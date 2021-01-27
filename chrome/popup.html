@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="style.css" />
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+  </head>
+  <body>
+    <div class="main_div" id="login_div">
+      <div class="user_name_div">
+        <label for="user_name">User :</label>
+        <input id="user_name">
+      </div>
+      <button id="login_button">Login</button>
+      <button id="register_button">Register</button>
+      <span class="warning_msg" id="login_warning_message"></span>
+      <span id="loading_span">Loading</span>
+    </div>
+    <div class="main_div" id="memo_div">
+      <div class="main_button_div">
+        <button id="logout_button">Logout</button>
+        <button id="options_button">Options</button>
+        <button id="save_button">Save</button>
+      </div>
+      <div class="main_memo_div">
+        <textarea id="memo"></textarea>
+      </div>
+    </div>
+  </body>
+
+  <script src="logic.js"></script>
+</html>
