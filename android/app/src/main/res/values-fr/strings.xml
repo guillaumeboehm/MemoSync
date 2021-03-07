@@ -2,9 +2,14 @@
 <resources>
     <string name="APP_NAME">MemoSync</string>
     <string name="DEBUG_USERNAME">bruh</string>
-    <string name="MEMO_HINT">Votre memo</string>
     <string name="LOGOUT">Se déconnecter</string>
     <string name="SAVE">Sauvegarder</string>
     <string name="LOGIN_HINT">T\'es qui ?</string>
     <string name="LOGIN">Se connecter</string>
+    <string name="PREF_MEMO_HINT">Le memo de&#160;</string>
+    <string name="SUF_MEMO_HINT"></string>
+    <string name="CREATE_USER">Créer le memo</string>
+    <string name="USER_NOT_EXISTS">Cet utilisateur n\'existe pas</string>
+    <string name="USER_EXISTS">Cet utilisateur existe déjà</string>
+    <string name="MEMO_MODIFIED">Votre memo est sauvegardé</string>
 </resources>

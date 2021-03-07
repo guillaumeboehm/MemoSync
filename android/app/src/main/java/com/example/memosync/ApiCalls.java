@@ -6,4 +6,12 @@ public class ApiCalls {
     static String getMemoUrl(String userName){
         return domain + "api/?user=" + userName;
     }
+
+    static String getCreateUserUrl(String userName){
+        return domain + "api/?user=" + userName + "&new";
+    }
+
+    static String getSaveMemoUrl(String userName, String memo){
+        return domain + "api/?user=" + userName + "&modif="+memo;
+    }
 }

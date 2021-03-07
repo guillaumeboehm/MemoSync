@@ -11,15 +11,19 @@ public class User {
         return connected;
     }
 
+    static String getCurrentUser(){ return current_user; }
+
     static void disconnect(){ connected = false; }
 
     static void connect(){ current_user = context.getString(R.string.DEBUG_USERNAME); connected = true; } //DEBUG PURPOSES
 
     static void connect(String userName){
-
-
-
         current_user = userName;
         connected = true;
+    }
+
+    // returns true if was connected
+    static boolean reconnect(){
+        return false;
     }
 }

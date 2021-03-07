@@ -19,7 +19,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        //check is user is saved on device
+        checkUser();
         load();
+    }
+
+    boolean checkUser(){
+        //check localStorage
+        return User.reconnect();
     }
 
     void load(){
@@ -28,8 +35,6 @@ public class MainActivity extends AppCompatActivity {
         memoActivity = new Intent(this, MemoActivity.class);
         memoActivity.setFlags(memoActivity.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
 
-        Log.d("CONNECTION TEST", "---------------------------------------------------------------------------------------------------------------------------------------------------------" +
-                                        (User.isConnected() ? "connected" : "not connected"));
         if(User.isConnected())
             loadMemo();
         else

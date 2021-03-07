@@ -1,9 +1,14 @@
 <resources>
     <string name="APP_NAME">MemoSync</string>
     <string name="DEBUG_USERNAME">bruh</string>
-    <string name="MEMO_HINT">Your memo</string>
+    <string name="PREF_MEMO_HINT"></string>
+    <string name="SUF_MEMO_HINT">\'s memo</string>
     <string name="LOGOUT">Logout</string>
     <string name="SAVE">Save</string>
     <string name="LOGIN_HINT">Who are you ?</string>
     <string name="LOGIN">Login</string>
+    <string name="CREATE_USER">Create user</string>
+    <string name="USER_NOT_EXISTS">This user does not exist</string>
+    <string name="USER_EXISTS">This user already exist</string>
+    <string name="MEMO_MODIFIED">Your memo is saved</string>
 </resources>
