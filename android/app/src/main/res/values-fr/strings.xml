@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="APP_NAME">MemoSync</string>
+    <string name="DEBUG_USERNAME">bruh</string>
+    <string name="MEMO_HINT">Votre memo</string>
+    <string name="LOGOUT">Se déconnecter</string>
+    <string name="SAVE">Sauvegarder</string>
+    <string name="LOGIN_HINT">T\'es qui ?</string>
+    <string name="LOGIN">Se connecter</string>
+</resources>

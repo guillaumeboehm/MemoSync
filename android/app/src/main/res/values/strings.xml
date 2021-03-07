@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">MemoSync</string>
+    <string name="APP_NAME">MemoSync</string>
+    <string name="DEBUG_USERNAME">bruh</string>
+    <string name="MEMO_HINT">Your memo</string>
+    <string name="LOGOUT">Logout</string>
+    <string name="SAVE">Save</string>
+    <string name="LOGIN_HINT">Who are you ?</string>
+    <string name="LOGIN">Login</string>
 </resources>
