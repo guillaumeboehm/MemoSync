@@ -2,7 +2,10 @@ package com.example.memosync;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -16,10 +19,12 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -30,36 +35,68 @@ import org.json.JSONObject;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 
 public class MemoActivity extends AppCompatActivity {
 
     //TODO refresh to pull memo
-    //TODO Hide keyboard on click on nothing
+    //TODO Loading anim while pulling memo (use pull to refresh anim ?)
 
     public Intent mainActivity;
+    public Intent settingsActivity;
+
+    public SharedPreferences preferences;
 
     public TextInputLayout memo;
-    public Button LogoutButton;
     public Button SaveButton;
+    public ImageButton SettingsButton;
 
     public String prevMemo=null;
     public String memoBeingSaved;
     public boolean promptNextSave = true;
 
     @Override
+    public boolean onSupportNavigateUp() {
+        User.disconnect();
+        startActivity(mainActivity);
+        finish();
+        return super.onSupportNavigateUp();
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.memo_page);
+
+        findViewById(R.id.main_memo_container).setOnTouchListener((View v, @SuppressLint("ClickableViewAccessibility") MotionEvent event) -> {
+            if(event.getAction() == MotionEvent.ACTION_DOWN){
+                hideCursor();hideKeyboard();
+                return true;
+            }
+            return false;
+        });
+
         mainActivity = new Intent(this, MainActivity.class);
+        settingsActivity = new Intent(this, SettingsActivity.class);
 
-        memo = (TextInputLayout) findViewById(R.id.memo);
-        LogoutButton = (Button) findViewById(R.id.logout_button);
-        SaveButton = (Button) findViewById(R.id.save_button);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayShowCustomEnabled(true);actionBar.setCustomView(R.layout.custom_action_bar);
+            SaveButton = findViewById(R.id.SaveButtonTheReturnOfTheSavings);
+            SettingsButton = findViewById(R.id.settings_button);
+        }
 
-        ActionBar ab = getSupportActionBar();
-        ab.setTitle("AAAAAAAAAAH");
+        memo = findViewById(R.id.memo);
+
+        // Dump preferences
+        Map<String, ?> allEntries = Prefs.getPrefs().getAll();
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            Log.d("map prefs", entry.getKey() + ": " + entry.getValue().toString());
+        }
 
         memo.getEditText().addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
@@ -72,14 +109,14 @@ public class MemoActivity extends AppCompatActivity {
                     SaveButton.setVisibility(View.GONE);
             }
         });
-        LogoutButton.setOnClickListener(v -> {
-            User.disconnect();
-            startActivity(mainActivity);
-        });
+
         SaveButton.setOnClickListener(v -> {
             hideKeyboard();
             hideCursor();
             saveMemo();
+        });
+        SettingsButton.setOnClickListener(v -> {
+            startActivity(settingsActivity);
         });
 
         try{

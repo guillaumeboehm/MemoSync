@@ -2,13 +2,18 @@ package com.example.memosync;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -26,23 +31,30 @@ import java.io.IOException;
 
 public class LoginActivity extends AppCompatActivity {
 
-    //TODO Click outside hides keyboard and cursor
-
     public Intent mainActivity;
 
     public Button login_button;
     public Button register_button;
     public TextInputLayout login_input;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_page);
         mainActivity = new Intent(this, MainActivity.class);
 
-        login_button = (Button) findViewById(R.id.login_button);
-        register_button = (Button) findViewById(R.id.create_button);
-        login_input = (TextInputLayout) findViewById(R.id.login_input);
+        login_button = findViewById(R.id.login_button);
+        register_button = findViewById(R.id.create_button);
+        login_input = findViewById(R.id.login_input);
+
+        findViewById(R.id.main_login_container).setOnTouchListener((View v, @SuppressLint("ClickableViewAccessibility") MotionEvent event) -> {
+            if(event.getAction() == MotionEvent.ACTION_DOWN){
+                hideCursor();hideKeyboard();
+                return true;
+            }
+            return false;
+        });
 
         // call login on button click
         login_button.setOnClickListener(v ->{
@@ -115,5 +127,13 @@ public class LoginActivity extends AppCompatActivity {
     }
     void hideError(){
         login_input.setError("");
+    }
+
+    void hideKeyboard(){
+        InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(login_input.getEditText().getWindowToken(),0);
+    }
+    void hideCursor(){
+        login_input.clearFocus();
     }
 }

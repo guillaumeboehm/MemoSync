@@ -12,4 +12,5 @@
     <string name="USER_NOT_EXISTS">Cet utilisateur n\'existe pas</string>
     <string name="USER_EXISTS">Cet utilisateur existe déjà</string>
     <string name="MEMO_MODIFIED">Votre memo est sauvegardé</string>
+    <string name="annoyance_settings">Putain d\'énervance</string>
 </resources>

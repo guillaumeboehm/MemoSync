@@ -1,11 +1,21 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <EditTextPreference
+        app:key="user"
+        app:defaultValue=""
+        app:isPreferenceVisible="false" />
+
+    <PreferenceCategory app:title="@string/annoyance_settings">
+
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="@string/messages_header">
 
         <EditTextPreference
             app:key="signature"
             app:title="@string/signature_title"
             app:useSimpleSummaryProvider="true" />
+
 
         <ListPreference
             app:defaultValue="reply"

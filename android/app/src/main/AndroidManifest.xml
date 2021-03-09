@@ -4,14 +4,15 @@
     package="com.example.memosync">
 
     <application
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/memosync_icon"
         android:label="@string/APP_NAME"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MemoSync">
+        android:theme="@style/Theme.MemoSync.WithoutActionBar">
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/title_activity_settings"
+            android:theme="@style/Theme.MemoSync.WithActionBar" />
         <activity
             android:name=".MainActivity"
             android:noHistory="true">
@@ -22,7 +23,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".LoginActivity" />
-        <activity android:name=".MemoActivity" />
+        <activity android:name=".MemoActivity"
+                  android:theme="@style/Theme.MemoSync.WithActionBar" />
     </application>
 
     <uses-permission android:name="android.permission.INTERNET"

@@ -1,5 +1,6 @@
 package com.example.memosync;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.ActionBar;
@@ -7,6 +8,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceFragmentCompat;
 
 public class SettingsActivity extends AppCompatActivity {
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        startActivity(new Intent(this,MainActivity.class));
+        finish();
+        return super.onSupportNavigateUp();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
