@@ -24,7 +24,8 @@
         </activity>
         <activity android:name=".LoginActivity" />
         <activity android:name=".MemoActivity"
-                  android:theme="@style/Theme.MemoSync.WithActionBar" />
+                  android:theme="@style/Theme.MemoSync.WithActionBar"
+                  android:windowSoftInputMode="adjustResize"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET"

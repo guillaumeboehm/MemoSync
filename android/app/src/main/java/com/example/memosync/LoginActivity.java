@@ -5,28 +5,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -83,17 +74,24 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {}
         });
+
+        VolleyRequest.request(ApiCalls.postMemoUrl(),
+                            ApiCalls.postMemoParams(""),
+                            response -> {
+                                Log.d("---------------",response.toString());
+                            },
+                            this);
     }
 
-    // Calls the HttpRequest
     void tryLogin(String userName){
         if(userName != "") {
-            HttpRequest req = new HttpRequest(this);
-            req.execute(ApiCalls.getMemoUrl(userName));
+            VolleyRequest.request(ApiCalls.postMemoUrl(),
+                                ApiCalls.postMemoParams(userName),
+                                this::httpResponse,
+                                this);
         }
     }
 
-    // called by the HttpRequest if user exists
     void httpResponse(JSONObject response_feed){
         if(response_feed.has("error")){
             // error handling
@@ -115,10 +113,11 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    // Calls the HttpRequest
     void tryCreate(String userName){
-        HttpRequest req = new HttpRequest(this);
-        req.execute(ApiCalls.getCreateUserUrl(login_input.getEditText().getText().toString()));
+        VolleyRequest.request(ApiCalls.postCreateUserUrl(),
+                            ApiCalls.postCreateUserParams(userName),
+                            this::httpResponse,
+                            this);
     }
 
     // Error displays

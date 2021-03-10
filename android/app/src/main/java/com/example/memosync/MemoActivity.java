@@ -35,6 +35,7 @@ import org.json.JSONObject;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -46,8 +47,6 @@ public class MemoActivity extends AppCompatActivity {
 
     public Intent mainActivity;
     public Intent settingsActivity;
-
-    public SharedPreferences preferences;
 
     public TextInputLayout memo;
     public Button SaveButton;
@@ -116,17 +115,15 @@ public class MemoActivity extends AppCompatActivity {
             saveMemo();
         });
         SettingsButton.setOnClickListener(v -> {
+            //TODO stack activity without quiting it
             startActivity(settingsActivity);
         });
 
-        try{
-            HttpRequest req = new HttpRequest(this);
-            req.execute(ApiCalls.getMemoUrl(User.getCurrentUser()));
-
-            memo.setHint(getString(R.string.PREF_MEMO_HINT) + User.getCurrentUser() + getString(R.string.SUF_MEMO_HINT));
-        } catch(Exception e){
-            Log.e("HttpRequest",e.getClass().getSimpleName() + " in Activity onCreate " + e.getMessage() + '\n' + Log.getStackTraceString(e));
-        }
+        VolleyRequest.request(ApiCalls.postMemoUrl(),
+                            ApiCalls.postMemoParams(User.getCurrentUser()),
+                            this::httpResponse,
+                            this);
+        memo.setHint(getString(R.string.PREF_MEMO_HINT) + User.getCurrentUser() + getString(R.string.SUF_MEMO_HINT));
     }
     @Override
     protected void onDestroy() {
@@ -138,8 +135,10 @@ public class MemoActivity extends AppCompatActivity {
     public void saveMemo(boolean... prompt){
         if(prompt.length > 0) promptNextSave = prompt[0]; else promptNextSave = true; // prompts by default
         memoBeingSaved = memo.getEditText().getText().toString();
-        HttpRequest req = new HttpRequest(this);
-        req.execute(ApiCalls.getSaveMemoUrl(User.getCurrentUser(),memoBeingSaved));
+        VolleyRequest.request(ApiCalls.postSaveMemoUrl(),
+                            ApiCalls.postSaveMemoParams(User.getCurrentUser(),memoBeingSaved,0),
+                            this::httpResponse,
+                            this);
     }
 
     public void httpResponse(JSONObject response_json){
