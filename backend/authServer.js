@@ -159,7 +159,7 @@ app.post('/login', async (req, res) => {
 		res.status(500).json({err:e})
 	}
 })
-app.post('/register', async (req, res) => {
+app.post('/signup', async (req, res) => {
 	try{
 		if(await models.users.exists({email:req.body.email})) return res.status(409).json({err:"UserAlreadyExists"});
 
@@ -202,10 +202,10 @@ app.get('/verifEmail', async (req, res)=>{
 		res.status(200).send('<h1>Your Email is verified! You can close this window.</h1>');
 	});
 });
-app.post('resendVerif' async (req, res)=>{
+app.post('/resendVerif', async (req, res)=>{
 
 });
-app.post('forgetPassword' async (req, res)=>{
+app.post('/forgetPassword', async (req, res)=>{
 
 });
 

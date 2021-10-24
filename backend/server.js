@@ -5,6 +5,29 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
+var path = require('path');
+var favicon = require('serve-favicon');
+
+//! view engine setup
+app.set('views', path.join(__dirname,'../frontend/views'));
+app.set('view engine', 'ejs');
+app.set('view options', {filename:true});
+app.use('/css', express.static(path.join(__dirname, "../frontend/css")));
+app.use('/js', express.static(path.join(__dirname, "../frontend/js")));
+app.use(favicon(path.join(__dirname, '../resources/favicon.ico')));
+//TODO restrict access for connected/disconnected
+app.get('/', (req, res) => {
+	res.render('welcome', { test: 'AAAAAAAAAAAAAAH' });
+})
+app.get('/home', (req, res) => {
+	res.render('home');
+})
+app.get('/login', (req, res) => {
+	res.render('login');
+})
+app.get('/signup', (req, res) => {
+	res.render('signup');
+})
 
 //! Mongoose config
 const mongoose = require('mongoose');
@@ -237,7 +260,19 @@ app.post('/DevUpdateMemo', async (req,res)=>{
 function authenticateToken(req, res, next) {
 	const authHeader = req.headers['authorization'];
 	const token = authHeader && authHeader.split(' ')[1];
-	if(token == null) return res.sendStatus(401);
+	if(token == null) return res.redirect('/');
+
+	jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
+		console.log(err);
+		if(err) return res.sendStatus(403);
+		req.userInfo = payload;
+		next();
+	})
+}
+function isConnected(req, res, next) {
+	const authHeader = req.headers['authorization'];
+	const token = authHeader && authHeader.split(' ')[1];
+	if(token == null) return res.redirect('/');
 
 	jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
 		console.log(err);

@@ -1,0 +1,17 @@
+<%- include('header', {loggedIn: false, page:'login'}); -%>
+
+    <div id="content">
+        <div id="container">
+            <p class="form-label">Login</p>
+            <form>
+                <input id="login-email" class="form-input" placeholder="Email"/>
+                <input id="login-password" class="form-input" placeholder="Password"/>
+                <div class="submit">Login</div>
+            </form>
+            <div class="center-link"><a>I forgot my password</a></div>
+            <div class="center-link"><a href="/signup">Create an account</a></div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="/js/login.js"></script>
+</html>

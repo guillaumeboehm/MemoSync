@@ -1,0 +1,85 @@
+:root{
+  /*color palette https://coolors.co/palettes/trending*/
+  --header-bg-color: #242200;
+  --header-buttons-color: #9e7a54;
+  --header-foreground: #dddddd;
+}
+
+.noselect {
+  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  font-family:Roboto,sans-serif;
+}
+
+#header{
+  display: flex;
+  align-items: center;
+  background-color: var(--header-bg-color);
+  padding: 20px 50px 20px 50px;
+}
+#logo{
+  flex: 0 0 auto;
+  font-size: 2rem;
+  text-decoration: none;
+  color: var(--header-foreground);
+}
+#header-spacer{
+  flex: 1 0 auto;
+}
+#logout,#login,#signup{
+  flex: 0 0 auto;
+  align: center;
+  text-decoration: none;
+}
+
+#header #login{
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-right: 20px;
+  color: var(--header-foreground);
+}
+#header .header-button{
+  /* background: #222; */
+  background: var(--header-buttons-color);
+  height: 40px;
+  min-width: 110px;
+  border: none;
+  border-radius: 10px;
+  color: var(--header-foreground);
+  font-size: 1.2rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+  /* padding-top: 5px; */
+}
+
+
+#header .header-button .line {
+  width: 0px;
+  height: 0px;
+  background: transparent;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  overflow: hidden;
+  transition: 300ms;
+  transition-property: height, width, left, border-bottom;
+}
+#header .header-button:hover .line {
+  height: 80%;
+  width: 80%;
+  left: 10%;
+  border-bottom: 1px solid #eee;
+}
