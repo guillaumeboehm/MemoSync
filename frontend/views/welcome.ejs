@@ -1,2 +1,9 @@
-<%- include('header', {loggedIn: false, page: 'welcome'}); -%>
-<h1>welcome</h1>
+<%- include('header', {page: 'welcome'}); -%>
+<script type="text/javascript">
+    if(localStorage.getItem('refreshToken') !== null) location.href = '/home';
+</script>
+<h1>MemoSync c'est cool en vrai promis</h1>
+
+</body>
+<script type="text/javascript" src="/js/welcome.js"></script>
+</html>

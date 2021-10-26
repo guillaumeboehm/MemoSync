@@ -6,15 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" type="text/css" href="/css/header.css">
     <link rel="stylesheet" type="text/css" href="/css/<%= page %>.css">
+    <link rel="stylesheet" type="text/css" href="/css/icons.css">
 </head>
 <body>
     <div id="header" class="">
-        <a id="logo" class="" href="/home">MemoSync</a>
+        <a id="logo" class="" href="/"><img src="/resources/memo-icon.png" alt="MemoSync"></img></a>
         <div id="header-spacer"></div>
-        <% if(loggedIn){ %>
-            <a id="logout" href="/"><div class="header-button"><span class="noselect">Logout</span><div class="line"></div></div></a>
-        <% } else{ %>
-            <a id="login" class="" href="/login">Login</a>
-            <a id="signup" href="/signup"><div class="header-button"><span class="noselect">Sign up</span><div class="line"></div></div></a>
-        <% } %>
+        <button id="header-logout" class="header-button loggedin display-none">Logout</button>
+        <a id="login" class="loggedout display-none" href="/login">Login</a>
+        <button id="header-signup" class="header-button loggedout display-none">Sign up</button>
     </div>
+    <script type="text/javascript" src="/js/header.js"></script>

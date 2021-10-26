@@ -1,0 +1,14 @@
+:root{
+    --content-background: #1c1b00;
+    --form-background: #242200;
+    --form-foreground: #dddddd;
+    --form-buttons-color: #9e7a54;
+    --form-message: #f03a70;
+    --form-message-success: #4ce69b;
+    --links-color: #3b8fff;
+}
+
+body{
+    background-color: var(--content-background);
+    color: var(--form-foreground);
+}

@@ -5,6 +5,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const jwt = require('jsonwebtoken');
+var cors = require('cors');
 
 //! Mail setup
 const mailer = require('nodemailer');
@@ -48,6 +49,7 @@ const asciiToB64 = (data) => Buffer.from(data).toString('base64');
 const b64ToAscii = (data) => Buffer.from(data, 'base64').toString('ascii');
 
 app.use(express.json());
+app.use(cors({origin: '*'}));
 
 app.post('/newToken', async (req, res) => {
 	try{
@@ -72,8 +74,9 @@ app.post('/newToken', async (req, res) => {
 app.delete('/logout', async (req, res) => {
 	try{
 		// Delete the user's refresh tokens
-		const email = req.body.email;
+		// const email = req.body.email;
 		const refreshToken = req.body.refreshToken;
+		const email = JSON.parse(b64ToAscii(refreshToken.split('.')[1])).email;
 		models.users.findOne({email:email},function(err, user){
 			if(err) {
 				console.log(err);
@@ -130,9 +133,10 @@ app.post('/login', async (req, res) => {
 				return res.sendStatus(500);
 			}
 			if(user===null) {
-				console.log('No user found');
+				console.log(email, pass, 'No user found');
 				return res.status(401).json({err:"NoUserFound"});
 			}
+			if(user.verification !== 'verified') return res.status(401).json({err:'VerifEmail'});
 
 			bcrypt.compare(pass, user.get('password'), function(err,success){
 				if(err) {
@@ -140,7 +144,6 @@ app.post('/login', async (req, res) => {
 					return res.sendStatus(500);
 				}
 				if(success){
-					if(user.verification !== 'verified') return res.status(401).json({err:'VerifEmail'});
 					const payload = { email: email };
 					const accessToken = generateAccessToken(payload);
 					const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET);
@@ -166,69 +169,226 @@ app.post('/signup', async (req, res) => {
 		const email = req.body.email;
 		const hashedPassword = await bcrypt.hash(req.body.password, 10);
 		const verifToken = crypto.randomBytes(40).toString('hex');
-		sendVerifEmail(email, verifToken);
-		const newUser = new models.users({
-			email: email,
-			password: hashedPassword,
-			verification: verifToken,
-			jwt_recovery_tokens: [],
-			creationDate: Date.now().toString() });
-		newUser.save();
-		res.sendStatus(201);
+		sendVerifEmail(email, verifToken).then(mailRes=>{
+			console.log(mailRes)
+			switch(mailRes.status){
+				case 504:
+					return res.status(400).json({err:'UnqualifiedAddress'});
+			}
+			const newUser = new models.users({
+				email: email,
+				password: hashedPassword,
+				verification: verifToken,
+				jwt_recovery_tokens: [],
+				creationDate: Date.now().toString() });
+			newUser.save();
+			res.sendStatus(201);
+		});
 	} catch(err) {
 		console.log(err)
 		res.sendStatus(500);
 	}
-
 })
 app.get('/verifEmail', async (req, res)=>{
-	const email = req.query.user;
-	const token = req.query.token;
+	try{
+		const email = req.query.user;
+		const token = req.query.token;
 
-	models.users.findOne({email:b64ToAscii(email)},function(err, user){
-		if(err) {
+		if(email===undefined || token===undefined){
+			return res.status(403).json({
+				text: 'The url is invalid, try resending the verification email.',
+				button: 'Resend verification email',
+				redirect: '/resendVerif'
+			});
+		}
+
+		models.users.findOne({email:b64ToAscii(email)},function(err, user){
+			if(err) {
+				console.log(err);
+				return res.sendStatus(500);
+			}
+			if(user===null) {
+				console.log('No user found');
+				return res.status(401).json({
+					text: 'The user you\'re trying to verify couldn\'t be found.',
+					button: 'Sign up',
+					redirect: '/signup'
+				});
+
+			}
+
+			if(user.verification === 'verified') return res.status(200).json({
+				text: 'Your email is already verified.',
+				button: 'Login',
+				redirect: '/login'
+			});
+			if(user.verification !== token) return res.status(400).json({
+				text: 'The verification token is invalid, try resending the verification email.',
+				button: 'Resend verification email',
+				redirect: '/resendVerif'
+			});
+			user.verification = 'verified';
+			user.save();
+			res.status(200).json({
+				text: 'Your email has been verified, your can now log in your MemoSync account.',
+				button: 'Login',
+				redirect: '/login'
+			});
+		});
+	} catch(err){
+		console.log(err);
+		res.sendStatus(500);
+	}
+});
+app.post('/forgotPassword', async (req, res)=>{
+	try{
+		const email = req.body.email;
+		models.users.findOne({email:email}, (err,user)=>{
+			if(err) {
+				console.log(err);
+				return res.sendStatus(500);
+			}
+			if(user===null) {
+				console.log('No user found');
+				return res.status(400).json({err:"NoUserFound"});
+			}
+
+			const pwdToken = crypto.randomBytes(40).toString('hex');
+			sendForgottenPasswordEmail(email, pwdToken).then(mailRes=>{
+				console.log(mailRes)
+				switch(mailRes.status){
+					case 504:
+						return res.status(400).json({err:'UnqualifiedAddress'});
+				}
+				user.set('resetPasswordToken', pwdToken);
+				user.save();
+				res.sendStatus(200);
+			});
+		});
+	} catch(err) {
+		console.log(err)
+		res.sendStatus(500);
+	}
+});
+app.post('/changePassword', async (req, res)=>{
+	const accessToken = req.body.accessToken;
+	const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+	var user = undefined;
+	var resetToken = undefined;
+	var email = undefined;
+	var error = {err: 'UnkownError'};
+	if(accessToken){
+		jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
 			console.log(err);
-			return res.sendStatus(500);
-		}
-		if(user===null) {
-			console.log('No user found');
-			return res.status(401).json({err:"NoUserFound"});
-		}
+			if(!err){
+				email = payload.email;
+			}
+			error = err;
+		});
+	}
+	if(!email){
+		user = req.body.user;
+		resetToken = req.body.resetToken;
+		if(user && resetToken) email = b64ToAscii(user);
+		else error = {err: 'MalformedLink'};
+	}
+	if(!email) return res.status(400).json(error);
+	else{
+		models.users.findOne({email:email},function(err, user){
+			if(err) {
+				console.log(err);
+				return res.sendStatus(500);
+			}
+			if(user===null) return res.status(400).json({ err: 'NoUserFound' });
+			if(resetToken && user.get('resetPasswordToken')!==resetToken) return res.status(400).json({ err: 'MalformedLink' });
 
-		if(user.verification === 'verified') return res.status(200).send('<h1>Your email is already verified.</h1>');
-		if(user.verification !== token) return res.status(400).send('<h1>The verification token is invalid, try logging in again and resending the verification email');
-		user.verification = 'verified';
-		user.save();
-		res.status(200).send('<h1>Your Email is verified! You can close this window.</h1>');
-	});
+			//Issok
+			user.set('password', hashedPassword);
+			user.set('resetPasswordToken', '');
+			user.save();
+			res.sendStatus(201);
+		});
+	}
 });
 app.post('/resendVerif', async (req, res)=>{
+	try{
+		const email = req.body.email;
+		models.users.findOne({email:email},function(err, user){
+			if(err) {
+				console.log(err);
+				return res.sendStatus(500);
+			}
+			if(user===null) return res.status(400).json({ err: 'NoUserFound' });
+			if(user.verification === 'verified') return res.status(400).json({ err: 'AlreadyVerified' });
 
-});
-app.post('/forgetPassword', async (req, res)=>{
-
+			const verifToken = crypto.randomBytes(40).toString('hex');
+			sendVerifEmail(email, verifToken).then(mailRes=>{
+				console.log(mailRes)
+				switch(mailRes.status){
+					case 504:
+						return res.status(400).json({err:'UnqualifiedAddress'});
+				}
+				user.set('verification', verifToken);
+				user.save();
+				res.sendStatus(200);
+			});
+		});
+	} catch(err) {
+		console.log(err)
+		res.sendStatus(500);
+	}
 });
 
 function generateAccessToken(payload) {
 	return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15h' });
 }
-function generateVerifURL(user, token){
-	return process.env.VERIF_URL.format(user, token);
-}
-function sendVerifEmail(dest, token) {
-	mailOptions = {
-		from: process.env.MAIL_USER,
-		to: dest,
-		subject: process.env.MAIL_SUBJECT,
-		text: process.env.MAIL_TEXT.format(generateVerifURL(asciiToB64(dest), token))
-	}
-	mailTransporter.sendMail(mailOptions, function(err, info){
-		if (err) {
-			console.log(err);
-			//TODO Ensure that the user will eventually receive the mail dunno how
-		} else {
-			console.log('Email sent: ' + info.response);
+async function sendVerifEmail(dest, token) {
+	return new Promise((resolve,reject)=>{
+		mailOptions = {
+			from: process.env.MAIL_USER,
+			to: dest,
+			subject: process.env.VERIF_MAIL_SUBJECT,
+			text: process.env.VERIF_MAIL_TEXT.format(process.env.VERIF_URL.format(asciiToB64(dest), token))
 		}
+		let mailRes = {};
+		mailTransporter.sendMail(mailOptions, function(err, info){
+			if (err) {
+				console.log(err);
+				mailRes.status = err.responseCode;
+				mailRes.err = err.response;
+				resolve(mailRes);
+				//TODO Ensure that the user will eventually receive the mail dunno how
+			} else {
+				mailRes.status = 200;
+				console.log('Email sent: ' + info.response);
+				resolve(mailRes);
+			}
+		});
+	});
+}
+async function sendForgottenPasswordEmail(dest, token) {
+	return new Promise((resolve,reject)=>{
+		mailOptions = {
+			from: process.env.MAIL_USER,
+			to: dest,
+			subject: process.env.PWD_MAIL_SUBJECT,
+			text: process.env.PWD_MAIL_TEXT.format(process.env.PWD_URL.format(asciiToB64(dest), token))
+		}
+		let mailRes = {};
+		mailTransporter.sendMail(mailOptions, function(err, info){
+			if (err) {
+				console.log(err);
+				mailRes.status = err.responseCode;
+				mailRes.err = err.response;
+				resolve(mailRes);
+				//TODO Ensure that the user will eventually receive the mail dunno how
+			} else {
+				mailRes.status = 200;
+				console.log('Email sent: ' + info.response);
+				resolve(mailRes);
+			}
+		});
 	});
 }
 

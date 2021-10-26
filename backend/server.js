@@ -14,10 +14,11 @@ app.set('view engine', 'ejs');
 app.set('view options', {filename:true});
 app.use('/css', express.static(path.join(__dirname, "../frontend/css")));
 app.use('/js', express.static(path.join(__dirname, "../frontend/js")));
+app.use('/resources', express.static(path.join(__dirname, "../resources")));
 app.use(favicon(path.join(__dirname, '../resources/favicon.ico')));
 //TODO restrict access for connected/disconnected
 app.get('/', (req, res) => {
-	res.render('welcome', { test: 'AAAAAAAAAAAAAAH' });
+	res.render('welcome');
 })
 app.get('/home', (req, res) => {
 	res.render('home');
@@ -27,6 +28,18 @@ app.get('/login', (req, res) => {
 })
 app.get('/signup', (req, res) => {
 	res.render('signup');
+})
+app.get('/verifEmail', (req, res) => {
+	res.render('verifEmail');
+})
+app.get('/resendVerif', (req, res) => {
+	res.render('resendVerif');
+})
+app.get('/forgotPassword', (req, res) => {
+	res.render('forgotPassword');
+})
+app.get('/changePassword', (req, res) => {
+	res.render('changePassword');
 })
 
 //! Mongoose config

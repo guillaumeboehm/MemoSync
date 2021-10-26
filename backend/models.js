@@ -3,6 +3,7 @@ module.exports = function(mongoose, dbCollNames) {
 		email: String,
 		password: String,
 		verification: String,
+		resetPasswordToken: String,
 		jwt_recovery_tokens: [String],
 		creationDate: Date
 	}, {versionKey: false});

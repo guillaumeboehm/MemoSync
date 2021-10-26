@@ -1,0 +1,15 @@
+<%- include('header', {page:'resendVerif'}); -%>
+
+    <div id="content">
+        <div id="container">
+            <p class="form-label">Resend verification link</p>
+            <form>
+                <input id="email" class="input form-input" type="email" autocomplete="username" placeholder="Email" required/>
+                <span id="message"></span>
+                <button type="submit" class="submit"><span class="button-text show">Resend link</span><div class="button-load"></div></button>
+            </form>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="/js/resendVerif.js"></script>
+</html>

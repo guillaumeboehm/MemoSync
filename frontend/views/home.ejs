@@ -1,2 +1,9 @@
-<%- include('header', {loggedIn: true, page: 'home'}); -%>
-<h1>home</h1>
+<%- include('header', {page: 'home'}); -%>
+<script type="text/javascript">
+    if(localStorage.getItem('refreshToken') === null) location.href = '/';
+</script>
+<h1>Wow homepage</h1>
+
+</body>
+<script type="text/javascript" src="/js/home.js"></script>
+</html>
