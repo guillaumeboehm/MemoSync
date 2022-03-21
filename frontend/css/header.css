@@ -31,12 +31,13 @@ body {
   display: flex;
   align-items: center;
   background-color: var(--header-bg-color);
-  padding: 20px 50px 20px 50px;
+  padding: 20px 50px 20px 10px;
 }
 #logo{
   flex: 0 0 auto;
   font-size: 2rem;
   text-decoration: none;
+  margin-left: 40px;
   color: var(--header-foreground);
 }
 #logo img{

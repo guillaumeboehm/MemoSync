@@ -4,6 +4,7 @@ const app = express();
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 require('dotenv').config();
+const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -43,7 +44,6 @@ app.get('/changePassword', (req, res) => {
 })
 
 //! Mongoose config
-const mongoose = require('mongoose');
 const dbName = process.env.DB_NAME;
 const dbUsername = process.env.DB_USERNAME;
 const dbPwd = process.env.DB_PWD;
@@ -68,6 +68,7 @@ app.use(express.json());
 
 //Admin routes
 app.delete('/AdminRemUsers', async (req,res)=>{
+	if(req.headers.pwd !== process.env.ADMIN_PASS) return res.sendStatus(403);
 	models.users.deleteMany({}, function (err){
 		if(err){
 			console.log(err);
@@ -78,8 +79,19 @@ app.delete('/AdminRemUsers', async (req,res)=>{
 			res.sendStatus(205);
 		}
 	});
+	models.memos.deleteMany({}, function (err){
+		if(err){
+			console.log(err);
+			res.sendStatus(500);
+		}
+		else{
+			console.log("All memos removed by admin")
+			res.sendStatus(200);
+		}
+	})
 })
 app.delete('/AdminRemUser', async (req,res)=>{
+	if(req.headers.pwd !== process.env.ADMIN_PASS) return res.sendStatus(403);
 	models.users.deleteOne({email:req.body.email}, function (err){
 		if(err){
 			console.log(err);
@@ -90,52 +102,69 @@ app.delete('/AdminRemUser', async (req,res)=>{
 			res.sendStatus(205);
 		}
 	});
+	models.memos.deleteMany({email:req.body.email}, function (err){
+		if(err){
+			console.log(err);
+			res.sendStatus(500);
+		}
+		else{
+			console.log("All memos from "+req.body.email+" removed by admin")
+			res.sendStatus(200);
+		}
+	})
 })
 app.delete('/AdminRemAllMemos', async (req,res)=>{
+	if(req.headers.pwd !== process.env.ADMIN_PASS) return res.sendStatus(403);
 	models.memos.deleteMany({}, function (err){
-			if(err){
-				console.log(err);
-				res.sendStatus(500);
-			}
-			else{
-				console.log("All memos removed by admin")
-				res.sendStatus(200);
-			}
-		})
+		if(err){
+			console.log(err);
+			res.sendStatus(500);
+		}
+		else{
+			console.log("All memos removed by admin")
+			res.sendStatus(200);
+		}
+	})
 })
 app.delete('/AdminRemMemos', async (req,res)=>{
+	if(req.headers.pwd !== process.env.ADMIN_PASS) return res.sendStatus(403);
 	models.memos.deleteMany({email:req.body.email}, function (err){
-			if(err){
-				console.log(err);
-				res.sendStatus(500);
-			}
-			else{
-				console.log("All memos from "+req.body.email+" removed by admin")
-				res.sendStatus(200);
-			}
-		})
+		if(err){
+			console.log(err);
+			res.sendStatus(500);
+		}
+		else{
+			console.log("All memos from "+req.body.email+" removed by admin")
+			res.sendStatus(200);
+		}
+	})
 })
 app.delete('/AdminRemMemo', async (req,res)=>{
+	if(req.headers.pwd !== process.env.ADMIN_PASS) return res.sendStatus(403);
 	models.memos.deleteOne({email:req.body.email, title:req.body.memoTitle}, function (err){
-			if(err){
-				console.log(err);
-				res.sendStatus(500);
-			}
-			else{
-				console.log("Memo "+req.body.memoTitle+" from "+req.body.email+" removed by admin")
-				res.sendStatus(200);
-			}
-		})
+		if(err){
+			console.log(err);
+			res.sendStatus(500);
+		}
+		else{
+			console.log("Memo "+req.body.memoTitle+" from "+req.body.email+" removed by admin")
+			res.sendStatus(200);
+		}
+	})
 })
 
 //Normal routes
 app.post('/newMemo', authenticateToken, async (req,res)=>{
 	try{
-		const userEmail = req.body.email;
-		if(userEmail !== req.userInfo.email) return res.sendStatus(403);
+		const userEmail = req.userInfo.email;
 		const memoTitle = req.body.memoTitle;
 		//if already exists exit
-		if(await models.memos.exists({email:userEmail, title:memoTitle})) return res.sendStatus(409);
+		if(await models.memos.exists({email:userEmail, title:memoTitle}).then(exists=>{
+			if(exists){
+				res.status(409).json({err: "memoAlreadyExists"});
+				return true;
+			}
+		})) return 0;
 
 		const newMemo = new models.memos({
 			email: userEmail,
@@ -166,7 +195,7 @@ app.get('/getAllMemos', authenticateToken, async (req,res)=>{
 		res.sendStatus(500);
 	}
 })
-app.get('/getMemo', authenticateToken, async (req,res)=>{
+app.post('/getMemo', authenticateToken, async (req,res)=>{
 	try{
 		const email = req.userInfo.email;
 		const memoTitle = req.body.memoTitle;
@@ -207,72 +236,31 @@ app.post('/updateMemo', authenticateToken, async (req,res)=>{
 		res.sendStatus(500);
 	}
 })
-
-
-
-
-
-
-//Dev routes
-app.post('/DevAddMemo', async (req,res)=>{
-	console.log("DevAddMemo")
+app.delete('/deleteMemo', authenticateToken, async (req,res)=>{
 	try{
-		const userEmail = req.body.email;
+		const email = req.userInfo.email;
 		const memoTitle = req.body.memoTitle;
-		//if already exists exit
-		if(await models.memos.exists({email:userEmail, title:memoTitle})) return res.sendStatus(409);
-
-		const memoToAdd = {
-			email: userEmail,
-			title: memoTitle,
-			text: "",
-			version: 0
-		};
-		const newMemo = new models.memos(memoToAdd);
-		newMemo.save();
-		console.log('memo added');
-		// res.sendStatus(201);
-		res.status(201).json(memoToAdd);
-	} catch {
+		models.memos.deleteOne({email:email, title:memoTitle}, function (err){
+				if(err){
+					console.log(err);
+					res.sendStatus(500);
+				}
+				else{
+					console.log("Memo "+req.body.memoTitle+" from "+req.body.email+" removed by user")
+					res.sendStatus(200);
+				}
+			})
+	}catch(err){
+		console.log(err);
 		res.sendStatus(500);
 	}
 })
-app.get('/DevGetMemos', async (req,res)=>{
-	console.log("DevGetMemos")
-	models.memos.find({email:req.body.email}, function (err, memos){
-		if(err){
-			console.log(err);
-			res.sendStatus(500);
-		}
-		else{
-			console.log(req.body.email+' memos fetched');
-			res.status(200).json(memos);
-		}
-	})
-})
-app.post('/DevUpdateMemo', async (req,res)=>{
-	console.log("DevGetMemo")
-	models.memos.findOneAndUpdate({email:req.body.email, title:req.body.memoTitle}, {text:req.body.memoTxt, $inc:{version:1}}, function (err, result){
-		if(err){
-			console.log(err);
-			res.sendStatus(500);
-		}
-		else{
-			console.log('memo fetched');
-			res.status(200).json(result);
-		}
-	})
-})
 
-
-
-
-
-
-
+//Utilities
 function authenticateToken(req, res, next) {
 	const authHeader = req.headers['authorization'];
 	const token = authHeader && authHeader.split(' ')[1];
+	console.log('received token', token)
 	if(token == null) return res.redirect('/');
 
 	jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {

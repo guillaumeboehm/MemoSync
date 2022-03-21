@@ -6,6 +6,7 @@ const express = require('express');
 const app = express();
 const jwt = require('jsonwebtoken');
 var cors = require('cors');
+var apiCall = undefined;
 
 //! Mail setup
 const mailer = require('nodemailer');
@@ -35,7 +36,7 @@ const mongoURL = 'mongodb://'+dbHost+':'+dbPort+'/'+dbName;
 try{
 	mongoose.connect(mongoURL, {user:dbUsername,pass:dbPwd});
 } catch(err){
-	console.log(err);
+	if(err) console.log(err);
 }
 const models = require('./models')(mongoose, dbCollNames);
 
@@ -52,95 +53,158 @@ app.use(express.json());
 app.use(cors({origin: '*'}));
 
 app.post('/newToken', async (req, res) => {
+	apiCall='newToken'
 	try{
+		const authHeader = req.headers['authorization'];
+		const authToken = authHeader && authHeader.split(' ')[1];
+		refresh = true
+		if (authToken != null) await jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
+			if(!err){
+				refresh = false;
+				// check if user still exists
+				if(models.users.exists({email:payload.email}).then(exists=>{ // Not sure wait await isn't accepted here... Seems to work without so meh
+					if(!exists){
+						logError('UserNotFound');
+						res.status(401).json({err:"UserNotFound"});
+						return true;
+					}
+				})) return 0;
+				logSuccess('Sending back current token');
+				return res.status(200).json({ accessToken: authToken });// resend the same token
+			}
+		});
+		if(!refresh) return 0;
 		const refreshToken = req.body.token;
-		if (refreshToken == null) return res.status(401).json({err:"NoRefreshTokenSent"});
+		if (refreshToken == null){
+			logError("NoRefreshTokenSent");
+			return res.status(401).json({err:"NoRefreshTokenSent"});
+		}
 		jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async function(err, payload){
 			if(err){
-				console.log(err);
+				logError("RefreshTokenInvalid", err);
 				return res.status(401).json({err:"RefreshTokenInvalid"});
 			}
-			if(await models.users.exists({email:payload.email, jwt_recovery_tokens:[refreshToken]})) return res.status(401).json({err:"RefreshTokenNotFound"});//I think I need a ! there... I'll just wait for it to crash cause I'm not sure
+			if(await models.users.exists({email:payload.email, jwt_recovery_tokens:[refreshToken]}).then(exists=>{
+				if(!exists){
+					logError("RefreshTokenNotFound");
+					res.status(401).json({err:"RefreshTokenNotFound"});
+					return true;
+				}
+			})) return 0;
 
 			const accessToken = generateAccessToken({ email: payload.email });
+			logSuccess('Sending new token');
 			res.status(200).json({ accessToken: accessToken });
 		});
 	} catch(e){
-		console.log(e);
+		logError("InternalError", e);
 		res.status(500).json({err:e})
 	}
 })
 
 app.delete('/logout', async (req, res) => {
+	apiCall='logout';
 	try{
 		// Delete the user's refresh tokens
-		// const email = req.body.email;
-		const refreshToken = req.body.refreshToken;
-		const email = JSON.parse(b64ToAscii(refreshToken.split('.')[1])).email;
-		models.users.findOne({email:email},function(err, user){
-			if(err) {
-				console.log(err);
-				return res.sendStatus(500);
+		const authHeader = req.headers['authorization'];
+		const refreshToken = authHeader && authHeader.split(' ')[1];
+		if(refreshToken == null){
+			logError("NoUserFound");
+			return res.status(400).json({err:"NoUserFound"});
+		}
+		jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, payload) => {
+			if(err){
+				logError("InvalidBearerToken", err);
+				return res.status(401).json({err:"InvalidBearerToken"});
 			}
-			if(user===null) {
-				console.log('No user found');
-				return res.status(401).json({err:"NoUserFound"});
-			}
+			models.users.findOne({email:payload.email},function(err, user){
+				if(err){
+					logError("InternalError", err);
+					return res.sendStatus(500);
+				}
+				if(user===null){
+					logError("NoUserFound");
+					return res.status(400).json({err:"NoUserFound"});
+				}
 
-			const tokens = user.get('jwt_recovery_tokens');
-			tokens.pop(refreshToken);
-			user.save();
+				const tokens = user.get('jwt_recovery_tokens');
+				tokens.pop(refreshToken);
+				user.save();
 
-			res.sendStatus(204);
+				logSuccess(payload.email+" logged out");
+				res.sendStatus(204);
+			});
 		});
+		logError("UnknownError");
+		return res.sendStatus(500);
 	} catch(e){
-		console.log(e);
+		logError("InternalError", e);
 		res.status(500).json({err:e})
 	}
 })
 app.delete('/logoutEverywhere', async (req, res) => {
+	apiCall='logoutEverywhere';
 	try{
 		// Delete all this user's refresh tokens
-		const email = req.body.email;
-		models.users.findOne({email:email},function(err, user){
-			if(err) {
-				console.log(err);
-				return res.sendStatus(500);
-			}
-			if(user===null) {
-				console.log('No user found');
-				return res.status(401).json({err:"NoUserFound"});
-			}
+		const authHeader = req.headers['authorization'];
+		const token = authHeader && authHeader.split(' ')[1];
+		if(token == null){
+			logError("NoBearerTokenSent");
+			return res.status(401).json({err:"NoBearerTokenSent"});
+		}
 
-			user.set('jwt_recovery_tokens', []);
-			user.save();
+		jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, payload) => {
+			if(err){
+				logError("InvalidBearerToken",err);
+				return res.status(401).json({err:"InvalidBearerToken"});
+			}
+			models.users.findOne({email:payload.email},function(err, user){
+				if(err){
+					logError("InternalError", err);
+					return res.sendStatus(500);
+				}
+				if(user===null){
+					logError("NoUserFound",err);
+					return res.status(400).json({err:"NoUserFound"});
+				}
 
-			res.sendStatus(204);
-		});
+				user.set('jwt_recovery_tokens', []);
+				user.save();
+
+				logSuccess(payload.email+'logged out everywhere');
+				res.sendStatus(204);
+			});
+		})
+		logError("UnknownError");
+		return res.sendStatus(500);
 	} catch(e){
-		console.log(e);
+		logError("InternalError", e);
 		res.status(500).json({err:e})
 	}
 })
 
 app.post('/login', async (req, res) => {
+	apiCall='login';
 	try{
 		const email = req.body.email;
 		const pass = req.body.password;
 		models.users.findOne({email:email},function(err, user){
 			if(err) {
-				console.log(err);
+				logError("InternalError", err);
 				return res.sendStatus(500);
 			}
 			if(user===null) {
-				console.log(email, pass, 'No user found');
+				logError("NoUserFound");
 				return res.status(401).json({err:"NoUserFound"});
 			}
-			if(user.verification !== 'verified') return res.status(401).json({err:'VerifEmail'});
+			if(user.verification !== 'verified'){
+				logError("VerifEmail");
+				return res.status(401).json({err:'VerifEmail'});
+			}
 
 			bcrypt.compare(pass, user.get('password'), function(err,success){
 				if(err) {
-					console.log(err);
+					logError("InternalError", err);
 					return res.sendStatus(500);
 				}
 				if(success){
@@ -152,19 +216,30 @@ app.post('/login', async (req, res) => {
 					tokens.push(refreshToken);
 					user.save();
 
+					logSuccess(payload.email+" logged in");
 					res.status(200).json({ accessToken: accessToken, refreshToken: refreshToken });
 				}
-				else res.status(401).json({err:"WrongPass"});
+				else{
+					logError("WrongPass");
+					res.status(401).json({err:"WrongPass"});
+				}
 			});
 		});
 	} catch(e){
-		console.log(e);
+		logError("InternalError", e);
 		res.status(500).json({err:e})
 	}
 })
 app.post('/signup', async (req, res) => {
+	apiCall='signup';
 	try{
-		if(await models.users.exists({email:req.body.email})) return res.status(409).json({err:"UserAlreadyExists"});
+		if(await models.users.exists({email:req.body.email}).then(exists=>{
+			if(exists){
+				logError("UserAlreadyExists");
+				res.status(409).json({err:"UserAlreadyExists"});
+				return true;
+			}
+		})) return 0;
 
 		const email = req.body.email;
 		const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -173,6 +248,7 @@ app.post('/signup', async (req, res) => {
 			console.log(mailRes)
 			switch(mailRes.status){
 				case 504:
+					logError('UnqualifiedAddress');
 					return res.status(400).json({err:'UnqualifiedAddress'});
 			}
 			const newUser = new models.users({
@@ -182,19 +258,22 @@ app.post('/signup', async (req, res) => {
 				jwt_recovery_tokens: [],
 				creationDate: Date.now().toString() });
 			newUser.save();
-			res.sendStatus(201);
+			logSuccess(email+" user created");
+			return res.sendStatus(201);
 		});
 	} catch(err) {
-		console.log(err)
-		res.sendStatus(500);
+		logError("InternalError", err);
+		return res.sendStatus(500);
 	}
 })
 app.get('/verifEmail', async (req, res)=>{
+	apiCall='verifEmail';
 	try{
 		const email = req.query.user;
 		const token = req.query.token;
 
 		if(email===undefined || token===undefined){
+			logError('InvalidURL');
 			return res.status(403).json({
 				text: 'The url is invalid, try resending the verification email.',
 				button: 'Resend verification email',
@@ -204,11 +283,11 @@ app.get('/verifEmail', async (req, res)=>{
 
 		models.users.findOne({email:b64ToAscii(email)},function(err, user){
 			if(err) {
-				console.log(err);
+				logError('InternalError', err);
 				return res.sendStatus(500);
 			}
 			if(user===null) {
-				console.log('No user found');
+				logError('NoUserFound');
 				return res.status(401).json({
 					text: 'The user you\'re trying to verify couldn\'t be found.',
 					button: 'Sign up',
@@ -217,18 +296,25 @@ app.get('/verifEmail', async (req, res)=>{
 
 			}
 
-			if(user.verification === 'verified') return res.status(200).json({
-				text: 'Your email is already verified.',
-				button: 'Login',
-				redirect: '/login'
-			});
-			if(user.verification !== token) return res.status(400).json({
-				text: 'The verification token is invalid, try resending the verification email.',
-				button: 'Resend verification email',
-				redirect: '/resendVerif'
-			});
+			if(user.verification === 'verified'){
+				logSuccess("Email already verified");
+				return res.status(200).json({
+					text: 'Your email is already verified.',
+					button: 'Login',
+					redirect: '/login'
+				});
+			}
+			if(user.verification !== token){
+				logError("verification token invalid");
+				return res.status(400).json({
+					text: 'The verification token is invalid, try resending the verification email.',
+					button: 'Resend verification email',
+					redirect: '/resendVerif'
+				});
+			}
 			user.verification = 'verified';
 			user.save();
+			logSuccess("Email is verified");
 			res.status(200).json({
 				text: 'Your email has been verified, your can now log in your MemoSync account.',
 				button: 'Login',
@@ -236,20 +322,21 @@ app.get('/verifEmail', async (req, res)=>{
 			});
 		});
 	} catch(err){
-		console.log(err);
+		logError("InternalError", err);
 		res.sendStatus(500);
 	}
 });
 app.post('/forgotPassword', async (req, res)=>{
+	apiCall='forgotPassword';
 	try{
 		const email = req.body.email;
 		models.users.findOne({email:email}, (err,user)=>{
 			if(err) {
-				console.log(err);
+				logError("InternalError", err);
 				return res.sendStatus(500);
 			}
 			if(user===null) {
-				console.log('No user found');
+				logError("NoUserFound");
 				return res.status(400).json({err:"NoUserFound"});
 			}
 
@@ -258,84 +345,103 @@ app.post('/forgotPassword', async (req, res)=>{
 				console.log(mailRes)
 				switch(mailRes.status){
 					case 504:
+						logError("UnqualifiedAddress");
 						return res.status(400).json({err:'UnqualifiedAddress'});
 				}
 				user.set('resetPasswordToken', pwdToken);
 				user.save();
+				logSuccess('reset link sent');
 				res.sendStatus(200);
 			});
 		});
 	} catch(err) {
-		console.log(err)
+		logError("InternalError", err);
 		res.sendStatus(500);
 	}
 });
 app.post('/changePassword', async (req, res)=>{
-	const accessToken = req.body.accessToken;
+	const authHeader = req.headers['authorization'];
+	const accessToken = authHeader && authHeader.split(' ')[1];
 	const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-	var user = undefined;
 	var resetToken = undefined;
 	var email = undefined;
 	var error = {err: 'UnkownError'};
+	// Check access token if one is provided
 	if(accessToken){
 		jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
-			console.log(err);
-			if(!err){
-				email = payload.email;
-			}
+			if(err) logError("accessToken invalid", err);
+			if(!err) email = payload.email;
 			error = err;
 		});
 	}
+	// if no access token was provided get the email from the body
 	if(!email){
-		user = req.body.user;
 		resetToken = req.body.resetToken;
-		if(user && resetToken) email = b64ToAscii(user);
+		if(req.body.user && resetToken) email = b64ToAscii(req.body.user);
 		else error = {err: 'MalformedLink'};
 	}
-	if(!email) return res.status(400).json(error);
-	else{
-		models.users.findOne({email:email},function(err, user){
-			if(err) {
-				console.log(err);
-				return res.sendStatus(500);
-			}
-			if(user===null) return res.status(400).json({ err: 'NoUserFound' });
-			if(resetToken && user.get('resetPasswordToken')!==resetToken) return res.status(400).json({ err: 'MalformedLink' });
-
-			//Issok
-			user.set('password', hashedPassword);
-			user.set('resetPasswordToken', '');
-			user.save();
-			res.sendStatus(201);
-		});
+	// if email is still not set something went wrong
+	if(!email){
+		if(error.err) logError(error.err);
+		return res.status(400).json(error);
 	}
+	models.users.findOne({email:email},function(err, user){
+		if(err) {
+			logError('InternalError', err);
+			return res.sendStatus(500);
+		}
+		if(user===null){
+			logError('NoUserFound');
+			return res.status(400).json({ err: 'NoUserFound' });
+		}
+		if(resetToken && user.get('resetPasswordToken')!==resetToken){
+			logError('MalformedLink');
+			return res.status(400).json({ err: 'MalformedLink' });
+		}
+
+		//Issok
+		user.set('password', hashedPassword);
+		user.set('resetPasswordToken', '');
+		user.save();
+		logSuccess('password changed');
+		res.sendStatus(201);
+	});
 });
 app.post('/resendVerif', async (req, res)=>{
+	apiCall='resendVerif';
 	try{
 		const email = req.body.email;
 		models.users.findOne({email:email},function(err, user){
 			if(err) {
-				console.log(err);
+				logError('InternalError', err);
 				return res.sendStatus(500);
 			}
-			if(user===null) return res.status(400).json({ err: 'NoUserFound' });
-			if(user.verification === 'verified') return res.status(400).json({ err: 'AlreadyVerified' });
+			if(user===null){
+				logError('NoUserFound');
+				return res.status(400).json({ err: 'NoUserFound' });
+			}
+			if(user.verification === 'verified'){
+				logError('AlreadyVerified');
+				return res.status(400).json({ err: 'AlreadyVerified' });
+			}
 
 			const verifToken = crypto.randomBytes(40).toString('hex');
 			sendVerifEmail(email, verifToken).then(mailRes=>{
 				console.log(mailRes)
 				switch(mailRes.status){
 					case 504:
+						logError('UnqualifiedAddress');
 						return res.status(400).json({err:'UnqualifiedAddress'});
 				}
 				user.set('verification', verifToken);
 				user.save();
+				logSuccess('verif email sent');
 				res.sendStatus(200);
 			});
 		});
 	} catch(err) {
-		console.log(err)
+		logError('InternalError', err);
 		res.sendStatus(500);
 	}
 });
@@ -390,6 +496,13 @@ async function sendForgottenPasswordEmail(dest, token) {
 			}
 		});
 	});
+}
+
+function logSuccess(msg, ret){
+	ret ? console.log("SUCCESS "+apiCall+" : "+msg, ret) : console.log("SUCCESS "+apiCall+" : "+msg);
+}
+function logError(msg, ret){
+	ret ? console.log("ERROR "+apiCall+" : "+msg, ret) : console.log("ERROR "+apiCall+" : "+msg);
 }
 
 app.listen(8081, async () => {

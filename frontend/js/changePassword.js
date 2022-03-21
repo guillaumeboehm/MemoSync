@@ -28,7 +28,6 @@ document.querySelector('form').onsubmit = (e)=>{
             'Content-Type': 'application/json'
         },
         body:JSON.stringify({
-            accessToken: accessToken || undefined,
             user: user || undefined,
             resetToken: resetToken || undefined,
             password: password

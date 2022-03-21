@@ -19,7 +19,14 @@ document.getElementById('header-logout').onclick = ()=>{
         }, null, 2)
     }).then(res => {
         if(res.status >= 300){ //err
-            res.json().then(data=>{ console.error(data.err); });
+            res.json().then(data=>{
+                if(data.err == 'NoUserFound'){//logout anyway
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('refreshToken');
+                    location.href = '/';
+                }
+                console.error(data.err);
+            });
         }
         else{
             localStorage.removeItem('accessToken');
