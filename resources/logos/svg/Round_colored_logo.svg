@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="100mm"
+   height="100mm"
+   viewBox="0 0 99.999999 100"
+   version="1.1"
+   id="svg5"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2">
+    <marker
+       style="overflow:visible"
+       id="DotS"
+       refX="0"
+       refY="0"
+       orient="auto">
+      <path
+         transform="matrix(0.2,0,0,0.2,1.48,0.2)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="m -2.5,-1 c 0,2.76 -2.24,5 -5,5 -2.76,0 -5,-2.24 -5,-5 0,-2.76 2.24,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="path2949" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1Send"
+       refX="0"
+       refY="0"
+       orient="auto">
+      <path
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path2897" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="DotM"
+       refX="0"
+       refY="0"
+       orient="auto">
+      <path
+         transform="matrix(0.4,0,0,0.4,2.96,0.4)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="m -2.5,-1 c 0,2.76 -2.24,5 -5,5 -2.76,0 -5,-2.24 -5,-5 0,-2.76 2.24,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="path2946" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1Mend"
+       refX="0"
+       refY="0"
+       orient="auto">
+      <path
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path2891" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1Mstart"
+       refX="0"
+       refY="0"
+       orient="auto">
+      <path
+         transform="matrix(0.4,0,0,0.4,4,0)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path2888" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1Lend"
+       refX="0"
+       refY="0"
+       orient="auto">
+      <path
+         transform="matrix(-0.8,0,0,-0.8,-10,0)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path2885" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="DotL"
+       refX="0"
+       refY="0"
+       orient="auto">
+      <path
+         transform="matrix(0.8,0,0,0.8,5.92,0.8)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="m -2.5,-1 c 0,2.76 -2.24,5 -5,5 -2.76,0 -5,-2.24 -5,-5 0,-2.76 2.24,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="path2943" />
+    </marker>
+    <filter
+       id="selectable_hidder_filter"
+       width="1"
+       height="1"
+       x="0"
+       y="0"
+       style="color-interpolation-filters:sRGB">
+      <feComposite
+         id="boolops_hidder_primitive"
+         result="composite1"
+         operator="arithmetic"
+         in2="SourceGraphic"
+         in="BackgroundImage"
+         k1="0"
+         k2="0"
+         k3="0"
+         k4="0" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       id="filter10403"
+       x="0"
+       y="0"
+       width="1"
+       height="1">
+      <feColorMatrix
+         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -0 -0 -0 1 0 "
+         id="feColorMatrix10401" />
+    </filter>
+  </defs>
+  <g
+     id="layer1"
+     transform="translate(-10,-10)"
+     style="display:inline">
+    <g
+       id="use46223"
+       style="display:inline;mix-blend-mode:normal"
+       clip-path="none">
+      <path
+         id="path1088"
+         style="opacity:1;fill:#f4af6b;fill-opacity:1;stroke:none;stroke-width:0.697217;stroke-opacity:1"
+         d="m 354.62109,98.048828 c -5.39228,2.626562 -11.51554,4.992072 -18.70703,7.994142 -19.88509,6.35818 -38.56737,8.05179 -113.29883,10.26758 -47.73575,1.41537 -64.00902,2.67189 -73.20703,5.65039 -9.27254,3.00263 -20.32748,11.76215 -23.80078,18.86133 -3.37534,6.89894 -2.95714,19.01833 0.94531,27.37304 1.17104,2.50707 3.67706,5.72434 7.10547,9.12696 4.29553,4.26321 6.74333,5.99068 12.96289,9.14843 9.05693,4.59831 17.58454,6.89445 30.28321,9.98828 -30.58489,-38.50404 -3.7914,-51.421 44.74218,-41.18359 20.72296,4.20136 34.6526,10.31795 42.74805,17.1875 10.75691,9.12797 19.98701,19.73384 25.38672,37.65234 6.14186,20.38124 2.77193,37.47335 -4.29687,51.47657 -7.62536,15.10577 -21.63428,24.34304 -43.78321,29.73437 -19.29939,4.69771 -39.27432,7.65173 -97.52344,8.67969 -46.569375,0.82184 -61.526884,2.21069 -81.978511,7.61133 -5.987653,1.58115 -11.154804,3.27415 -15.884766,5.09375 A 188.97638,188.97638 0 0 0 188.97656,377.95312 188.97638,188.97638 0 0 0 377.95312,188.97656 188.97638,188.97638 0 0 0 354.62109,98.048828 Z"
+         transform="matrix(0.26458333,0,0,0.26458333,10,10)" />
+      <path
+         id="path1090"
+         style="opacity:1;fill:#69b6ea;fill-opacity:1;stroke:none;stroke-width:0.697217;stroke-opacity:1"
+         d="m 200.06836,0.33789062 c -6.93981,0.0145905 -13.86487,0.0136689 -20.80469,0.0253906 A 188.97638,188.97638 0 0 0 0,188.97656 188.97638,188.97638 0 0 0 23.525391,280.07227 c 5.079576,-2.47319 10.414417,-4.73007 15.572265,-7.17579 20.08644,-6.9261 43.386424,-9.35691 104.382814,-10.88867 61.17281,-1.53618 80.3794,-3.21896 89.59375,-7.85156 9.52355,-4.78806 16.14351,-10.98277 19.42578,-17.58984 1.46745,-2.95391 2.00847,-6.47208 2.13281,-10.45703 0.0192,-16.09903 -7.39539,-26.87077 -24.19922,-35.15235 -9.0915,-4.39313 -19.5347,-7.59214 -29.78906,-9.60156 34.32376,46.78694 -5.99371,52.09937 -38.82812,45.75391 -12.99616,-2.22306 -33.65828,-8.05383 -53.875,-22.33204 -11.915324,-9.76081 -19.411728,-22.45823 -21.902348,-38.5625 -4.942359,-31.95702 7.575367,-56.65915 28.628908,-69.781246 20.04745,-12.49503 41.03253,-17.326793 119.45117,-18.501953 47.47045,-0.71137 65.42535,-2.591701 86.80469,-9.087891 4.00393,-1.216613 7.54869,-2.431146 10.81055,-3.671875 A 188.97638,188.97638 0 0 0 200.06836,0.33789062 Z"
+         transform="matrix(0.26458333,0,0,0.26458333,10,10)" />
+    </g>
+  </g>
+</svg>
