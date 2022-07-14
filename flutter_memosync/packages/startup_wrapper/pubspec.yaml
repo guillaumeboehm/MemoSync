@@ -1,0 +1,9 @@
+name: startup_wrapper
+publis_to: none
+environment:
+  sdk: ">=2.17.5 <3.0.0"
+
+dependencies:
+  launch_at_startup: ^0.1.7
+  package_info_plus: ^1.4.2
+  universal_platform: ^1.0.0

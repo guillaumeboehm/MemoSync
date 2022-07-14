@@ -1,0 +1,159 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:1802099124627800133",
+      "lastPropertyId": "11:5170716514867111143",
+      "name": "SettingsObject",
+      "properties": [
+        {
+          "id": "1:3658916574990741375",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:7183470845003545038",
+          "name": "notificationsEnabled",
+          "type": 1
+        },
+        {
+          "id": "3:9131191219664393701",
+          "name": "locale",
+          "type": 9
+        },
+        {
+          "id": "4:8519703443511612641",
+          "name": "onStartup",
+          "type": 1
+        },
+        {
+          "id": "5:114878746288545066",
+          "name": "launchMinimized",
+          "type": 1
+        },
+        {
+          "id": "6:7286044354514574718",
+          "name": "closeMinimized",
+          "type": 1
+        },
+        {
+          "id": "7:4125372603773619095",
+          "name": "darkMode",
+          "type": 1
+        },
+        {
+          "id": "8:638546078286123367",
+          "name": "autoSave",
+          "type": 1
+        },
+        {
+          "id": "9:6054518670964488088",
+          "name": "autoSaveInterval",
+          "type": 6
+        },
+        {
+          "id": "10:7651500493277564334",
+          "name": "bgSync",
+          "type": 1
+        },
+        {
+          "id": "11:5170716514867111143",
+          "name": "bgSyncWifiOnly",
+          "type": 1
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:1055531509661255756",
+      "lastPropertyId": "4:134245841953881265",
+      "name": "UserObject",
+      "properties": [
+        {
+          "id": "1:1730563784349922907",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2160235371543273611",
+          "name": "email",
+          "type": 9
+        },
+        {
+          "id": "3:8595369247990831842",
+          "name": "accessToken",
+          "type": 9
+        },
+        {
+          "id": "4:134245841953881265",
+          "name": "refreshToken",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:4069413510918380086",
+      "lastPropertyId": "8:2516340542979424665",
+      "name": "MemoObject",
+      "properties": [
+        {
+          "id": "1:9050067451739108436",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:5963388206405135402",
+          "name": "title",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "1:820892203743669510"
+        },
+        {
+          "id": "3:4099516092467832380",
+          "name": "text",
+          "type": 9
+        },
+        {
+          "id": "4:2314021521984331796",
+          "name": "lastSynchedText",
+          "type": 9
+        },
+        {
+          "id": "5:3689455229493583917",
+          "name": "version",
+          "type": 6
+        },
+        {
+          "id": "6:9018749663950860507",
+          "name": "patches",
+          "type": 9
+        },
+        {
+          "id": "8:2516340542979424665",
+          "name": "dbSettings",
+          "type": 9
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "3:4069413510918380086",
+  "lastIndexId": "1:820892203743669510",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [
+    1998655991692523208
+  ],
+  "retiredRelationUids": [],
+  "version": 1
+}
