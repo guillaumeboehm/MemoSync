@@ -1,0 +1,89 @@
+{
+    "label": {
+        "accept": "accepter",
+        "ok": "ok",
+        "enabled": "activé",
+        "year": "année",
+        "years": "années",
+        "month": "mois",
+        "months": "mois",
+        "hour": "heure",
+        "hours": "heures",
+        "minute": "minute",
+        "minutes": "minutes",
+        "weeks": "semaines",
+        "day": "jour",
+        "cancel": "annuler",
+        "week": "semaine",
+        "search": "chercher",
+        "days": "jours",
+        "second": "seconde",
+        "seconds": "secondes"
+    },
+    "menu": {
+        "logout": "Se déconnecter",
+        "settings": "Paramètres"
+    },
+    "settings": {
+        "general": {
+            "launch_on_startup": "Lancer au démarrage du système",
+            "minimize_on_close": "Fermer en minimisant",
+            "start_minimized": "Lancer l'application minimisée",
+            "autosave": {
+                "section_title": "Auto-sauvegarder les mémos",
+                "frequency": "Préciser la fréquence d'auto-sauvegarde",
+                "frequency_label": "Fréquence d'auto-sauvegarde"
+            },
+            "background_sync": {
+                "section_title": "Synchroniser avec l'application fermée",
+                "wifi_only": "Synchroniser uniquement en wifi"
+            },
+            "section_title": "Général",
+            "enable_notifications": "Activer les notifications"
+        },
+        "appearance": {
+            "section_title": "Apparence",
+            "dark_theme": "Thème sombre",
+            "language": "Langue"
+        },
+        "account": {
+            "section_title": "Compte",
+            "change_password": "Changer de mot de passe"
+        },
+        "privacy": {
+            "section_title": "Confidentialité",
+            "optin_analytics": "Participer aux rapports analytiques"
+        },
+        "advanced": {
+            "section_title": "Avancé",
+            "devel_updates": "Obtenir les mises à jour de développement"
+        },
+        "help": {
+            "reporting": "Reporter des inconvéniences ou des erreurs",
+            "section_title": "Aide"
+        },
+        "option_set_error_msg": "Impossible de mettre cette option à jour.",
+        "security": {
+            "data_encryption": "Activer l'encryption totale des données",
+            "section_title": "Sécurité"
+        }
+    },
+    "language": {
+        "name": {
+            "fr": "Français",
+            "ru": "Russe",
+            "en": "Anglais"
+        },
+        "selected_message": "La langue actuellement sélectionnée est le {language}",
+        "selection": {
+            "message": "Sélectionnez une langue parmis la liste",
+            "title": "Selection de la langue"
+        }
+    },
+    "debug": {
+        "purge_local_db": "Purger les mémos de la base de donnée locale"
+    },
+    "general": {
+        "app_title": "MemoSync"
+    }
+}
