@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:objectbox/objectbox.dart';
@@ -17,14 +19,16 @@ enum NotificationTypes {
   @HiveField(3)
   timePeriod,
 
+  /// Unknown field
   @HiveField(4)
   unknown,
 }
 
+/// Assertions for ObjectBox
 void ensureNotificationTypesValues() {
   assert(NotificationTypes.fixedTime.index == 0, 'fixedTime must be 0');
-  assert(NotificationTypes.timePeriod.index == 1, 'fixedTime must be 1');
-  assert(NotificationTypes.unknown.index == 2, 'fixedTime must be 2');
+  assert(NotificationTypes.timePeriod.index == 1, 'timePeriod must be 1');
+  assert(NotificationTypes.unknown.index == 2, 'unknown must be 2');
 }
 
 /// Defines how the notification repeats in memo settings.
@@ -50,17 +54,19 @@ enum NotificationRepeatEvery {
   @HiveField(4)
   period,
 
+  /// Unknown field
   @HiveField(6)
   unknown,
 }
 
+/// Assertions for ObjectBox
 void ensureNotificationRepeatEveryValues() {
   assert(NotificationRepeatEvery.day.index == 0, 'day must be 0');
   assert(NotificationRepeatEvery.week.index == 1, 'week must be 1');
   assert(NotificationRepeatEvery.month.index == 2, 'month must be 2');
   assert(NotificationRepeatEvery.year.index == 3, 'year must be 3');
-  assert(NotificationRepeatEvery.period.index == 4, 'day must be 4');
-  assert(NotificationRepeatEvery.unknown.index == 5, 'day must be 5');
+  assert(NotificationRepeatEvery.period.index == 4, 'period must be 4');
+  assert(NotificationRepeatEvery.unknown.index == 5, 'unknown must be 5');
 }
 
 /// [HiveObject] used to cache the memos.
@@ -95,16 +101,77 @@ class MemoObject extends HiveObject {
   String patches = '';
 
   /// Memo settings map with <MemoId, Settings>
+  ///
+  /// Settings are formatted as follows:
+  ///
+  /// settings:
+  ///   permanent_notification: bool
+  ///   notifications_on: bool
+  ///   notifications:
+  ///   [
+  ///     repeatEveryCount: int
+  ///     repeatEvery: NotificationRepeatEvery
+  ///     repeatEveryHour: int
+  ///     repeatEveryMinute: int
+  ///     repeatEverySecond: int
+  ///     repeatOnDays:
+  ///       Mon: bool
+  ///       Tue: bool
+  ///       Wed: bool
+  ///       Thu: bool
+  ///       Fri: bool
+  ///       Sat: bool
+  ///       Sun: bool
+  ///     ignoreOnDays:
+  ///       Mon: bool
+  ///       Tue: bool
+  ///       Wed: bool
+  ///       Thu: bool
+  ///       Fri: bool
+  ///       Sat: bool
+  ///       Sun: bool
+  ///     repeatOnDate: DateTime,
+  ///   ]
   @HiveField(7)
   Map<String, dynamic> settings = <String, dynamic>{};
 
   /// ObjectBox converter for settings
   String? get dbSettings {
+    try {
+      if (settings['notifications'] != null) {
+        for (final notif in settings['notifications'] as List) {
+          notif as Map<String, dynamic>;
+          // Converting repeatEvery to int
+          notif['repeatEvery'] =
+              (notif['repeatEvery'] as NotificationRepeatEvery).index;
+          // Converting repeatOnDate to String
+          notif['repeatOnDate'] =
+              (notif['repeatOnDate'] as DateTime).toUtc().toIso8601String();
+        }
+      }
+    } catch (e) {
+      unawaited(Logger.error('Settings was probably empty: $e'));
+    }
     return jsonEncode(settings);
   }
 
   /// ObjectBox converter for settings
   set dbSettings(String? value) {
     settings = jsonDecode(value ?? '') as Map<String, dynamic>;
+    try {
+      if (settings['notifications'] != null) {
+        for (final notif in settings['notifications'] as List) {
+          notif as Map<String, dynamic>;
+          // Converting repeatEvery from int to NotificationRepeatEvery
+          notif['repeatEvery'] =
+              NotificationRepeatEvery.values[notif['repeatEvery'] as int];
+          // Converting repeatOnDate from String to DateTime
+          notif['repeatOnDate'] =
+              DateTime.parse(notif['repeatOnDate'] as String).toLocal();
+        }
+      }
+    } catch (e) {
+      unawaited(Logger.error('Settings was probably empty: $e'));
+    }
   }
 }

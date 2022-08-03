@@ -10,7 +10,7 @@ import 'package:flutter_memosync/src/services/logger.dart';
 /// Widget containing the memo list, memo view and memo settings
 class HomePage extends StatelessWidget {
   /// Default constructor
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   /// Generic route used to instanciate [HomePage]
   static MaterialPageRoute<HomePage> route() =>

@@ -8,14 +8,14 @@ class NumberInputField extends StatelessWidget {
   /// Default constructor
   // ignore: prefer_const_constructors_in_immutables
   NumberInputField({
-    Key? key,
+    super.key,
     required this.controller,
     required this.submit,
     this.width,
     this.lowerBound,
     this.upperBound,
     this.hint,
-  }) : super(key: key);
+  });
 
   /// Controller for the input text
   final TextEditingController controller;

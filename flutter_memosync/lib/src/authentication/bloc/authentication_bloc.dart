@@ -244,7 +244,6 @@ class AuthenticationBloc
     AuthHideError event,
     Emitter<AuthenticationState> emit,
   ) async {
-    await Logger.info('hide error');
     emit(const AuthenticationState.hideFormInfo());
   }
 

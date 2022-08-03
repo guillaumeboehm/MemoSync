@@ -9,7 +9,7 @@ import 'package:validators/validators.dart';
 /// View for the user login
 class ResendVerifEmailView extends StatefulWidget {
   /// Default constructor
-  const ResendVerifEmailView({Key? key}) : super(key: key);
+  const ResendVerifEmailView({super.key});
 
   @override
   State<ResendVerifEmailView> createState() => _ResendVerifEmailViewState();

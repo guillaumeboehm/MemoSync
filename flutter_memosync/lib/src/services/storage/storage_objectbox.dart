@@ -3,8 +3,11 @@ import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_memosync/objectbox.g.dart';
+import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/models/models.dart';
+import 'package:flutter_memosync/src/services/notification_service.dart';
 import 'package:flutter_memosync/src/services/storage/storage_interface.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Handles all the storage using Hive
 class Storage extends StorageInterface {
@@ -21,19 +24,59 @@ class Storage extends StorageInterface {
   static final userStorage = store.box<UserObject>();
 
   /// Stream of the settings value.
-  static final settingsStorageStream = settingsStorage.query().build().stream();
+  static ValueNotifier<SettingsObject> settingsStorageStream() {
+    final cn = ValueNotifier<SettingsObject>(
+      settingsStorage.getAll().isEmpty
+          ? SettingsObject()
+          : settingsStorage.getAll()[0],
+    );
+    settingsStorage.query().watch(triggerImmediately: true).listen(
+          (query) => cn.value = query.findUnique() ?? SettingsObject(),
+        );
+    return cn;
+  }
 
   /// Stream of the memo values notifying only on change to the memo [title].
-  static Stream<MemoObject> singleMemoStorageStream(
+  static ValueNotifier<MemoObject> singleMemoStorageStream(
     String title,
-  ) =>
-      memosStorage.query(MemoObject_.title.equals(title)).build().stream();
+  ) {
+    final cn = ValueNotifier<MemoObject>(
+      memosStorage
+              .query(MemoObject_.title.equals(title))
+              .build()
+              .findUnique() ??
+          MemoObject(),
+    );
+    memosStorage
+        .query(MemoObject_.title.equals(title))
+        .watch(triggerImmediately: true)
+        .listen(
+          (query) => cn.value = query.findUnique() ?? MemoObject(),
+        );
+    return cn;
+  }
 
   /// Stream of the memos values.
-  static final memosStorageStream = memosStorage.query().build().stream();
+  static ValueNotifier<List<MemoObject>> memosStorageStream() {
+    final cn = ValueNotifier<List<MemoObject>>(
+      memosStorage.getAll(),
+    );
+    memosStorage.query().watch(triggerImmediately: true).listen(
+          (query) => cn.value = query.find(),
+        );
+    return cn;
+  }
 
   /// Stream of the user value.
-  static final userStorageStream = userStorage.query().build().stream();
+  static ValueNotifier<UserObject> userStorageStream() {
+    final cn = ValueNotifier<UserObject>(
+      userStorage.getAll().isEmpty ? UserObject() : userStorage.getAll()[0],
+    );
+    userStorage.query().watch(triggerImmediately: true).listen(
+          (query) => cn.value = query.findUnique() ?? UserObject(),
+        );
+    return cn;
+  }
 
   /// Stream of the settings for the memo [title]
   ///
@@ -42,26 +85,29 @@ class Storage extends StorageInterface {
     String title, {
     String? setting,
   }) {
-    final vl = ValueNotifier<dynamic>(
-      memosStorage
+    final cn = ValueNotifier<dynamic>(
+      setting == null
+          ? memosStorage
+                  .query(MemoObject_.title.equals(title))
+                  .build()
+                  .findUnique()
+                  ?.settings ??
+              <String, dynamic>{}
+          : memosStorage
               .query(MemoObject_.title.equals(title))
               .build()
-              .findFirst()
-              ?.settings ??
-          {},
+              .findUnique()
+              ?.settings[setting],
     );
     memosStorage
         .query(MemoObject_.title.equals(title))
-        .build()
-        .stream()
-        .listen((query) {
-      vl
-        ..value = (setting == null ? query.settings : query.settings[setting])
-        // ignore: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
-        ..notifyListeners();
-      // Not supposed to do that but I don't know how to make it work otherwise
-    });
-    return vl;
+        .watch(triggerImmediately: true)
+        .listen(
+          (query) => cn.value = setting == null
+              ? query.findUnique()?.settings
+              : query.findUnique()?.settings[setting],
+        );
+    return cn;
   }
 
   /// Initializes ObjectBox store.
@@ -76,20 +122,23 @@ class Storage extends StorageInterface {
 
   /// Returns the settings object or a new object if it is not set.
   static SettingsObject getSettings() {
-    return settingsStorage.get(0) ?? SettingsObject();
+    return settingsStorage.getAll().isEmpty
+        ? SettingsObject()
+        : settingsStorage.getAll()[0];
   }
 
   /// Stores the value of [settings] in [settingsStorage].
   static void setSettings(SettingsObject? settings) {
     settingsStorage.put(
       settings ?? SettingsObject(),
-      mode: settings != null ? PutMode.update : PutMode.put,
     );
   }
 
   /// Returns the entire memos map.
   static Map<dynamic, MemoObject> getMemos() {
-    return memosStorage.getAll().asMap();
+    return {
+      for (var memo in memosStorage.getAll()) memo.title: memo,
+    };
   }
 
   /// Returns a specific memo
@@ -107,17 +156,36 @@ class Storage extends StorageInterface {
   }) {
     memosStorage.put(
       obj ?? MemoObject(),
-      mode: obj == null ? PutMode.put : PutMode.update,
+      mode: PutMode.put,
     );
+    if (obj != null) {
+      SharedPreferences.getInstance().then(
+        (prefs) {
+          if (prefs.getString('currentPermanentMemo')!.startsWith('$memo-')) {
+            NotificationService.setPermanentNotification(
+              obj.text,
+              memoTitle: obj.title,
+              memoVersion: obj.version,
+            );
+          }
+        },
+      );
+    }
   }
 
   /// Removes [memo] from the cache
   static void removeMemo({required String memo}) {
-    memosStorage
-        .query(MemoObject_.title.equals(memo))
-        .build()
-        .findUnique()
-        ?.delete();
+    try {
+      memosStorage.remove(
+        memosStorage
+            .query(MemoObject_.title.equals(memo))
+            .build()
+            .findUnique()!
+            .id,
+      );
+    } catch (e) {
+      Logger.error('Cannot remove memo: $e');
+    }
   }
 
   /// Returns the settings object for [memo] or a new object if it is not set.
@@ -138,21 +206,25 @@ class Storage extends StorageInterface {
     required String memo,
     Map<String, dynamic>? settings,
   }) {
-    memosStorage.query(MemoObject_.title.equals(memo)).build().findUnique()
-      ?..settings = settings ?? <String, dynamic>{}
-      ..save();
+    final newMemo = memosStorage
+        .query(MemoObject_.title.equals(memo))
+        .build()
+        .findUnique()
+      ?..settings = settings ?? <String, dynamic>{};
+    // ..save();
+    if (newMemo == null) return;
+    memosStorage.put(newMemo);
   }
 
   /// Returns the user object or ```null``` if not set.
   static UserObject? getUser() {
-    return userStorage.get(0);
+    return userStorage.getAll().isEmpty ? null : userStorage.getAll()[0];
   }
 
   /// Stores the value of [user] in [userStorage].
   static void setUser(UserObject? user) {
     userStorage.put(
       user ?? UserObject(),
-      mode: user == null ? PutMode.put : PutMode.update,
     );
   }
 

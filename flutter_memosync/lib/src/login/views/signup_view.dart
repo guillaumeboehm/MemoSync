@@ -9,7 +9,7 @@ import 'package:validators/validators.dart';
 /// View for the user sign up
 class SignupView extends StatefulWidget {
   /// Default constructor
-  const SignupView({Key? key}) : super(key: key);
+  const SignupView({super.key});
 
   @override
   State<SignupView> createState() => _SignupViewState();

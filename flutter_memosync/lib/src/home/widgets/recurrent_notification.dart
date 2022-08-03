@@ -416,7 +416,7 @@ Future<Map<dynamic, dynamic>?> showNotificationDialog(
                               children: [
                                 Text(
                                   """at ${(_data['repeatEveryHour'] ?? TimeOfDay.now().hour).toString().padLeft(2, '0')}:"""
-                                  """${(_data['repeatEveryMinutes'] ?? TimeOfDay.now().minute).toString().padLeft(2, '0')}""",
+                                  """${(_data['repeatEveryMinute'] ?? TimeOfDay.now().minute).toString().padLeft(2, '0')}""",
                                 ),
                                 IconButton(
                                   onPressed: () {

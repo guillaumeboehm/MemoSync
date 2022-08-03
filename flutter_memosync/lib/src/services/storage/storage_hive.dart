@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/models/models.dart';
+import 'package:flutter_memosync/src/services/notification_service.dart';
 import 'package:flutter_memosync/src/services/storage/storage_interface.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_platform/universal_platform.dart';
 
 /// Handles all the storage using Hive
@@ -21,20 +24,50 @@ class Storage extends StorageInterface {
   static final userStorage = Hive.box<UserObject>('user');
 
   /// Stream of the settings value.
-  static final settingsStorageStream =
-      Hive.box<SettingsObject>('settings').listenable();
+  static ValueNotifier<SettingsObject> settingsStorageStream() {
+    final vn = ValueNotifier<SettingsObject>(
+      Hive.box<SettingsObject>('settings').get('settings') ?? SettingsObject(),
+    );
+    Hive.box<SettingsObject>('settings').listenable().addListener(() {
+      vn.value = Hive.box<SettingsObject>('settings').get('settings') ??
+          SettingsObject();
+    });
+    return vn;
+  }
 
   /// Stream of the memo values notifying only on change to the memo [title].
-  static ValueListenable<Box<MemoObject>> singleMemoStorageStream(
-    String title,
-  ) =>
-      Hive.box<MemoObject>('memos').listenable(keys: <dynamic>[title]);
+  static ValueNotifier<MemoObject> singleMemoStorageStream(String title) {
+    final vn = ValueNotifier<MemoObject>(
+      Hive.box<MemoObject>('memos').get(title) ?? MemoObject(),
+    );
+    Hive.box<MemoObject>('settings')
+        .listenable(keys: <dynamic>[title]).addListener(() {
+      vn.value = Hive.box<MemoObject>('settings').get(title) ?? MemoObject();
+    });
+    return vn;
+  }
 
   /// Stream of the memos values.
-  static final memosStorageStream = Hive.box<MemoObject>('memos').listenable();
+  static ValueNotifier<List<MemoObject>> memosStorageStream() {
+    final vn = ValueNotifier<List<MemoObject>>(
+      Hive.box<MemoObject>('memos').values.toList(),
+    );
+    Hive.box<MemoObject>('memos').listenable().addListener(() {
+      vn.value = Hive.box<MemoObject>('memos').values.toList();
+    });
+    return vn;
+  }
 
   /// Stream of the user value.
-  static final userStorageStream = Hive.box<UserObject>('user').listenable();
+  static ValueNotifier<UserObject> userStorageStream() {
+    final vn = ValueNotifier<UserObject>(
+      Hive.box<UserObject>('user').get('user') ?? UserObject(),
+    );
+    Hive.box<UserObject>('user').listenable().addListener(() {
+      vn.value = Hive.box<UserObject>('user').get('user') ?? UserObject();
+    });
+    return vn;
+  }
 
   /// Stream of the settings for the memo [title]
   ///
@@ -43,12 +76,12 @@ class Storage extends StorageInterface {
     String title, {
     String? setting,
   }) {
-    final vl = ValueNotifier<dynamic>(
+    final vn = ValueNotifier<dynamic>(
       Hive.box<MemoObject>('memos').get(title)?.settings ?? {},
     );
 
     Hive.box<MemoObject>('memos').watch(key: title).listen((BoxEvent event) {
-      vl
+      vn
         ..value = (setting == null
             ? (event.value as MemoObject).settings
             : (event.value as MemoObject).settings[setting])
@@ -56,7 +89,7 @@ class Storage extends StorageInterface {
         ..notifyListeners();
       // Not supposed to do that but I don't know how to make it work otherwise
     });
-    return vl;
+    return vn;
   }
 
   /// Initializes Hive and all the boxes.
@@ -120,11 +153,36 @@ class Storage extends StorageInterface {
     MemoObject? obj,
   }) {
     memosStorage.put(memo, obj ?? MemoObject());
+    if (obj != null) {
+      SharedPreferences.getInstance().then(
+        (prefs) {
+          if (prefs
+              .getString('currentPermanentMemo')!
+              .startsWith('${memo as String}-')) {
+            log('Should notify');
+            NotificationService.setPermanentNotification(
+              obj.text,
+              memoTitle: obj.title,
+              memoVersion: obj.version,
+            );
+          }
+        },
+      );
+    }
   }
 
   /// Removes [memo] from the cache
   static void removeMemo({required dynamic memo}) {
     memosStorage.delete(memo);
+    SharedPreferences.getInstance().then(
+      (prefs) {
+        if (prefs
+            .getString('currentPermanentMemo')!
+            .startsWith('${memo as String}-')) {
+          NotificationService.unsetPermanentNotification();
+        }
+      },
+    );
   }
 
   /// Returns the settings object for [memo] or a new object if it is not set.

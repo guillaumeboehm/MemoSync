@@ -116,7 +116,7 @@ class MemoRepository {
         }
       }
 
-      return memosRes;
+      return memosRes..addAll({'removedMemos': memosToRemove.keys.toList()});
     } else {
       return metaDataRes;
     }

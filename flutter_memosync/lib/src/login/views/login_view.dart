@@ -9,7 +9,7 @@ import 'package:validators/validators.dart';
 /// View for the user login
 class LoginView extends StatefulWidget {
   /// Default constructor
-  const LoginView({Key? key}) : super(key: key);
+  const LoginView({super.key});
 
   @override
   State<LoginView> createState() => _LoginViewState();

@@ -46,16 +46,19 @@ class DesktopWindowManager {
       title: 'MemoSync',
     );
 
-    // Show window if not launch minimized
-    if (!Storage.getSettings().launchMinimized) {
+    // ### System tray stuff
+    systemTray = st.SystemTray();
+
+    // ### Show window if not launch minimized or just make tray icon
+    if (Storage.getSettings().closeMinimized &&
+        Storage.getSettings().launchMinimized) {
+      await _makeSysTray();
+    } else {
       await windowManager.waitUntilReadyToShow(windowOptions, () async {
         await windowManager.show();
         await windowManager.focus();
       });
     }
-
-    // ### System tray stuff
-    systemTray = st.SystemTray();
   }
 
   static Future<void> _makeSysTray() async {
@@ -133,6 +136,11 @@ class DesktopWindowManager {
       await _deleteSysTray();
     } catch (_) {}
     await windowManager.show();
+  }
+
+  /// Forces the window to close without going to system tray
+  static Future<void> forceExit() async {
+    await windowManager.destroy();
   }
 
   /// Set whether to launch the application on startup

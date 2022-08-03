@@ -1,8 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_memosync/app.dart';
+import 'package:quick_notify/quick_notify.dart';
 
 /// Static class used to log information in the console.
 class Logger {
@@ -47,29 +46,18 @@ class Logger {
   }
 
   /// Displays a debug message on the screen.
-  // TODO(me): not working
-  static void graphic(String? str) {
-    Future.doWhile(
-      () async {
-        if (App.context == null) {
-          return Future.delayed(
-            const Duration(milliseconds: 300),
-            () => true,
-          );
-        }
-        final time = DateTime.now();
-        final value = '[${time.year}-${time.month}-${time.day} '
-            '${time.hour}:${time.minute}:${time.second}] $str $_file';
-        unawaited(
-          showDialog(
-            context: App.context!,
-            builder: (BuildContext context) {
-              return Text(value);
-            },
-          ),
-        );
-        return false;
-      },
+  static Future<bool> notify(String? str) async {
+    if (!kDebugMode || !printInfoLogs) return false;
+    // if (!await QuickNotify.hasPermission()) {
+    //   await QuickNotify.requestPermission();
+    // }
+    // if (!await QuickNotify.hasPermission()) return false;
+    final time = DateTime.now();
+    QuickNotify.notify(
+      title: '''
+[${time.year}-${time.month}-${time.day} ${time.hour}:${time.minute}:${time.second}]''',
+      content: str,
     );
+    return true;
   }
 }

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_memosync/src/authentication/authentication.dart';
+import 'package:flutter_memosync/src/services/background_handlers/desktop_window_manager.dart';
 import 'package:flutter_memosync/src/settings/settings.dart';
 
 /// Drawer widget used in wide screen mode
 class ModalDrawer extends StatefulWidget {
   /// Default constructor
-  const ModalDrawer({Key? key}) : super(key: key);
+  const ModalDrawer({super.key});
 
   @override
   State<ModalDrawer> createState() => _ModalDrawerState();
@@ -48,6 +49,10 @@ class _ModalDrawerState extends State<ModalDrawer> {
                         .add(AuthLogoutRequested());
                   },
                   child: const Text('Logout'),
+                ),
+                const ElevatedButton(
+                  onPressed: DesktopWindowManager.forceExit,
+                  child: Text('Exit'),
                 ),
               ],
             ),

@@ -4,6 +4,7 @@ import 'package:flutter_memosync/src/home/bloc/home_bloc.dart';
 import 'package:flutter_memosync/src/home/widgets/widgets.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/models/models.dart';
+import 'package:flutter_memosync/src/services/notification_service.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:universal_platform/universal_platform.dart';
@@ -27,10 +28,10 @@ enum Sections {
 class SettingsView extends StatefulWidget {
   /// Default constructor
   const SettingsView({
-    Key? key,
+    super.key,
     required this.constraints,
     required this.isWide,
-  }) : super(key: key);
+  });
 
   /// Maps a [NotificationRepeatEvery] to a [String]
   static final repeatEveryToString = <NotificationRepeatEvery, String>{
@@ -133,8 +134,7 @@ class _SettingsViewState extends State<SettingsView> {
     for (final section in Sections.values) {
       // build the tiles
       final tiles = <AbstractSettingsTile>[];
-      if (section == Sections.notifications &&
-          (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)) {
+      if (section == Sections.notifications && UniversalPlatform.isAndroid) {
         // Permanent notifications
         const setting = 'permanent_notification';
         tiles.add(
@@ -145,6 +145,18 @@ class _SettingsViewState extends State<SettingsView> {
                 memo: currentMemo,
                 settings: settings,
               );
+              if (value) {
+                final memo = Storage.getMemo(memo: currentMemo);
+                if (memo != null) {
+                  NotificationService.setPermanentNotification(
+                    memo.text,
+                    memoVersion: memo.version,
+                    memoTitle: currentMemo,
+                  );
+                }
+              } else {
+                NotificationService.unsetPermanentNotification();
+              }
             },
             initialValue: (settings[setting] as bool?) ?? false,
             leading: const Icon(Icons.notification_important),
@@ -226,6 +238,7 @@ class _SettingsViewState extends State<SettingsView> {
           (UniversalPlatform.isAndroid || UniversalPlatform.isIOS || true)) {
         tiles.add(
           SettingsTile(
+            enabled: false, //TODO(me): To implement
             title: const Text('Set widgets'),
           ),
         );
@@ -235,12 +248,14 @@ class _SettingsViewState extends State<SettingsView> {
         tiles
           ..add(
             SettingsTile(
+              enabled: false, //TODO(me): To implement
               title: const Text('Set as home page background'),
               onPressed: (context) {},
             ),
           )
           ..add(
             SettingsTile(
+              enabled: false, //TODO(me): To implement
               title: const Text('Set as lock screen background'),
               onPressed: (context) {},
             ),

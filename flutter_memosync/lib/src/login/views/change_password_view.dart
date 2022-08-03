@@ -11,10 +11,10 @@ import 'package:validators/validators.dart';
 class ChangePassword extends Widget {
   /// Default constructor
   ChangePassword({
-    Key? key,
+    super.key,
     required this.args,
     // required this.context,
-  }) : super(key: key);
+  });
 
   /// route and query arguments
   final Map<String, String> args;

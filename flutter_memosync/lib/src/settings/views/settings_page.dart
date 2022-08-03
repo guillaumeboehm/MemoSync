@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_memosync/src/services/desktop_window_manager.dart';
+import 'package:flutter_memosync/src/services/background_handlers/desktop_window_manager.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/models/models.dart';
+import 'package:flutter_memosync/src/services/notification_service.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
+import 'package:flutter_memosync/src/utilities/string_extenstion.dart';
 import 'package:flutter_memosync/src/widgets/number_input.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:universal_platform/universal_platform.dart';
@@ -12,7 +14,7 @@ import 'package:universal_platform/universal_platform.dart';
 /// Page showing the app settings
 class SettingsPage extends StatelessWidget {
   /// Default constructor
-  const SettingsPage({Key? key}) : super(key: key);
+  const SettingsPage({super.key});
 
   /// Settings page route
   static MaterialPageRoute<SettingsPage> route() =>
@@ -37,19 +39,20 @@ class SettingsPage extends StatelessWidget {
           ],
         ),
       ),
-      body: ValueListenableBuilder<Box<SettingsObject>>(
-        valueListenable: Storage.settingsStorageStream,
-        builder: (context, settingsBox, _) {
-          final settings = Storage.getSettings();
+      body: ValueListenableBuilder<SettingsObject>(
+        valueListenable: Storage.settingsStorageStream(),
+        builder: (context, settings, _) {
           return SettingsList(
             sections: [
               // GENERAL
               SettingsSection(
-                title: const Text('General'),
+                title: Text(translate('settings.general.section_title')),
                 tiles: [
                   if (UniversalPlatform.isDesktop)
                     SettingsTile.switchTile(
-                      title: const Text('Launch on system startup'),
+                      title: Text(
+                        translate('settings.general.launch_on_startup'),
+                      ),
                       initialValue: settings.onStartup,
                       onToggle: (enabled) async {
                         if (await DesktopWindowManager.launchOnStartup(
@@ -64,7 +67,9 @@ class SettingsPage extends StatelessWidget {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: const Text("Couldn't set this option."),
+                              content: Text(
+                                translate('settings.option_set_error_msg'),
+                              ),
                               backgroundColor: Colors.red.shade400,
                             ),
                           );
@@ -73,7 +78,9 @@ class SettingsPage extends StatelessWidget {
                     ),
                   if (UniversalPlatform.isDesktop)
                     SettingsTile.switchTile(
-                      title: const Text('Minimized on close'),
+                      title: Text(
+                        translate('settings.general.minimize_on_close'),
+                      ),
                       initialValue: settings.closeMinimized,
                       onToggle: (enabled) async {
                         if (await DesktopWindowManager.minimizeOnClose(
@@ -85,7 +92,9 @@ class SettingsPage extends StatelessWidget {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: const Text("Couldn't set this option."),
+                              content: Text(
+                                translate('settings.option_set_error_msg'),
+                              ),
                               backgroundColor: Colors.red.shade400,
                             ),
                           );
@@ -94,7 +103,8 @@ class SettingsPage extends StatelessWidget {
                     ),
                   if (UniversalPlatform.isDesktop)
                     SettingsTile.switchTile(
-                      title: const Text('Start minimized'),
+                      title:
+                          Text(translate('settings.general.start_minimized')),
                       enabled: settings.closeMinimized,
                       initialValue: settings.launchMinimized,
                       onToggle: (enabled) => Storage.setSettings(
@@ -102,14 +112,26 @@ class SettingsPage extends StatelessWidget {
                       ),
                     ),
                   SettingsTile.switchTile(
-                    title: const Text('Enable notifications'),
-                    initialValue: settings.notificationsEnabled,
-                    onToggle: (enabled) => Storage.setSettings(
-                      settings..notificationsEnabled = enabled,
+                    title: Text(
+                      translate('settings.general.enable_notifications'),
                     ),
+                    initialValue: settings.notificationsEnabled,
+                    onToggle: (enabled) {
+                      Storage.setSettings(
+                        settings..notificationsEnabled = enabled,
+                      );
+                      if (enabled) {
+                        NotificationService
+                            .setPermanentNotificationFromOldState();
+                      } else {
+                        NotificationService.disablePermanentNotification();
+                      }
+                    },
                   ),
                   SettingsTile.navigation(
-                    title: const Text('Autosave memos'),
+                    title: Text(
+                      translate('settings.general.autosave_memos'),
+                    ),
                     onPressed: (_) {
                       Navigator.push(
                         context,
@@ -118,7 +140,10 @@ class SettingsPage extends StatelessWidget {
                     },
                   ),
                   SettingsTile.navigation(
-                    title: const Text('Background sync'),
+                    title: Text(
+                      translate(
+                          'settings.general.background_sync.section_title'),
+                    ),
                     onPressed: (_) {
                       Navigator.push(
                         context,
@@ -130,34 +155,71 @@ class SettingsPage extends StatelessWidget {
               ),
               // Appearance
               SettingsSection(
-                title: const Text('Appearance'),
+                title: Text(translate('settings.appearance.section_title')),
                 tiles: [
                   SettingsTile.switchTile(
                     initialValue: settings.darkMode,
                     onToggle: (isDark) =>
                         Storage.setSettings(settings..darkMode = isDark),
-                    title: const Text('Dark theme'),
+                    title: Text(
+                      translate('settings.appearance.dark_theme'),
+                    ),
                   ),
                   SettingsTile(
-                    value: Text(settings.locale ?? 'English'),
-                    onPressed: (lang) {
+                    value: Text(
+                      translate(
+                        '''
+language.name.${LocalizedApp.of(context).delegate.currentLocale.languageCode}''',
+                      ),
+                    ),
+                    onPressed: (_) {
                       // ignore: lines_longer_than_80_chars
                       // TODO(me): set locale as default or a list of available languages
-                      final locale =
-                          settings.locale == 'English' ? 'French' : 'English';
-                      Storage.setSettings(settings..locale = locale);
+
+                      // final locale =
+                      //     LocalizedApp.of(context).delegate.currentLocale ==
+                      //             const Locale('en')
+                      //         ? const Locale('fr')
+                      //         : const Locale('en');
+                      // Storage.setSettings(settings..locale = locale);
+                      showDialog<Locale?>(
+                        context: context,
+                        builder: (diagContext) {
+                          return SimpleDialog(
+                            title: Text(
+                              translate(
+                                'language.selected_message',
+                                args: {
+                                  'language': translate(
+                                    '''
+language.name.${LocalizedApp.of(context).delegate.currentLocale.languageCode}''',
+                                  ),
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                      ).then((locale) {
+                        changeLocale(context, locale?.scriptCode);
+                      });
                     },
-                    title: const Text('Language'),
+                    title: Text(
+                      translate('settings.appearance.language'),
+                    ),
                   ),
                 ],
               ),
               // Account
               SettingsSection(
-                title: const Text('Account'),
+                title: Text(
+                  translate('settings.account.section_title'),
+                ),
                 tiles: [
                   SettingsTile.navigation(
                     enabled: false,
-                    title: const Text('Change password'),
+                    title: Text(
+                      translate('settings.account.change_password'),
+                    ),
                     onPressed: (_) {
                       // TODO(me): implement
                     },
@@ -166,7 +228,9 @@ class SettingsPage extends StatelessWidget {
               ),
               // Privacy
               SettingsSection(
-                title: const Text('Privacy'),
+                title: Text(
+                  translate('settings.privacy.section_title'),
+                ),
                 tiles: [
                   SettingsTile.switchTile(
                     enabled: false,
@@ -174,13 +238,17 @@ class SettingsPage extends StatelessWidget {
                     onToggle: (enabled) {
                       // TODO(me): implement
                     },
-                    title: const Text('Opt-in analytics reporting'),
+                    title: Text(
+                      translate('settings.privacy.optin_analytics'),
+                    ),
                   ),
                 ],
               ),
               // Security
               SettingsSection(
-                title: const Text('Security'),
+                title: Text(
+                  translate('settings.security.section_title'),
+                ),
                 tiles: [
                   SettingsTile.switchTile(
                     enabled: false,
@@ -188,13 +256,17 @@ class SettingsPage extends StatelessWidget {
                     onToggle: (enabled) {
                       // TODO(me): implement
                     },
-                    title: const Text('Enable full data encryption'),
+                    title: Text(
+                      translate('settings.security.data_encryption'),
+                    ),
                   ),
                 ],
               ),
               // Advanced
               SettingsSection(
-                title: const Text('Advanced'),
+                title: Text(
+                  translate('settings.advanced.section_title'),
+                ),
                 tiles: [
                   SettingsTile.switchTile(
                     enabled: false,
@@ -202,20 +274,26 @@ class SettingsPage extends StatelessWidget {
                     onToggle: (enabled) {
                       // TODO(me): implement
                     },
-                    title: const Text('Get development updates'),
+                    title: Text(
+                      translate('settings.advanced.devel_updates'),
+                    ),
                   ),
                 ],
               ),
               // Help
               SettingsSection(
-                title: const Text('Help'),
+                title: Text(
+                  translate('settings.help.section_title'),
+                ),
                 tiles: [
                   SettingsTile.navigation(
                     enabled: false,
                     onPressed: (enabled) {
                       // TODO(me): implement
                     },
-                    title: const Text('Reporting inconveniences and errors'),
+                    title: Text(
+                      translate('settings.help.reporting'),
+                    ),
                   ),
                 ],
               ),
@@ -229,9 +307,11 @@ class SettingsPage extends StatelessWidget {
 
 // ############################################### AUTO SAVE MEMOS
 class _AutoSaveMemos extends _SubSettingPage {
-  const _AutoSaveMemos({
-    required SettingsList Function(SettingsObject) builder,
-  }) : super(title: 'Auto-save memos', builder: builder);
+  _AutoSaveMemos({
+    required super.builder,
+  }) : super(
+          title: translate('settings.general.autosave_memos.section_title'),
+        );
 
   /// Settings page route
   static MaterialPageRoute<_AutoSaveMemos> route() =>
@@ -247,13 +327,13 @@ class _AutoSaveMemos extends _SubSettingPage {
                       initialValue: settings.autoSave,
                       onToggle: (enabled) =>
                           Storage.setSettings(settings..autoSave = enabled),
-                      title: const Text('Enabled'),
+                      title: Text(translate('label.enabled')),
                     ),
                     SettingsTile(
                       enabled: settings.autoSave,
                       value: Text(
                         '''
-${interval.toString().split('.')[0].replaceFirst(RegExp(':'), 'h').replaceFirst(RegExp(':'), 'm')}s''',
+${interval.toString().split('.')[0].replaceFirst(RegExp(':'), translate('label.hour').characters.first).replaceFirst(RegExp(':'), translate('label.minute').characters.first)}${translate('label.seconds').characters.first}''',
                       ),
                       onPressed: (value) {
                         showDialog<Duration>(
@@ -284,7 +364,11 @@ ${interval.toString().split('.')[0].replaceFirst(RegExp(':'), 'h').replaceFirst(
                             }
 
                             return SimpleDialog(
-                              title: const Text('Set auto-save frequency'),
+                              title: Text(
+                                translate(
+                                  'settings.general.autosave.frequency',
+                                ),
+                              ),
                               children: [
                                 Center(
                                   child: Row(
@@ -294,14 +378,16 @@ ${interval.toString().split('.')[0].replaceFirst(RegExp(':'), 'h').replaceFirst(
                                         controller: hoursController
                                           ..text = hours.toString(),
                                         submit: submit,
-                                        hint: 'Hours',
+                                        hint: translate('label.hours')
+                                            .capitalize(),
                                         width: 60,
                                       ),
                                       NumberInputField(
                                         controller: minutesController
                                           ..text = minutes.toString(),
                                         submit: submit,
-                                        hint: 'Minutes',
+                                        hint: translate('label.minutes')
+                                            .capitalize(),
                                         width: 70,
                                         upperBound: 60,
                                       ),
@@ -309,7 +395,8 @@ ${interval.toString().split('.')[0].replaceFirst(RegExp(':'), 'h').replaceFirst(
                                         controller: secondsController
                                           ..text = seconds.toString(),
                                         submit: submit,
-                                        hint: 'Seconds',
+                                        hint: translate('label.seconds')
+                                            .capitalize(),
                                         width: 70,
                                         upperBound: 60,
                                       ),
@@ -324,11 +411,15 @@ ${interval.toString().split('.')[0].replaceFirst(RegExp(':'), 'h').replaceFirst(
                                       onPressed: () {
                                         Navigator.pop(diagContext);
                                       },
-                                      child: const Text('CANCEL'),
+                                      child: Text(
+                                        translate('label.cancel').toUpperCase(),
+                                      ),
                                     ),
                                     TextButton(
                                       onPressed: submit,
-                                      child: const Text('OK'),
+                                      child: Text(
+                                        translate('label.ok').toUpperCase(),
+                                      ),
                                     ),
                                     const Padding(
                                       padding: EdgeInsets.only(
@@ -347,7 +438,9 @@ ${interval.toString().split('.')[0].replaceFirst(RegExp(':'), 'h').replaceFirst(
                           );
                         });
                       },
-                      title: const Text('Autosave frequency'),
+                      title: Text(
+                        translate('settings.general.autosave.frequency_label'),
+                      ),
                     ),
                   ],
                 ),
@@ -360,9 +453,10 @@ ${interval.toString().split('.')[0].replaceFirst(RegExp(':'), 'h').replaceFirst(
 
 // ############################################### BACKGROUND SYNC
 class _BackgroundSync extends _SubSettingPage {
-  const _BackgroundSync({
-    required SettingsList Function(SettingsObject) builder,
-  }) : super(title: 'Background sync', builder: builder);
+  _BackgroundSync({
+    required super.builder,
+  }) : super(
+            title: translate('settings.general.background_sync.section_title'));
 
   /// Settings page route
   static MaterialPageRoute<_BackgroundSync> route() =>
@@ -377,16 +471,21 @@ class _BackgroundSync extends _SubSettingPage {
                       initialValue: settings.bgSync,
                       onToggle: (enabled) =>
                           Storage.setSettings(settings..bgSync = enabled),
-                      title: const Text('Enabled'),
+                      title: Text(translate('label.enabled')),
                     ),
-                    SettingsTile.switchTile(
-                      enabled: settings.bgSync,
-                      initialValue: settings.bgSyncWifiOnly,
-                      onToggle: (enabled) => Storage.setSettings(
-                        settings..bgSyncWifiOnly = enabled,
+                    if (!UniversalPlatform.isDesktopOrWeb)
+                      SettingsTile.switchTile(
+                        enabled: settings.bgSync,
+                        initialValue: settings.bgSyncWifiOnly,
+                        onToggle: (enabled) => Storage.setSettings(
+                          settings..bgSyncWifiOnly = enabled,
+                        ),
+                        title: Text(
+                          translate(
+                            'settings.general.background_sync.wifi_only',
+                          ),
+                        ),
                       ),
-                      title: const Text('Synchronize on wifi only'),
-                    ),
                   ],
                 ),
               ],
@@ -397,8 +496,10 @@ class _BackgroundSync extends _SubSettingPage {
 }
 
 abstract class _SubSettingPage extends StatelessWidget {
-  const _SubSettingPage({Key? key, required this.title, required this.builder})
-      : super(key: key);
+  const _SubSettingPage({
+    required this.title,
+    required this.builder,
+  });
 
   final String title;
   final SettingsList Function(SettingsObject) builder;
@@ -419,10 +520,9 @@ abstract class _SubSettingPage extends StatelessWidget {
           ],
         ),
       ),
-      body: ValueListenableBuilder<Box<SettingsObject>>(
-        valueListenable: Storage.settingsStorageStream,
-        builder: (context, settingsBox, _) {
-          final settings = Storage.getSettings();
+      body: ValueListenableBuilder<SettingsObject>(
+        valueListenable: Storage.settingsStorageStream(),
+        builder: (context, settings, _) {
           return builder(settings);
         },
       ),

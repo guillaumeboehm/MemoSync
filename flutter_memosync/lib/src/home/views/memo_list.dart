@@ -6,14 +6,13 @@ import 'package:flutter_memosync/src/services/models/models.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
 import 'package:flutter_memosync/src/widgets/list_drawer.dart';
 import 'package:fuzzy/fuzzy.dart';
-import 'package:hive/hive.dart';
 import 'package:throttling/throttling.dart';
 import 'package:universal_platform/universal_platform.dart';
 
 /// Widget displaying the memo list
 class MemoList extends StatefulWidget {
   /// Default constructor
-  const MemoList({Key? key, required this.constraints}) : super(key: key);
+  const MemoList({super.key, required this.constraints});
 
   /// The constraints for the list computed in the page
   final BoxConstraints constraints;
@@ -192,21 +191,15 @@ class _MemoListState extends State<MemoList>
                     },
                     child: ValueListenableBuilder(
                       // Listen for memo changes
-                      valueListenable: Storage.memosStorageStream,
-                      builder: (listContext, Box<MemoObject>? box, _) {
+                      valueListenable: Storage.memosStorageStream(),
+                      builder: (listContext, List<MemoObject> memoList, _) {
                         return ValueListenableBuilder(
                           // Listen for search query changes
                           valueListenable: searchQueryNotifier,
                           builder: (context, String? query, _) {
                             // Filter items with search query
                             final filterdItems = Fuzzy(
-                              box
-                                  ?.toMap()
-                                  .map<dynamic, String>(
-                                    (key, value) => MapEntry(key, value.title),
-                                  )
-                                  .values
-                                  .toList(),
+                              memoList.map((value) => value.title).toList(),
                               options: FuzzyOptions<dynamic>(
                                 shouldNormalize: true,
                               ),

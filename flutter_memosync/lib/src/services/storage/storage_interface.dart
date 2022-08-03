@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 
 /// Handles all the storage
+// ignore: lines_longer_than_80_chars
 // ignore_for_file: type_annotate_public_apis, always_declare_return_types, inference_failure_on_function_return_type
 
 abstract class StorageInterface {

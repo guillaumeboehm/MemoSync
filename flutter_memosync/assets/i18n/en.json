@@ -1,0 +1,106 @@
+{
+	"general": 
+	{
+		"app_title": "MemoSync"
+	},
+    "label":
+    {
+		"cancel": "cancel",
+		"accept": "accept",
+		"ok": "ok",
+        "search": "search",
+		"enabled": "enabled",
+		"year": "year",
+		"years": "years",
+		"month": "month",
+		"months": "months",
+		"week": "week",
+		"weeks": "weeks",
+		"day": "day",
+		"days": "days",
+		"hour": "hour",
+		"hours": "hours",
+		"minute": "minute",
+		"minutes": "minutes",
+		"second": "second",
+		"seconds": "seconds"
+    },
+    "menu":
+    {
+        "logout": "Logout",
+        "settings": "Settings"
+    },
+    "settings": 
+    {
+        "general": {
+            "section_title": "General",
+            "launch_on_startup": "Launch on system startup",
+            "minimize_on_close": "Minimize on close",
+            "start_minimized": "Start minimized",
+            "enable_notifications": "Enable notifications",
+            "autosave": {
+				"section_title": "Auto-save memos",
+				"frequency": "Set auto-save frequency",
+				"frequency_label": "Auto-save frequency"
+			},
+            "background_sync": {
+				"section_title": "Synchronize in the background",
+				"wifi_only": "Synchronize on wifi only"
+			}
+        }, 
+        "appearance": {
+            "section_title": "Appearance",
+            "dark_theme": "Dark theme",
+            "language": "Language"
+        },
+        "account": {
+            "section_title": "Account",
+            "change_password": "Change password"
+        },
+		"privacy": {
+			"section_title": "Privacy",
+			"optin_analytics": "Opt-in analytics reporting"
+		},
+		"security": {
+			"section_title": "Security",
+			"data_encryption": "Enable full data encryption"
+		},
+		"advanced": {
+			"section_title": "Advanced",
+			"devel_updates": "Get development updates"
+		},
+		"help": {
+			"section_title": "Help",
+			"reporting": "Reporting inconvenienves and errors"
+		},
+		"option_set_error_msg": "Couldn't set this option."
+    },
+	"language": 
+	{
+		"name": 
+		{
+			"en": "English",
+			"fr": "French",
+			"ru": "Russian"
+		},
+		"selected_message": "Currently selected language is {language}",
+		"selection": 
+		{
+			"message": "Please select a language from the list",
+			"title": "Language Selection"
+		}
+	},
+	"plural": 
+	{
+		"demo": 
+		{
+			"zero": "Please start pushing the 'plus' button.",
+			"one": "You have pushed the button one time.",
+			"two": "You have pushed the button two times.",
+			"other": "You have pushed the button {{value}} times."
+		}
+	},
+    "debug": {
+        "purge_local_db": "Purge local memo database"
+    }
+}

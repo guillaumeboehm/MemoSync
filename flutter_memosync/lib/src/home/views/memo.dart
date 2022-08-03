@@ -8,13 +8,12 @@ import 'package:flutter_memosync/src/home/home.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/models/memo.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
-import 'package:hive/hive.dart';
 import 'package:throttling/throttling.dart';
 
 /// Main memo view with the memo editor
 class MemoView extends StatefulWidget {
   /// Default constructor
-  const MemoView({Key? key}) : super(key: key);
+  const MemoView({super.key});
 
   @override
   State<MemoView> createState() => _MemoViewState();
@@ -66,10 +65,8 @@ class _MemoViewState extends State<MemoView> {
                               valueListenable: Storage.singleMemoStorageStream(
                                 state.currentMemo,
                               ),
-                              builder: (context, box, _) {
-                                final patches = (box as Box<MemoObject>?)
-                                    ?.get(state.currentMemo)
-                                    ?.patches;
+                              builder: (context, memo, _) {
+                                final patches = (memo as MemoObject?)?.patches;
                                 final isModified =
                                     patches != null && patches.isNotEmpty;
                                 return ColoredBox(
@@ -91,25 +88,12 @@ class _MemoViewState extends State<MemoView> {
                                           visible: isModified,
                                           child: TextButton(
                                             onPressed: () {
-                                              final currentText = box
-                                                      ?.get(
-                                                        state.currentMemo,
-                                                      )
-                                                      ?.text ??
-                                                  '';
-                                              final currentVersion = (box
-                                                          ?.get(
-                                                            state.currentMemo,
-                                                          )
-                                                          ?.version ??
-                                                      0) +
-                                                  1;
-                                              final currentPatches = box
-                                                      ?.get(
-                                                        state.currentMemo,
-                                                      )
-                                                      ?.patches ??
-                                                  '';
+                                              final currentText =
+                                                  memo?.text ?? '';
+                                              final currentVersion =
+                                                  (memo?.version ?? 0) + 1;
+                                              final currentPatches =
+                                                  memo?.patches ?? '';
                                               context.read<HomeBloc>().add(
                                                     SyncMemo(
                                                       state.currentMemo,
@@ -142,13 +126,10 @@ class _MemoViewState extends State<MemoView> {
                                         Storage.singleMemoStorageStream(
                                       state.currentMemo,
                                     ),
-                                    builder: (context, memoBox, widget) {
-                                      _memoController.text = memoBox == null
+                                    builder: (context, memo, widget) {
+                                      _memoController.text = memo == null
                                           ? ''
-                                          : (memoBox as Box<MemoObject>)
-                                                  .get(state.currentMemo)
-                                                  ?.text ??
-                                              '';
+                                          : (memo as MemoObject?)?.text ?? '';
                                       if (cursorPos[state.currentMemo] !=
                                           null) {
                                         _memoController.selection =

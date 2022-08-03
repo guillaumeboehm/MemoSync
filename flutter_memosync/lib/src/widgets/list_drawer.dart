@@ -6,7 +6,7 @@ import 'package:flutter_memosync/src/home/home.dart';
 /// Bottom drawer widget used when adding a memo
 class ListDrawer extends StatefulWidget {
   /// Default constructor
-  const ListDrawer({Key? key, required this.width}) : super(key: key);
+  const ListDrawer({super.key, required this.width});
 
   /// Width of the list panel
   final double width;

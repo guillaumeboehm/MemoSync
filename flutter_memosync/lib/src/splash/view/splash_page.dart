@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 /// A [MaterialPageRoute] is available with [SplashPage.route()]
 class SplashPage extends StatelessWidget {
   /// Constructor for [SplashPage]
-  const SplashPage({Key? key}) : super(key: key);
+  const SplashPage({super.key});
 
   /// Returns a [MaterialPageRoute] building an instance of this class
   static Route<void> route() {

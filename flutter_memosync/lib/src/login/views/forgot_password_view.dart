@@ -9,7 +9,7 @@ import 'package:validators/validators.dart';
 /// View for the user login
 class ForgotPasswordView extends StatefulWidget {
   /// Default constructor
-  const ForgotPasswordView({Key? key}) : super(key: key);
+  const ForgotPasswordView({super.key});
 
   @override
   State<ForgotPasswordView> createState() => _ForgotPasswordViewState();

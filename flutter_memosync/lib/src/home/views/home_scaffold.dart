@@ -9,15 +9,16 @@ import 'package:flutter_memosync/src/services/storage/storage.dart';
 import 'package:flutter_memosync/src/settings/settings.dart';
 import 'package:flutter_memosync/src/widgets/modal_drawer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 /// Widget returning the Scaffold for the home page
 class HomeScaffold extends StatelessWidget {
   /// Default constructor
   const HomeScaffold({
-    Key? key,
+    super.key,
     required this.builder,
     this.canBack = false,
-  }) : super(key: key);
+  });
 
   /// Returns the home widget to build.
   final Widget Function(BoxConstraints constraints) builder;
@@ -44,25 +45,25 @@ class HomeScaffold extends StatelessWidget {
                       child: ListView(
                         padding: EdgeInsets.zero,
                         children: [
-                          const DrawerHeader(
+                          DrawerHeader(
                             child: Text(
-                              'MemoSync',
-                              style: TextStyle(fontSize: 40),
+                              translate('general.app_title'),
+                              style: const TextStyle(fontSize: 40),
                             ),
                           ),
                           if (kDebugMode)
-                            const ListTile(
-                              title: Text('Pugre local memo db'),
+                            ListTile(
+                              title: Text(translate('debug.purge_local_db')),
                               onTap: Storage.removeAllMemos,
                             ),
                           ListTile(
-                            title: const Text('Settings'),
+                            title: Text(translate('menu.settings')),
                             onTap: () => Navigator.of(context)
                               ..pop()
                               ..push<void>(SettingsPage.route()),
                           ),
                           ListTile(
-                            title: const Text('logout'),
+                            title: Text(translate('menu.logout')),
                             onTap: () => context
                                 .read<AuthenticationBloc>()
                                 .add(AuthLogoutRequested()),

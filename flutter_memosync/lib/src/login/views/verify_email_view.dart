@@ -9,10 +9,10 @@ import 'package:universal_html/html.dart' show window;
 class VerifyEmail extends Widget {
   /// Default constructor
   const VerifyEmail({
-    Key? key,
+    super.key,
     required this.args,
     // required this.context,
-  }) : super(key: key);
+  });
 
   /// route and query arguments
   final Map<String, String> args;

@@ -11,7 +11,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 /// The top level login page
 class LoginPage extends StatefulWidget {
   /// Default constructor
-  const LoginPage({Key? key, this.args}) : super(key: key);
+  const LoginPage({super.key, this.args});
 
   /// Quite dirty, used for special routes such as verifEmail
   final Map<String, String>? args;

@@ -2,11 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
+import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_memosync/src/login/login.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
+import 'package:universal_io/io.dart';
 import 'package:validators/validators.dart';
 
 /// Describes if the user is connected.
@@ -176,6 +179,19 @@ If a user is registered with this email and it is not yet verified, a verificati
 
 /// Repository used to handle user connection.
 class AuthenticationRepository {
+  /// Default constructor
+  AuthenticationRepository() {
+    if (kDebugMode) {
+      // Seems needed for some emulators
+      (_authDio.httpClientAdapter as DefaultHttpClientAdapter)
+          .onHttpClientCreate = (HttpClient client) {
+        client.badCertificateCallback =
+            (X509Certificate cert, String host, int port) => true;
+        return client;
+      };
+    }
+  }
+
   final _controller = StreamController<AuthenticationStatus>();
 
   final _authBaseUri = Uri(
