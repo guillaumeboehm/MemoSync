@@ -33,7 +33,7 @@ If you like my app and want to contribute to it, feel free to open an [**issue**
 The project's translation is being handled on weblate, making it very easy for anyone to contribute!
 
 [<img 
-    src="https://hosted.weblate.org/widgets/memosync/-/application/287x66-grey.png" 
+    src="https://hosted.weblate.org/widgets/memosync/-/multi-auto.svg" 
     alt="Weblate">](https://hosted.weblate.org/engage/memosync/)
 
 
