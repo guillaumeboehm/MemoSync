@@ -25,8 +25,8 @@ void main() async {
   runApp(
     LocalizedApp(
       await LocalizationDelegate.create(
-        fallbackLocale: 'en_US',
-        supportedLocales: ['en_US', 'fr_FR'],
+        fallbackLocale: 'en',
+        supportedLocales: ['en', 'fr'],
         preferences: TranslatePreferences(),
       ),
       App(

@@ -1,106 +1,203 @@
 {
-	"general": 
-	{
-		"app_title": "MemoSync"
-	},
-    "label":
-    {
-		"cancel": "cancel",
-		"accept": "accept",
-		"ok": "ok",
-        "search": "search",
-		"enabled": "enabled",
-		"year": "year",
-		"years": "years",
-		"month": "month",
-		"months": "months",
-		"week": "week",
-		"weeks": "weeks",
-		"day": "day",
-		"days": "days",
-		"hour": "hour",
-		"hours": "hours",
-		"minute": "minute",
-		"minutes": "minutes",
-		"second": "second",
-		"seconds": "seconds"
+    "authentication": {
+        "change_password": "Change password",
+        "create_account": "Create an account",
+        "forgot_password": "I forgot my password",
+        "form_validation": {
+            "email_invalid": "Please enter a valid email.",
+            "password_too_short": "Your password must be at least 8 characters long",
+            "password_too_weak": "Your password must contain at least one special character, one lower case letter and one capital letter."
+        },
+        "hints": {
+            "email": "Email",
+            "new_password": "New password",
+            "password": "Password"
+        },
+        "login": "Login",
+        "malformed_link": "This link seems malformed, try asking for a link again.",
+        "password_changed": "Password changed successfuly, you can now log in.",
+        "resend_link": "Resend link",
+        "resend_verification": "Resend verification email",
+        "reset_password": "Reset password",
+        "reset_password_maybe_sent": "If a user is registered with this email, a reset link has been sent. Don't forget to check your spams.",
+        "send_reset_link": "Send reset link",
+        "server_unreachable": "There seems to be an issue connecting to the memosync servers, please retry later.",
+        "signup": "Sign up",
+        "signup_title": "Sign up to MemoSync",
+        "unqualified_address": "Your email is not accessible, please use a valid email address.",
+        "user_already_exists": {
+            "after": "",
+            "before": "A user with this email already exists, ",
+            "button": "try logging in"
+        },
+        "user_created": {
+            "after": "",
+            "before": "Your account has been created, verify your email and then ",
+            "button": "log in"
+        },
+        "user_has_account": "I already have an account",
+        "username_or_password_incorrect": "The username or password is incorrect",
+        "verification_link_sent": "If a user is registered with this email and it is not yet verified, a verification link has been sent. Don't forget to check your spams.",
+        "verify_email": {
+            "after": "before trying to log in\n(don't forget to check your spam folder)",
+            "before": "",
+            "button": "Verify your email address"
+        },
+        "verifying": "Verifying"
     },
-    "menu":
-    {
+    "debug": {
+        "purge_local_db": "Purge local memo database"
+    },
+    "general": {
+        "app_title": "MemoSync",
+        "unknown_error": "Unknown error"
+    },
+    "label": {
+        "accept": "accept",
+        "cancel": "cancel",
+        "day": "day",
+        "days": "days",
+        "delete": "delete",
+        "deletion": "deletion",
+        "enabled": "enabled",
+        "friday": "friday",
+        "hour": "hour",
+        "hours": "hours",
+        "minute": "minute",
+        "minutes": "minutes",
+        "monday": "monday",
+        "month": "month",
+        "months": "months",
+        "ok": "ok",
+        "period": "period",
+        "saturday": "saturday",
+        "search": "search",
+        "second": "second",
+        "seconds": "seconds",
+        "sunday": "sunday",
+        "thursday": "thursday",
+        "tuesday": "tuesday",
+        "wednesday": "wednesday",
+        "week": "week",
+        "weeks": "weeks",
+        "year": "year",
+        "years": "years"
+    },
+    "language": {
+        "name": {
+            "en": "English",
+            "fr": "French",
+            "ru": "Russian"
+        },
+        "selected_message": "Currently selected language is {language}",
+        "selection": {
+            "message": "Please select a language from the list",
+            "title": "Language Selection"
+        }
+    },
+    "memo": {
+        "create_memo": "Create a new memo",
+        "deletion_alert": {
+            "after": ",\nthis action is irreversible.",
+            "before": "Are you sure you want to",
+            "important": " delete {memoTitle}"
+        },
+        "hints": {
+            "new_memo_title": "New memo title"
+        },
+        "settings": {
+            "background": {
+                "set_home_page": "Set as home page background",
+                "set_lock_screen": "Set as lock screen background"
+            },
+            "page_title": "{currentMemoTitle} settings",
+            "pinned_notifications": {
+                "description": "Pins a non-discardlable notification with the content of the memo",
+                "title": "Pinned notifications"
+            },
+            "recurrent_notifications": {
+                "add": "Add notification",
+                "ignore_on": "Ignore on: {dayList}",
+                "repeat_every": "Repeat every",
+                "repeat_on_day": "Repeat on the {day} of each {monthOrYear}",
+                "select_one_day": "You must select at least one day.",
+                "title": "Recurrent notifications"
+            },
+            "widgets": {
+                "set": "Set widgets"
+            }
+        },
+        "synchronize": "Sync"
+    },
+    "menu": {
+        "exit": "Exit",
         "logout": "Logout",
         "settings": "Settings"
     },
-    "settings": 
-    {
+    "plural": {
+        "demo": {
+            "one": "You have pushed the button one time.",
+            "other": "You have pushed the button {{value}} times.",
+            "two": "You have pushed the button two times.",
+            "zero": "Please start pushing the 'plus' button."
+        }
+    },
+    "settings": {
+        "account": {
+            "change_password": "Change password",
+            "section_title": "Account"
+        },
+        "advanced": {
+            "devel_updates": "Get development updates",
+            "section_title": "Advanced"
+        },
+        "appearance": {
+            "dark_theme": "Dark theme",
+            "language": "Language",
+            "section_title": "Appearance"
+        },
         "general": {
-            "section_title": "General",
+            "autosave": {
+                "frequency": "Set auto-save frequency",
+                "frequency_label": "Auto-save frequency",
+                "section_title": "Auto-save memos"
+            },
+            "background_sync": {
+                "section_title": "Synchronize in the background",
+                "wifi_only": "Synchronize on wifi only"
+            },
+            "enable_notifications": "Enable notifications",
             "launch_on_startup": "Launch on system startup",
             "minimize_on_close": "Minimize on close",
-            "start_minimized": "Start minimized",
-            "enable_notifications": "Enable notifications",
-            "autosave": {
-				"section_title": "Auto-save memos",
-				"frequency": "Set auto-save frequency",
-				"frequency_label": "Auto-save frequency"
-			},
-            "background_sync": {
-				"section_title": "Synchronize in the background",
-				"wifi_only": "Synchronize on wifi only"
-			}
-        }, 
-        "appearance": {
-            "section_title": "Appearance",
-            "dark_theme": "Dark theme",
-            "language": "Language"
+            "section_title": "General",
+            "start_minimized": "Start minimized"
         },
-        "account": {
-            "section_title": "Account",
-            "change_password": "Change password"
+        "help": {
+            "reporting": "Reporting inconvenienves and errors",
+            "section_title": "Help"
         },
-		"privacy": {
-			"section_title": "Privacy",
-			"optin_analytics": "Opt-in analytics reporting"
-		},
-		"security": {
-			"section_title": "Security",
-			"data_encryption": "Enable full data encryption"
-		},
-		"advanced": {
-			"section_title": "Advanced",
-			"devel_updates": "Get development updates"
-		},
-		"help": {
-			"section_title": "Help",
-			"reporting": "Reporting inconvenienves and errors"
-		},
-		"option_set_error_msg": "Couldn't set this option."
+        "option_set_error_msg": "Couldn't set this option.",
+        "privacy": {
+            "optin_analytics": "Opt-in analytics reporting",
+            "section_title": "Privacy"
+        },
+        "security": {
+            "data_encryption": "Enable full data encryption",
+            "section_title": "Security"
+        },
+        "title": "Global settings"
     },
-	"language": 
-	{
-		"name": 
-		{
-			"en": "English",
-			"fr": "French",
-			"ru": "Russian"
-		},
-		"selected_message": "Currently selected language is {language}",
-		"selection": 
-		{
-			"message": "Please select a language from the list",
-			"title": "Language Selection"
-		}
-	},
-	"plural": 
-	{
-		"demo": 
-		{
-			"zero": "Please start pushing the 'plus' button.",
-			"one": "You have pushed the button one time.",
-			"two": "You have pushed the button two times.",
-			"other": "You have pushed the button {{value}} times."
-		}
-	},
-    "debug": {
-        "purge_local_db": "Purge local memo database"
+    "snack": {
+        "memo_created": "Memo created.",
+        "memo_creation_internal_error": "Something went wrong while creating the memo.",
+        "memo_deleted": "Memo deleted",
+        "memo_deletion_error": "Error while trying to delete the memo.",
+        "memo_exists_already": "A memo with this title already exists.",
+        "memo_list_refreshed": "Memo list refreshed.",
+        "memo_sync_error": "An error occured during sync: {error}.",
+        "memo_sync_newer_version_exists": "A newer version of the memo has been merged, verify the memo for any mistakes.",
+        "memo_sync_success": "Memo synced successfully.",
+        "memo_title_missing": "Error while trying to delete the memo.",
+        "memo_was_deleted": "This memo has been deleted from an other device."
     }
 }

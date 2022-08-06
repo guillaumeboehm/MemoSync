@@ -2,6 +2,7 @@ import 'package:disable_battery_optimization/disable_battery_optimization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_memosync/src/authentication/authentication.dart';
 import 'package:flutter_memosync/src/home/home.dart';
 import 'package:flutter_memosync/src/home/repositories/memo.dart';
@@ -70,6 +71,9 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
           themeMode: (settings.darkMode) ? ThemeMode.dark : ThemeMode.light,
           navigatorKey: _navigatorKey,
           localizationsDelegates: [
+            GlobalMaterialLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
             localizationDelegate,
           ],
           supportedLocales: localizationDelegate.supportedLocales,

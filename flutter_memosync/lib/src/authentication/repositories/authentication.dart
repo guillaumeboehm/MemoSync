@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_memosync/src/login/login.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:universal_io/io.dart';
 import 'package:validators/validators.dart';
 
@@ -26,20 +27,18 @@ enum AuthenticationStatus {
 
 /// Map of all the error messages corresponding to error results
 Map<String, Widget Function(BuildContext)> authenticationMessages = {
-  'ServerUnreachable': (context) => const Text(
-        '''
-There seems to be an issue connecting to the memosync servers, please retry later.''',
+  'ServerUnreachable': (context) => Text(
+        translate('authentication.server_unreachable'),
         textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.red),
+        style: const TextStyle(color: Colors.red),
       ),
   'UserCreated': (context) => RichText(
         textAlign: TextAlign.center,
         text: TextSpan(
           children: [
-            const TextSpan(
-              text:
-                  'Your account has been created, verify your email and then ',
-              style: TextStyle(color: Colors.green),
+            TextSpan(
+              text: translate('authentication.user_created.before'),
+              style: const TextStyle(color: Colors.green),
             ),
             WidgetSpan(
               child: TextButton(
@@ -49,62 +48,61 @@ There seems to be an issue connecting to the memosync servers, please retry late
                       .read<LoginBloc>()
                       .add(const LoginChangeView(LoginViews.login));
                 },
-                child: const Text(
-                  'log in',
-                  style: TextStyle(color: Colors.orange),
+                child: Text(
+                  translate('authentication.user_created.login_button'),
+                  style: const TextStyle(color: Colors.orange),
                 ),
               ),
+            ),
+            TextSpan(
+              text: translate('authentication.user_created.after'),
+              style: const TextStyle(color: Colors.green),
             ),
           ],
         ),
       ),
-  'UnqualifiedAddress': (context) => const Text(
-        '''
-Your email is not accessible, please use a valid email address.''',
+  'UnqualifiedAddress': (context) => Text(
+        translate('authentication.unqualified_address'),
         textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.red),
+        style: const TextStyle(color: Colors.red),
       ),
-  'NoUserFound': (context) => const Text(
-        'The username or password is incorrect',
+  'NoUserFound': (context) => Text(
+        translate('authentication.username_or_password_incorrect'),
         textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.red),
+        style: const TextStyle(color: Colors.red),
       ),
-  'WrongPass': (context) => const Text(
-        'The username or password is incorrect',
+  'WrongPass': (context) => Text(
+        translate('authentication.username_or_password_incorrect'),
         textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.red),
+        style: const TextStyle(color: Colors.red),
       ),
-  'ResetPasswordMaybeSent': (context) => const Text(
-        '''
-If a user is registered with this email, a reset link has been sent. Don't forget to check your spams.''',
+  'ResetPasswordMaybeSent': (context) => Text(
+        translate('authentication.reset_password_maybe_sent'),
         textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.green),
+        style: const TextStyle(color: Colors.green),
       ),
-  'MalformedLink': (context) => const Text(
-        '''
-This link seems malformed, try asking for a link again.''',
+  'MalformedLink': (context) => Text(
+        translate('authentication.malformed_link'),
         textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.red),
+        style: const TextStyle(color: Colors.red),
       ),
-  'PasswordChanged': (context) => const Text(
-        '''
-Password changed successfuly, you can now log in.''',
+  'PasswordChanged': (context) => Text(
+        translate('authentication.malformed_link'),
         textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.green),
+        style: const TextStyle(color: Colors.green),
       ),
-  'VerifLinkMaybeSent': (context) => const Text(
-        '''
-If a user is registered with this email and it is not yet verified, a verification link has been sent. Don't forget to check your spams.''',
+  'VerifLinkMaybeSent': (context) => Text(
+        translate('authentication.verification_link_sent'),
         textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.green),
+        style: const TextStyle(color: Colors.green),
       ),
   'UserAlreadyExists': (context) => RichText(
         textAlign: TextAlign.center,
         text: TextSpan(
           children: [
-            const TextSpan(
-              text: 'A user with this email already exists, ',
-              style: TextStyle(color: Colors.red),
+            TextSpan(
+              text: translate('authentication.user_already_exists.before'),
+              style: const TextStyle(color: Colors.red),
             ),
             WidgetSpan(
               child: TextButton(
@@ -114,11 +112,15 @@ If a user is registered with this email and it is not yet verified, a verificati
                       .read<LoginBloc>()
                       .add(const LoginChangeView(LoginViews.login));
                 },
-                child: const Text(
-                  'try logging in',
-                  style: TextStyle(color: Colors.orange),
+                child: Text(
+                  translate('authentication.user_already_exists.login_button'),
+                  style: const TextStyle(color: Colors.orange),
                 ),
               ),
+            ),
+            TextSpan(
+              text: translate('authentication.user_already_exists.after'),
+              style: const TextStyle(color: Colors.red),
             ),
           ],
         ),
@@ -127,6 +129,10 @@ If a user is registered with this email and it is not yet verified, a verificati
         textAlign: TextAlign.center,
         text: TextSpan(
           children: [
+            TextSpan(
+              text: translate('authentication.verify_email.before'),
+              style: const TextStyle(color: Colors.red),
+            ),
             WidgetSpan(
               child: TextButton(
                 style: const ButtonStyle(alignment: Alignment.bottomCenter),
@@ -135,46 +141,45 @@ If a user is registered with this email and it is not yet verified, a verificati
                       .read<LoginBloc>()
                       .add(const LoginChangeView(LoginViews.resendVerifEmail));
                 },
-                child: const Text(
-                  'Verify your email address',
-                  style: TextStyle(color: Colors.orange),
+                child: Text(
+                  translate('authentication.verify_email.button'),
+                  style: const TextStyle(color: Colors.orange),
                 ),
               ),
             ),
-            const TextSpan(
-              text:
-                  """before trying to log in\n(don't forget to check your spam folder)""",
-              style: TextStyle(color: Colors.red),
+            TextSpan(
+              text: translate('authentication.verify_email.after'),
+              style: const TextStyle(color: Colors.red),
             ),
           ],
         ),
       ),
-  'OK': (context) => RichText(
-        // TODO(me): Need to change that to verifSent or smthg
-        textAlign: TextAlign.center,
-        text: TextSpan(
-          children: [
-            const TextSpan(
-              text: 'Verification email sent, check your emails and ',
-              style: TextStyle(color: Colors.red),
-            ),
-            WidgetSpan(
-              child: TextButton(
-                style: const ButtonStyle(alignment: Alignment.bottomCenter),
-                onPressed: () {
-                  context
-                      .read<LoginBloc>()
-                      .add(const LoginChangeView(LoginViews.login));
-                },
-                child: const Text(
-                  'log in',
-                  style: TextStyle(color: Colors.orange),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+  // 'OK': (context) => RichText(
+  //       // TODO(me): Need to change that to verifSent or smthg
+  //       textAlign: TextAlign.center,
+  //       text: TextSpan(
+  //         children: [
+  //           const TextSpan(
+  //             text: 'Verification email sent, check your emails and ',
+  //             style: TextStyle(color: Colors.red),
+  //           ),
+  //           WidgetSpan(
+  //             child: TextButton(
+  //               style: const ButtonStyle(alignment: Alignment.bottomCenter),
+  //               onPressed: () {
+  //                 context
+  //                     .read<LoginBloc>()
+  //                     .add(const LoginChangeView(LoginViews.login));
+  //               },
+  //               child: const Text(
+  //                 'log in',
+  //                 style: TextStyle(color: Colors.orange),
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
 };
 
 /// Repository used to handle user connection.

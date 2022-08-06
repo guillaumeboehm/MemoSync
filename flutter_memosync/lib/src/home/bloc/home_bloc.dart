@@ -9,6 +9,7 @@ import 'package:flutter_memosync/src/authentication/bloc/authentication_bloc.dar
 import 'package:flutter_memosync/src/home/repositories/memo.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';
@@ -157,14 +158,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           ScaffoldMessenger.of(homeContext).showSnackBar(
             SnackBar(
               backgroundColor: Colors.green.shade400,
-              content: const Text('Memo deleted'),
+              content: Text(translate('snack.memo_deleted')),
             ),
           );
         } else {
           ScaffoldMessenger.of(homeContext).showSnackBar(
             SnackBar(
               backgroundColor: Colors.red.shade400,
-              content: const Text('Error while trying to delete the memo.'),
+              content: Text(translate('snack.memo_deletion_error')),
             ),
           );
         }
@@ -191,7 +192,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             ScaffoldMessenger.of(homeContext).showSnackBar(
               SnackBar(
                 backgroundColor: Colors.red.shade400,
-                content: const Text('A memo with this title already exists.'),
+                content: Text(translate('snack.memo_exists_already')),
               ),
             );
             add(const RefreshMemoList());
@@ -199,15 +200,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             ScaffoldMessenger.of(homeContext).showSnackBar(
               SnackBar(
                 backgroundColor: Colors.red.shade400,
-                content: const Text('Enter a title for the memo.'),
+                content: Text(translate('snack.memo_title_missing')),
               ),
             );
           } else if (res['code'] == 'InternalError') {
             ScaffoldMessenger.of(homeContext).showSnackBar(
               SnackBar(
                 backgroundColor: Colors.red.shade400,
-                content:
-                    const Text('Something went wrong while creating the memo.'),
+                content: Text(translate('snack.memo_creation_internal_error')),
               ),
             );
           }
@@ -216,7 +216,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           ScaffoldMessenger.of(homeContext).showSnackBar(
             SnackBar(
               backgroundColor: Colors.green.shade400,
-              content: const Text('Memo created.'),
+              content: Text(translate('snack.memo_created')),
             ),
           );
           add(const RefreshMemoList());
@@ -273,16 +273,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               builder: (context) {
                 switch (res['code']) {
                   case 'NewerVersionExists':
-                    return const Text(
-                      '''
-A newer version of the memo has been merged, verify the memo for any mistakes.''',
+                    return Text(
+                      translate('snack.memo_sync_newer_version_exists'),
                     );
                   case 'MemoDeleted':
-                    return const Text(
-                      '''This memo has been deleted from an other device.''',
+                    return Text(
+                      translate('snack.memo_was_deleted'),
                     );
                   default:
-                    return Text("An error occured during sync: ${res['code']}");
+                    return Text(
+                      translate(
+                        'snack.memo_sync_error',
+                        args: {'error': res['code']},
+                      ),
+                    );
                 }
               },
             ),
@@ -292,7 +296,7 @@ A newer version of the memo has been merged, verify the memo for any mistakes.''
         ScaffoldMessenger.of(homeContext).showSnackBar(
           SnackBar(
             backgroundColor: Colors.green.shade300,
-            content: const Text('Memo synced successfully'),
+            content: Text(translate('snack.memo_sync_success')),
           ),
         );
       }

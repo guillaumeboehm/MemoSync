@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_memosync/src/authentication/authentication.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:universal_html/html.dart' show window;
 import 'package:validators/validators.dart';
 
@@ -69,7 +71,9 @@ class ChangePassword extends Widget {
                             autofillHints: const ['new-password'],
                             decoration: InputDecoration(
                               border: const OutlineInputBorder(),
-                              labelText: 'New password',
+                              labelText: translate(
+                                'authentication.hints.new_password',
+                              ),
                               counterText: '',
                               suffixIcon: IconButton(
                                 onPressed: () {
@@ -138,12 +142,12 @@ class ChangePassword extends Widget {
                                 context,
                               )
                           : null,
-                      child: const Padding(
-                        padding: EdgeInsets.all(15),
+                      child: Padding(
+                        padding: const EdgeInsets.all(15),
                         child: Text(
-                          'Change password',
+                          translate('authentication.change_password'),
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 20),
+                          style: const TextStyle(fontSize: 20),
                         ),
                       ),
                     ),
@@ -181,7 +185,7 @@ ${error != null ? error['code'].toString() : success?['code'].toString()}"""]
                         onPressed: () {
                           window.location.href = '/';
                         },
-                        child: const Text('Login'),
+                        child: Text(translate('authentication.login')),
                       ),
                     ],
                   );

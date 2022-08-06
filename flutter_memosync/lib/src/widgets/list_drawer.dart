@@ -2,6 +2,7 @@ import 'package:bottom_drawer/bottom_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_memosync/src/home/home.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 /// Bottom drawer widget used when adding a memo
 class ListDrawer extends StatefulWidget {
@@ -116,16 +117,18 @@ class _ListDrawerState extends State<ListDrawer> {
                                 ),
                               ),
                             ),
-                            const Padding(
-                              padding: EdgeInsets.only(top: 15, bottom: 5),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 15, bottom: 5),
                               child: Text(
-                                'Create a new memo',
-                                style: TextStyle(fontSize: 17),
+                                translate('memo.create_memo'),
+                                style: const TextStyle(fontSize: 17),
                               ),
                             ),
                             TextField(
-                              decoration: const InputDecoration(
-                                hintText: 'New memo title',
+                              decoration: InputDecoration(
+                                hintText:
+                                    translate('memo.hints.new_memo_title'),
                               ),
                               controller: _inputController,
                               focusNode: _inputFocusController,

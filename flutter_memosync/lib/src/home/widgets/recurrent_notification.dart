@@ -6,6 +6,7 @@ import 'package:flutter_memosync/src/home/views/memo_settings.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/models/memo.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 /// Returns a notification [SettingsTile]
@@ -38,17 +39,17 @@ SettingsTile notificationTile({
                 if (notifInfo['repeatEveryHour'] as int > 0)
                   TextSpan(
                     text: """
-${notifInfo['repeatEveryHour'].toString().padLeft(2, '0')}h""",
+${notifInfo['repeatEveryHour'].toString().padLeft(2, '0')}${translate('label.hour').characters.first}""",
                   ),
                 if (notifInfo['repeatEveryMinute'] as int > 0)
                   TextSpan(
                     text: """
-${notifInfo['repeatEveryMinute'].toString().padLeft(2, '0')}m""",
+${notifInfo['repeatEveryMinute'].toString().padLeft(2, '0')}${translate('label.minute').characters.first}""",
                   ),
                 if (notifInfo['repeatEverySecond'] as int > 0)
                   TextSpan(
                     text: """
-${notifInfo['repeatEverySecond'].toString().padLeft(2, '0')}s""",
+${notifInfo['repeatEverySecond'].toString().padLeft(2, '0')}${translate('label.second').characters.first}""",
                   ),
               ],
             )
@@ -147,22 +148,50 @@ Future<Map<dynamic, dynamic>?> showNotificationDialog(
         'repeatEveryMinute': TimeOfDay.now().minute,
         'repeatEverySecond': 0,
         'repeatOnDays': <String, bool>{
-          'Mon': false,
-          'Tue': false,
-          'Wed': false,
-          'Thu': false,
-          'Fri': false,
-          'Sat': false,
-          'Sun': false,
+          (translate('label.monday').length > 3)
+              ? translate('label.monday').substring(0, 3)
+              : translate('label.monday'): false,
+          (translate('label.tuesday').length > 3)
+              ? translate('label.tuesday').substring(0, 3)
+              : translate('label.tuesday'): false,
+          (translate('label.wednsday').length > 3)
+              ? translate('label.wednsday').substring(0, 3)
+              : translate('label.wednsday'): false,
+          (translate('label.thursday').length > 3)
+              ? translate('label.thursday').substring(0, 3)
+              : translate('label.thursday'): false,
+          (translate('label.friday').length > 3)
+              ? translate('label.friday').substring(0, 3)
+              : translate('label.friday'): false,
+          (translate('label.saturday').length > 3)
+              ? translate('label.saturday').substring(0, 3)
+              : translate('label.saturday'): false,
+          (translate('label.sunday').length > 3)
+              ? translate('label.sunday').substring(0, 3)
+              : translate('label.sunday'): false,
         },
         'ignoreOnDays': <String, bool>{
-          'Mon': false,
-          'Tue': false,
-          'Wed': false,
-          'Thu': false,
-          'Fri': false,
-          'Sat': false,
-          'Sun': false,
+          (translate('label.monday').length > 3)
+              ? translate('label.monday').substring(0, 3)
+              : translate('label.monday'): false,
+          (translate('label.tuesday').length > 3)
+              ? translate('label.tuesday').substring(0, 3)
+              : translate('label.tuesday'): false,
+          (translate('label.wednsday').length > 3)
+              ? translate('label.wednsday').substring(0, 3)
+              : translate('label.wednsday'): false,
+          (translate('label.thursday').length > 3)
+              ? translate('label.thursday').substring(0, 3)
+              : translate('label.thursday'): false,
+          (translate('label.friday').length > 3)
+              ? translate('label.friday').substring(0, 3)
+              : translate('label.friday'): false,
+          (translate('label.saturday').length > 3)
+              ? translate('label.saturday').substring(0, 3)
+              : translate('label.saturday'): false,
+          (translate('label.sunday').length > 3)
+              ? translate('label.sunday').substring(0, 3)
+              : translate('label.sunday'): false,
         },
         'repeatOnDate': DateTime.now(),
       };
@@ -180,7 +209,9 @@ Future<Map<dynamic, dynamic>?> showNotificationDialog(
     if ((data as Map)['repeatEvery'] == NotificationRepeatEvery.week) {
       if ((data['repeatOnDays'] as Map).values.every((el) => el == false)) {
         valid = false;
-        errMsg = 'You must select at least one day.';
+        errMsg = translate(
+          'memo.settings.recurrent_notifications.select_one_day',
+        );
       }
     }
 
@@ -190,7 +221,7 @@ Future<Map<dynamic, dynamic>?> showNotificationDialog(
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red.shade400,
-          content: Text(errMsg ?? 'Unknown error'),
+          content: Text(errMsg ?? translate('general.unknown_error')),
         ),
       );
     }
@@ -225,7 +256,11 @@ Future<Map<dynamic, dynamic>?> showNotificationDialog(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Repeat every'),
+                    Text(
+                      translate(
+                        'memo.settings.recurrent_notifications.repeat_every',
+                      ),
+                    ),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -504,22 +539,32 @@ Repeat on: ${(Map<String, bool>.from(_data['repeatOnDays'] as Map)..removeWhere(
                               NotificationRepeatEvery.month)
                             // Occurs on this day of the month
                             Text(
-                              '''
-Repeat on the '''
-                              """
-${dateToDayString((_data['repeatOnDate'] as DateTime).toLocal())}"""
-                              '''
- of each month.''',
+                              translate(
+                                '''
+memo.settings.recurrent_notifications.repeat_on_day''',
+                                args: {
+                                  'day': dateToDayString(
+                                    (_data['repeatOnDate'] as DateTime)
+                                        .toLocal(),
+                                  ),
+                                  'monthOrYear': translate('label.month'),
+                                },
+                              ),
                             )
                           else
                             // Occurs on this day of the year
                             Text(
-                              '''
-Repeat on the '''
-                              """
-${dateToDayOfMonthString((_data['repeatOnDate'] as DateTime).toLocal())}"""
-                              '''
- of each year.''',
+                              translate(
+                                '''
+memo.settings.recurrent_notifications.repeat_on_day''',
+                                args: {
+                                  'day': dateToDayOfMonthString(
+                                    (_data['repeatOnDate'] as DateTime)
+                                        .toLocal(),
+                                  ),
+                                  'monthOrYear': translate('label.year'),
+                                },
+                              ),
                             ),
                           IconButton(
                             onPressed: () {
@@ -571,8 +616,16 @@ ${dateToDayOfMonthString((_data['repeatOnDate'] as DateTime).toLocal())}"""
                       Padding(
                         padding: const EdgeInsets.only(bottom: 20, top: 20),
                         child: Text(
-                          """
-Ignore on: ${(Map<String, bool>.from(_data['ignoreOnDays'] as Map)..removeWhere((key, value) => !value)).keys.join(', ')}""",
+                          translate(
+                            'memo.settings.recurrent_notifications.ignore_on',
+                            args: {
+                              'dayList': (Map<String, bool>.from(
+                                      _data['ignoreOnDays'] as Map)
+                                    ..removeWhere((key, value) => !value))
+                                  .keys
+                                  .join(', '),
+                            },
+                          ),
                         ),
                       ),
                     if (_data['repeatEvery'] == NotificationRepeatEvery.period)
@@ -634,14 +687,14 @@ Ignore on: ${(Map<String, bool>.from(_data['ignoreOnDays'] as Map)..removeWhere(
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(diagContext),
-                  child: const Text('CANCEL'),
+                  child: Text(translate('label.cancel').toUpperCase()),
                 ),
                 TextButton(
                   onPressed: () => validate(
                     _data,
                     validCallback: () => Navigator.pop(diagContext, _data),
                   ),
-                  child: const Text('OK'),
+                  child: Text(translate('label.ok').toUpperCase()),
                 ),
               ],
             ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_memosync/src/authentication/authentication.dart';
 import 'package:flutter_memosync/src/login/login.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:validators/validators.dart';
 
 /// View for the user sign up
@@ -48,10 +49,10 @@ class _SignupViewState extends State<SignupView> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Sign up to MemoSync',
+              Text(
+                translate('authentication.signup_title'),
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                 ),
@@ -79,14 +80,16 @@ class _SignupViewState extends State<SignupView> {
                             cut: true,
                             paste: true,
                           ),
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: 'Email',
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
+                            labelText: translate('authentication.hints.email'),
                             counterText: '',
                           ),
                           validator: (value) {
                             if (!isEmail(value ?? '')) {
-                              return 'Please enter a valid email.';
+                              return translate(
+                                'authentication.form_validation.email_invalid',
+                              );
                             }
                             return null;
                           },
@@ -114,7 +117,9 @@ class _SignupViewState extends State<SignupView> {
                                     autofillHints: const ['new-password'],
                                     decoration: InputDecoration(
                                       border: const OutlineInputBorder(),
-                                      labelText: 'Password',
+                                      labelText: translate(
+                                        'authentication.hints.password',
+                                      ),
                                       counterText: '',
                                       errorMaxLines: 3,
                                       suffixIcon: IconButton(
@@ -131,14 +136,18 @@ class _SignupViewState extends State<SignupView> {
                                     validator: (value) {
                                       value ??= '';
                                       if (!isLength(value, 8)) {
-                                        return '''
-Your password must be at least 8 characters long''';
+                                        return translate(
+                                          '''
+authentication.form_validation.password_too_short''',
+                                        );
                                       }
                                       if (!matches(value, r'[#?!@$%^&*-]') ||
                                           !matches(value, '[A-Z]') ||
                                           !matches(value, '[a-z]')) {
-                                        return '''
-Your password must contain at least one special character, one lower case letter and one capital letter.''';
+                                        return translate(
+                                          '''
+authentication.form_validation.password_too_weak''',
+                                        );
                                       }
                                       return null;
                                     },
@@ -188,12 +197,12 @@ ${error != null ? error['code'].toString() : success?['code'].toString()}"""]
                           onPressed: !state.processing
                               ? () => _submit(_formKey, context)
                               : null,
-                          child: const Padding(
-                            padding: EdgeInsets.all(15),
+                          child: Padding(
+                            padding: const EdgeInsets.all(15),
                             child: Text(
-                              'Sign up',
+                              translate('authentication.signup'),
                               textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 20),
+                              style: const TextStyle(fontSize: 20),
                             ),
                           ),
                         ),
@@ -209,8 +218,8 @@ ${error != null ? error['code'].toString() : success?['code'].toString()}"""]
                 onPressed: () => context
                     .read<LoginBloc>()
                     .add(const LoginChangeView(LoginViews.login)),
-                child: const Text(
-                  'I already have an account',
+                child: Text(
+                  translate('authentication.user_has_account'),
                   textAlign: TextAlign.center,
                 ),
               ),

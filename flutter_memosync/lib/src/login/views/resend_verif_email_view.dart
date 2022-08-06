@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_memosync/src/authentication/authentication.dart';
 import 'package:flutter_memosync/src/login/login.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:validators/validators.dart';
 
 /// View for the user login
@@ -44,10 +45,10 @@ class _ResendVerifEmailViewState extends State<ResendVerifEmailView> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Resend verification link',
+              Text(
+                translate('authentication.resend_verification'),
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                 ),
@@ -71,14 +72,16 @@ class _ResendVerifEmailViewState extends State<ResendVerifEmailView> {
                         cut: true,
                         paste: true,
                       ),
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: 'Email',
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        hintText: translate('authentication.hints.email'),
                         counterText: '',
                       ),
                       validator: (value) {
                         if (!isEmail(value ?? '')) {
-                          return 'Please enter a valid email.';
+                          return translate(
+                            'authentication.form_validation.email_invalid',
+                          );
                         }
                         return null;
                       },
@@ -125,12 +128,12 @@ class _ResendVerifEmailViewState extends State<ResendVerifEmailView> {
                           onPressed: !state.processing
                               ? () => _submit(_formKey, context)
                               : null,
-                          child: const Padding(
-                            padding: EdgeInsets.all(15),
+                          child: Padding(
+                            padding: const EdgeInsets.all(15),
                             child: Text(
-                              'Resend link',
+                              translate('authentication.resend_link'),
                               textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 20),
+                              style: const TextStyle(fontSize: 20),
                             ),
                           ),
                         );
@@ -146,7 +149,7 @@ class _ResendVerifEmailViewState extends State<ResendVerifEmailView> {
                 onPressed: () => context
                     .read<LoginBloc>()
                     .add(const LoginChangeView(LoginViews.login)),
-                child: const Text('Login'),
+                child: Text(translate('authentication.login')),
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 5),
@@ -155,8 +158,8 @@ class _ResendVerifEmailViewState extends State<ResendVerifEmailView> {
                 onPressed: () => context
                     .read<LoginBloc>()
                     .add(const LoginChangeView(LoginViews.signup)),
-                child: const Text(
-                  'Create an account',
+                child: Text(
+                  translate('authentication.create_account'),
                   textAlign: TextAlign.center,
                 ),
               ),

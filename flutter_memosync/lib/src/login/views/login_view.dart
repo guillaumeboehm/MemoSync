@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_memosync/src/authentication/authentication.dart';
 import 'package:flutter_memosync/src/login/login.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:validators/validators.dart';
 
 /// View for the user login
@@ -52,9 +53,9 @@ class _LoginViewState extends State<LoginView> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Login',
-                style: TextStyle(
+              Text(
+                translate('authentication.login'),
+                style: const TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                 ),
@@ -78,14 +79,16 @@ class _LoginViewState extends State<LoginView> {
                         cut: true,
                         paste: true,
                       ),
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Email',
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        labelText: translate('authentication.hints.email'),
                         counterText: '',
                       ),
                       validator: (value) {
                         if (!isEmail(value ?? '')) {
-                          return 'Please enter a valid email.';
+                          return translate(
+                            'authentication.form_validation.email_invalid',
+                          );
                         }
                         return null;
                       },
@@ -116,7 +119,9 @@ class _LoginViewState extends State<LoginView> {
                                 autofillHints: const ['current-password'],
                                 decoration: InputDecoration(
                                   border: const OutlineInputBorder(),
-                                  labelText: 'Password',
+                                  labelText: translate(
+                                    'authentication.hints.password',
+                                  ),
                                   counterText: '',
                                   suffixIcon: IconButton(
                                     onPressed: () {
@@ -186,9 +191,9 @@ class _LoginViewState extends State<LoginView> {
                           child: Padding(
                             padding: const EdgeInsets.all(15),
                             child: !state.processing
-                                ? const Text(
-                                    'Login',
-                                    style: TextStyle(fontSize: 20),
+                                ? Text(
+                                    translate('authentication.login'),
+                                    style: const TextStyle(fontSize: 20),
                                   )
                                 : const CircularProgressIndicator(),
                           ),
@@ -205,8 +210,8 @@ class _LoginViewState extends State<LoginView> {
                 onPressed: () => context
                     .read<LoginBloc>()
                     .add(const LoginChangeView(LoginViews.forgotPassword)),
-                child: const Text(
-                  'I forgot my password',
+                child: Text(
+                  translate('authentication.forgot_password'),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -217,8 +222,8 @@ class _LoginViewState extends State<LoginView> {
                 onPressed: () => context
                     .read<LoginBloc>()
                     .add(const LoginChangeView(LoginViews.signup)),
-                child: const Text(
-                  'Create an account',
+                child: Text(
+                  translate('authentication.create_account'),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -229,8 +234,8 @@ class _LoginViewState extends State<LoginView> {
                 onPressed: () => context
                     .read<LoginBloc>()
                     .add(const LoginChangeView(LoginViews.resendVerifEmail)),
-                child: const Text(
-                  'Resend verification email',
+                child: Text(
+                  translate('authentication.resend_verification'),
                   textAlign: TextAlign.center,
                 ),
               ),

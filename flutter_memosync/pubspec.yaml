@@ -42,8 +42,13 @@ dependencies:
   flutter_background_service: ^2.1.3
   flutter_bloc: ^8.0.1
   flutter_local_notifications: ^9.7.0
+  flutter_localizations:
+    sdk: flutter
   flutter_svg: ^1.0.3
-  flutter_translate: ^4.0.3
+  # flutter_translate: ^4.0.3
+  flutter_translate: 
+    git:
+      url: https://github.com/guillaumeboehm/Flutter-Translate
   fuzzy: ^0.4.0-nullsafety.0
   hive: ^2.1.0
   hive_flutter: ^1.1.0

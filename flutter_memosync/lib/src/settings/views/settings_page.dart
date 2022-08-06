@@ -29,10 +29,10 @@ class SettingsPage extends StatelessWidget {
       appBar: AppBar(
         title: Flex(
           direction: Axis.horizontal,
-          children: const [
+          children: [
             Flexible(
               child: Text(
-                'Global Settings',
+                translate('settings.title'),
                 overflow: TextOverflow.fade,
               ),
             ),
@@ -130,7 +130,7 @@ class SettingsPage extends StatelessWidget {
                   ),
                   SettingsTile.navigation(
                     title: Text(
-                      translate('settings.general.autosave_memos'),
+                      translate('settings.general.autosave.section_title'),
                     ),
                     onPressed: (_) {
                       Navigator.push(
@@ -142,7 +142,8 @@ class SettingsPage extends StatelessWidget {
                   SettingsTile.navigation(
                     title: Text(
                       translate(
-                          'settings.general.background_sync.section_title'),
+                        'settings.general.background_sync.section_title',
+                      ),
                     ),
                     onPressed: (_) {
                       Navigator.push(
@@ -166,6 +167,9 @@ class SettingsPage extends StatelessWidget {
                     ),
                   ),
                   SettingsTile(
+                    title: Text(
+                      translate('settings.appearance.language'),
+                    ),
                     value: Text(
                       translate(
                         '''
@@ -173,39 +177,63 @@ language.name.${LocalizedApp.of(context).delegate.currentLocale.languageCode}'''
                       ),
                     ),
                     onPressed: (_) {
-                      // ignore: lines_longer_than_80_chars
-                      // TODO(me): set locale as default or a list of available languages
-
-                      // final locale =
-                      //     LocalizedApp.of(context).delegate.currentLocale ==
-                      //             const Locale('en')
-                      //         ? const Locale('fr')
-                      //         : const Locale('en');
-                      // Storage.setSettings(settings..locale = locale);
                       showDialog<Locale?>(
                         context: context,
                         builder: (diagContext) {
-                          return SimpleDialog(
+                          final delegate = LocalizedApp.of(context).delegate;
+                          final langs = delegate.supportedLocales;
+                          return AlertDialog(
                             title: Text(
                               translate(
                                 'language.selected_message',
                                 args: {
                                   'language': translate(
                                     '''
-language.name.${LocalizedApp.of(context).delegate.currentLocale.languageCode}''',
+language.name.${delegate.currentLocale.languageCode}''',
                                   ),
                                 },
+                              ),
+                            ),
+                            content: SizedBox(
+                              height: 400,
+                              width: 400,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Expanded(
+                                    child: ListView.builder(
+                                      itemCount: langs.length,
+                                      itemBuilder: (context, index) {
+                                        return ListTile(
+                                          title: Text(
+                                            translate(
+                                              '''
+language.name.${langs[index].languageCode}''',
+                                            ),
+                                          ),
+                                          onTap: () => Navigator.pop(
+                                            diagContext,
+                                            langs[index],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           );
                         },
                       ).then((locale) {
-                        changeLocale(context, locale?.scriptCode);
+                        changeLocale(context, locale?.languageCode);
+                        Storage.setSettings(
+                          Storage.getSettings()
+                            ..locale = translate(
+                              'language.name.${locale?.languageCode}',
+                            ),
+                        );
                       });
                     },
-                    title: Text(
-                      translate('settings.appearance.language'),
-                    ),
                   ),
                 ],
               ),
@@ -310,7 +338,7 @@ class _AutoSaveMemos extends _SubSettingPage {
   _AutoSaveMemos({
     required super.builder,
   }) : super(
-          title: translate('settings.general.autosave_memos.section_title'),
+          title: translate('settings.general.autosave.section_title'),
         );
 
   /// Settings page route

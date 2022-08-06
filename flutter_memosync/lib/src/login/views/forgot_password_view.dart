@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_memosync/src/authentication/authentication.dart';
 import 'package:flutter_memosync/src/login/login.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:validators/validators.dart';
 
 /// View for the user login
@@ -44,10 +45,10 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Reset password',
+              Text(
+                translate('authentication.reset_password'),
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                 ),
@@ -71,14 +72,16 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                         cut: true,
                         paste: true,
                       ),
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: 'Email',
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        hintText: translate('authentication.hints.email'),
                         counterText: '',
                       ),
                       validator: (value) {
                         if (!isEmail(value ?? '')) {
-                          return 'Please enter a valid email.';
+                          return translate(
+                            'authentication.form_validation.email_invalid',
+                          );
                         }
                         return null;
                       },
@@ -127,12 +130,12 @@ ${error != null ? error['code'].toString() : success?['code'].toString()}"""]
                           onPressed: !state.processing
                               ? () => _submit(_formKey, context)
                               : null,
-                          child: const Padding(
-                            padding: EdgeInsets.all(15),
+                          child: Padding(
+                            padding: const EdgeInsets.all(15),
                             child: Text(
-                              'Send reset link',
+                              translate('authentication.send_reset_link'),
                               textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 20),
+                              style: const TextStyle(fontSize: 20),
                             ),
                           ),
                         );
@@ -148,7 +151,7 @@ ${error != null ? error['code'].toString() : success?['code'].toString()}"""]
                 onPressed: () => context
                     .read<LoginBloc>()
                     .add(const LoginChangeView(LoginViews.login)),
-                child: const Text('Login'),
+                child: Text(translate('authentication.login')),
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 5),
@@ -157,8 +160,8 @@ ${error != null ? error['code'].toString() : success?['code'].toString()}"""]
                 onPressed: () => context
                     .read<LoginBloc>()
                     .add(const LoginChangeView(LoginViews.signup)),
-                child: const Text(
-                  'Create an account',
+                child: Text(
+                  translate('authentication.create_account'),
                   textAlign: TextAlign.center,
                 ),
               ),

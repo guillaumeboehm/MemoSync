@@ -6,6 +6,8 @@ import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/models/models.dart';
 import 'package:flutter_memosync/src/services/notification_service.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
+import 'package:flutter_memosync/src/utilities/string_extenstion.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:universal_platform/universal_platform.dart';
 
@@ -35,11 +37,11 @@ class SettingsView extends StatefulWidget {
 
   /// Maps a [NotificationRepeatEvery] to a [String]
   static final repeatEveryToString = <NotificationRepeatEvery, String>{
-    NotificationRepeatEvery.day: 'Day',
-    NotificationRepeatEvery.week: 'Week',
-    NotificationRepeatEvery.month: 'Month',
-    NotificationRepeatEvery.year: 'Year',
-    NotificationRepeatEvery.period: 'Period',
+    NotificationRepeatEvery.day: translate('label.day').capitalize(),
+    NotificationRepeatEvery.week: translate('label.week').capitalize(),
+    NotificationRepeatEvery.month: translate('label.month').capitalize(),
+    NotificationRepeatEvery.year: translate('label.year').capitalize(),
+    NotificationRepeatEvery.period: translate('label.period').capitalize(),
   };
 
   /// The size constraints for this view
@@ -95,7 +97,10 @@ class _SettingsViewState extends State<SettingsView> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 60, vertical: 5),
                     child: Text(
-                      '${state.currentMemo} settings',
+                      translate(
+                        'memo.settings.page_title',
+                        args: {'currentMemoTitle': state.currentMemo},
+                      ),
                       style: const TextStyle(fontSize: 20),
                     ),
                   ),
@@ -160,9 +165,9 @@ class _SettingsViewState extends State<SettingsView> {
             },
             initialValue: (settings[setting] as bool?) ?? false,
             leading: const Icon(Icons.notification_important),
-            title: const Text('Pinned notification'),
-            description: const Text(
-              '''Pins a non-discardlable notification with the content of the memo''',
+            title: Text(translate('memo.settings.pinned_notifications.title')),
+            description: Text(
+              translate('memo.settings.pinned_notifications.description'),
             ),
           ),
         );
@@ -181,7 +186,9 @@ class _SettingsViewState extends State<SettingsView> {
             },
             initialValue: (settings[setting] as bool?) ?? false,
             leading: const Icon(Icons.notifications_on),
-            title: const Text('Recurrent notifications'),
+            title: Text(
+              translate('memo.settings.recurrent_notifications.title'),
+            ),
           ),
         );
       }
@@ -192,7 +199,9 @@ class _SettingsViewState extends State<SettingsView> {
           SettingsTile(
             enabled: settings['notifications_on'] as bool? ?? false,
             trailing: const Icon(Icons.add),
-            title: const Text('Add notification'),
+            title: Text(
+              translate('memo.settings.recurrent_notifications.add'),
+            ),
             onPressed: (context) async {
               // ignore: avoid_dynamic_calls
               if (settings['notifications'].runtimeType != List<dynamic>) {
@@ -239,7 +248,7 @@ class _SettingsViewState extends State<SettingsView> {
         tiles.add(
           SettingsTile(
             enabled: false, //TODO(me): To implement
-            title: const Text('Set widgets'),
+            title: Text(translate('memo.settings.widgets.set')),
           ),
         );
       }
@@ -249,14 +258,15 @@ class _SettingsViewState extends State<SettingsView> {
           ..add(
             SettingsTile(
               enabled: false, //TODO(me): To implement
-              title: const Text('Set as home page background'),
+              title: Text(translate('memo.settings.background.set_home_page')),
               onPressed: (context) {},
             ),
           )
           ..add(
             SettingsTile(
               enabled: false, //TODO(me): To implement
-              title: const Text('Set as lock screen background'),
+              title:
+                  Text(translate('memo.settings.background.set_lock_screen')),
               onPressed: (context) {},
             ),
           );

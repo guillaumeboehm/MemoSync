@@ -139,9 +139,9 @@ class HomeScaffold extends StatelessWidget {
                                 const Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 5),
                                 ),
-                                const Flexible(
+                                Flexible(
                                   child: Text(
-                                    'MemoSync',
+                                    translate('general.app_title'),
                                     overflow: TextOverflow.fade,
                                   ),
                                 ),

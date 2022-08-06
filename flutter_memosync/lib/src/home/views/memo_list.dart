@@ -4,7 +4,9 @@ import 'package:flutter_memosync/src/home/home.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/models/models.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
+import 'package:flutter_memosync/src/utilities/string_extenstion.dart';
 import 'package:flutter_memosync/src/widgets/list_drawer.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:fuzzy/fuzzy.dart';
 import 'package:throttling/throttling.dart';
 import 'package:universal_platform/universal_platform.dart';
@@ -102,12 +104,16 @@ class _MemoListState extends State<MemoList>
                                                 // ignore: use_build_context_synchronously
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
-                                                  const SnackBar(
+                                                  SnackBar(
                                                     content: Text(
-                                                      'Memo list refreshed',
+                                                      translate(
+                                                        '''
+snack.memo_list_refreshed''',
+                                                      ),
                                                     ),
-                                                    duration:
-                                                        Duration(seconds: 1),
+                                                    duration: const Duration(
+                                                      seconds: 1,
+                                                    ),
                                                   ),
                                                 );
                                               },
@@ -139,8 +145,8 @@ class _MemoListState extends State<MemoList>
                           },
                           controller: searchController,
                           decoration: InputDecoration(
-                            labelText: 'Search',
-                            hintText: 'Search',
+                            labelText: translate('label.search').capitalize(),
+                            hintText: translate('label.search').capitalize(),
                             prefixIcon: const Icon(Icons.search),
                             suffixIcon: IconButton(
                               padding: const EdgeInsets.only(right: 15),
@@ -181,9 +187,11 @@ class _MemoListState extends State<MemoList>
                           // guard close above
                           // ignore: use_build_context_synchronously
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Memo list refreshed'),
-                              duration: Duration(seconds: 1),
+                            SnackBar(
+                              content: Text(
+                                translate('snack.memo_list_refreshed'),
+                              ),
+                              duration: const Duration(seconds: 1),
                             ),
                           );
                         },
@@ -261,9 +269,9 @@ class _MemoListState extends State<MemoList>
                   _,
                 ) {
                   return (isProcessing as bool? ?? false)
-                      ? const AlertDialog(
-                          title: Text('Deletion'),
-                          content: SizedBox(
+                      ? AlertDialog(
+                          title: Text(translate('label.deletion').capitalize()),
+                          content: const SizedBox(
                             height: 32,
                             width: 32,
                             child: Center(
@@ -274,22 +282,25 @@ class _MemoListState extends State<MemoList>
                           ),
                         )
                       : AlertDialog(
-                          title: const Text('Deletion'),
+                          title: Text(translate('label.deletion').capitalize()),
                           content: RichText(
                             text: TextSpan(
                               children: [
-                                const TextSpan(
-                                  text: '''Are you sure you want to''',
+                                TextSpan(
+                                  text: translate('memo.deletion_alert.before'),
                                 ),
                                 TextSpan(
-                                  text: ''' delete $memoTitle''',
+                                  text: translate(
+                                    'memo.deletion_alert.important',
+                                    args: {'memoTitle': memoTitle},
+                                  ),
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.red.shade400,
                                   ),
                                 ),
-                                const TextSpan(
-                                  text: ''',\nthis action is irreversible.''',
+                                TextSpan(
+                                  text: translate('memo.deletion_alert.after'),
                                 ),
                               ],
                             ),
@@ -301,7 +312,8 @@ class _MemoListState extends State<MemoList>
                                   diagContext,
                                 ).pop();
                               },
-                              child: const Text('Cancel'),
+                              child:
+                                  Text(translate('label.cancel').capitalize()),
                             ),
                             TextButton(
                               onPressed: () {
@@ -319,7 +331,8 @@ class _MemoListState extends State<MemoList>
                                   ).pop();
                                 }
                               },
-                              child: const Text('Delete'),
+                              child:
+                                  Text(translate('label.delete').capitalize()),
                             ),
                           ],
                         );
