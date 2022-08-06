@@ -39,7 +39,7 @@
         "username_or_password_incorrect": "The username or password is incorrect",
         "verification_link_sent": "If a user is registered with this email and it is not yet verified, a verification link has been sent. Don't forget to check your spams.",
         "verify_email": {
-            "after": "before trying to log in\n(don't forget to check your spam folder)",
+            "after": "before trying to log in (don't forget to check your spam folder)",
             "before": "",
             "button": "Verify your email address"
         },
@@ -98,7 +98,7 @@
     "memo": {
         "create_memo": "Create a new memo",
         "deletion_alert": {
-            "after": ",\nthis action is irreversible.",
+            "after": ", this action is irreversible.",
             "before": "Are you sure you want to",
             "important": " delete {memoTitle}"
         },
