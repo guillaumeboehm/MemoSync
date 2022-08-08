@@ -85,5 +85,15 @@
     },
     "general": {
         "app_title": "MemoSync"
+    },
+    "authentication": {
+        "change_password": "Changer de mot de passe",
+        "create_account": "Créer un compte",
+        "form_validation": {
+            "email_invalid": "Entrez une adresse email valide s'il-vous-plait.",
+            "password_too_short": "Votre mot de passe doit contenir au moins 8 caractères",
+            "password_too_weak": "Votre mot de passe doit contenir au moins un caractère spécial, une lettre minuscule et une lettre majuscule."
+        },
+        "forgot_password": "J'ai oublié mon mot de passe"
     }
 }
