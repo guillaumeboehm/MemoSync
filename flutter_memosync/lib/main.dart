@@ -28,6 +28,8 @@ void main() async {
         fallbackLocale: 'en',
         supportedLocales: ['en', 'fr'],
         preferences: TranslatePreferences(),
+        useFallbackForMissingStrings: true,
+        interpolateEmptyAsEmtpyString: true,
       ),
       App(
         authenticationRepository: AuthenticationRepository(),

@@ -37,7 +37,7 @@ Map<String, Widget Function(BuildContext)> authenticationMessages = {
         text: TextSpan(
           children: [
             TextSpan(
-              text: translate('authentication.user_created.before'),
+              text: translateList('authentication.user_created')[0],
               style: const TextStyle(color: Colors.green),
             ),
             WidgetSpan(
@@ -49,13 +49,13 @@ Map<String, Widget Function(BuildContext)> authenticationMessages = {
                       .add(const LoginChangeView(LoginViews.login));
                 },
                 child: Text(
-                  translate('authentication.user_created.login_button'),
+                  translateList('authentication.user_created')[1],
                   style: const TextStyle(color: Colors.orange),
                 ),
               ),
             ),
             TextSpan(
-              text: translate('authentication.user_created.after'),
+              text: translateList('authentication.user_created')[2],
               style: const TextStyle(color: Colors.green),
             ),
           ],
@@ -101,7 +101,7 @@ Map<String, Widget Function(BuildContext)> authenticationMessages = {
         text: TextSpan(
           children: [
             TextSpan(
-              text: translate('authentication.user_already_exists.before'),
+              text: translateList('authentication.user_already_exists')[0],
               style: const TextStyle(color: Colors.red),
             ),
             WidgetSpan(
@@ -113,13 +113,13 @@ Map<String, Widget Function(BuildContext)> authenticationMessages = {
                       .add(const LoginChangeView(LoginViews.login));
                 },
                 child: Text(
-                  translate('authentication.user_already_exists.login_button'),
+                  translateList('authentication.user_already_exists')[1],
                   style: const TextStyle(color: Colors.orange),
                 ),
               ),
             ),
             TextSpan(
-              text: translate('authentication.user_already_exists.after'),
+              text: translateList('authentication.user_already_exists')[2],
               style: const TextStyle(color: Colors.red),
             ),
           ],
@@ -130,7 +130,7 @@ Map<String, Widget Function(BuildContext)> authenticationMessages = {
         text: TextSpan(
           children: [
             TextSpan(
-              text: translate('authentication.verify_email.before'),
+              text: translateList('authentication.verify_email')[0],
               style: const TextStyle(color: Colors.red),
             ),
             WidgetSpan(
@@ -142,13 +142,13 @@ Map<String, Widget Function(BuildContext)> authenticationMessages = {
                       .add(const LoginChangeView(LoginViews.resendVerifEmail));
                 },
                 child: Text(
-                  translate('authentication.verify_email.button'),
+                  translateList('authentication.verify_email')[1],
                   style: const TextStyle(color: Colors.orange),
                 ),
               ),
             ),
             TextSpan(
-              text: translate('authentication.verify_email.after'),
+              text: translateList('authentication.verify_email')[2],
               style: const TextStyle(color: Colors.red),
             ),
           ],

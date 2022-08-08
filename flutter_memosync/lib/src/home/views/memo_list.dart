@@ -268,6 +268,10 @@ snack.memo_list_refreshed''',
                   isProcessing,
                   _,
                 ) {
+                  final memoDeletionAlert = translateList(
+                    'memo.deletion_alert',
+                    args: {'memoTitle': memoTitle},
+                  );
                   return (isProcessing as bool? ?? false)
                       ? AlertDialog(
                           title: Text(translate('label.deletion').capitalize()),
@@ -287,20 +291,17 @@ snack.memo_list_refreshed''',
                             text: TextSpan(
                               children: [
                                 TextSpan(
-                                  text: translate('memo.deletion_alert.before'),
+                                  text: memoDeletionAlert[0],
                                 ),
                                 TextSpan(
-                                  text: translate(
-                                    'memo.deletion_alert.important',
-                                    args: {'memoTitle': memoTitle},
-                                  ),
+                                  text: memoDeletionAlert[1],
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.red.shade400,
                                   ),
                                 ),
                                 TextSpan(
-                                  text: translate('memo.deletion_alert.after'),
+                                  text: memoDeletionAlert[2],
                                 ),
                               ],
                             ),
