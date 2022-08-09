@@ -18,11 +18,22 @@
         "search": "chercher",
         "days": "jours",
         "second": "seconde",
-        "seconds": "secondes"
+        "seconds": "secondes",
+        "delete": "supprimer",
+        "deletion": "suppression",
+        "friday": "vendredi",
+        "monday": "lundi",
+        "period": "période",
+        "saturday": "samedi",
+        "sunday": "dimanche",
+        "thursday": "jeudi",
+        "tuesday": "mardi",
+        "wednesday": "mercredi"
     },
     "menu": {
         "logout": "Se déconnecter",
-        "settings": "Paramètres"
+        "settings": "Paramètres",
+        "exit": "Quitter"
     },
     "settings": {
         "general": {
@@ -66,7 +77,8 @@
         "security": {
             "data_encryption": "Activer l'encryption totale des données",
             "section_title": "Sécurité"
-        }
+        },
+        "title": "Paramètres globaux"
     },
     "language": {
         "name": {
@@ -84,7 +96,8 @@
         "purge_local_db": "Purger les mémos de la base de donnée locale"
     },
     "general": {
-        "app_title": "MemoSync"
+        "app_title": "MemoSync",
+        "unknown_error": "Erreur inconnue"
     },
     "authentication": {
         "change_password": "Changer de mot de passe",
@@ -94,6 +107,88 @@
             "password_too_short": "Votre mot de passe doit contenir au moins 8 caractères",
             "password_too_weak": "Votre mot de passe doit contenir au moins un caractère spécial, une lettre minuscule et une lettre majuscule."
         },
-        "forgot_password": "J'ai oublié mon mot de passe"
+        "forgot_password": "J'ai oublié mon mot de passe",
+        "hints": {
+            "new_password": "Nouveau mot de passe",
+            "password": "Mot de passe",
+            "email": "Email"
+        },
+        "login": "Se connecter",
+        "user_has_account": "J'ai déjà un compte",
+        "username_or_password_incorrect": "Le nom d'utilisateur ou le mot de passe est incorrect",
+        "verifying": "Vérification",
+        "resend_verification": "Renvoyer l'email de vérification",
+        "signup": "S'inscrire",
+        "unqualified_address": "Votre email n'est pas accessible, utilisez une adresse email valide s'il-vous-plait.",
+        "password_changed": "Votre mot de passe à été modifié avec succès, vous pouvez maintenant vous connecter.",
+        "malformed_link": "Ce lien semble invalide, essayez de demander un lien à nouveau.",
+        "resend_link": "Renvoyer le lien",
+        "reset_password": "Réinitialiser le mot de passe",
+        "send_reset_link": "Envoyer le lien de réinitialisation",
+        "user_already_exists": [
+            "Un utilisateur avec cet email existe déjà, ",
+            "essayez de vous connecter",
+            "."
+        ],
+        "user_created": [
+            "Votre compte à été créé, vérifiez votre email puis ",
+            "connectez-vous",
+            "."
+        ],
+        "verify_email": [
+            "Avant d'essayer de vous connecter,",
+            "vérifiez votre adresse email.",
+            " (N'oubliez pas de regarder vos courriers indésirables)"
+        ],
+        "server_unreachable": "Il semble y avoir un problème de connection aux serveurs de memosync, réessayez plus tard s'il-vous-plait.",
+        "reset_password_maybe_sent": "Si un utilisateur est enregistré sur cet email, un lien à été envoyé. N'oubliez pas de vérifier vos courriers indésirables.",
+        "verification_link_sent": "Si un utilisateur est inscrit avec cet email, et qu'il n'est pas encore vérifié, un lien de vérification à été envoyé. N'oubliez pas de regarder vos courriers indésirables.",
+        "signup_title": "Inscription à MemoSync"
+    },
+    "memo": {
+        "hints": {
+            "new_memo_title": "Titre du nouveau memo"
+        },
+        "settings": {
+            "background": {
+                "set_home_page": "Définir en tant de fond d'écran de la page d'accueil",
+                "set_lock_screen": "Définir en tant que font d'écran de l'écran de verrouillage"
+            },
+            "page_title": "paramètres de {currentMemoTitle}",
+            "pinned_notifications": {
+                "description": "Épingle une notification avec le contenu du mémo",
+                "title": "Notification épinglé"
+            },
+            "recurrent_notifications": {
+                "add": "Ajouter une notification",
+                "ignore_on": "Ignorer les : {dayList}",
+                "repeat_every": "Répéter tous les",
+                "repeat_on_day": "Répéter le {day} de chaque {monthOrYear}",
+                "select_one_day": "Vous devez sélectionner au moins un jour.",
+                "title": "Notifications récurrentes"
+            },
+            "widgets": {
+                "set": "Définir des widgets"
+            }
+        },
+        "synchronize": "Synchroniser",
+        "deletion_alert": [
+            "Êtes-vous sûr de vouloir ",
+            "supprimer {memoTitle}",
+            ", cette action est définitive."
+        ],
+        "create_memo": "Créer un nouveau mémo"
+    },
+    "snack": {
+        "memo_exists_already": "Un mémo avec ce titre existe déjà.",
+        "memo_sync_success": "Mémo synchronisé avec succès.",
+        "memo_created": "Mémo créé.",
+        "memo_creation_internal_error": "Quelque chose n'a pas fonctionné durant la création du mémo.",
+        "memo_deleted": "Mémo supprimé",
+        "memo_deletion_error": "Une erreur est survenue durant la suppression du mémo.",
+        "memo_list_refreshed": "Liste des mémos rafraîchie.",
+        "memo_sync_newer_version_exists": "Une version plus récente du mémo à été combinée, vérifiez que le mémo ne contient pas d'erreurs.",
+        "memo_was_deleted": "Ce mémo à été supprimé depuis un autre appareil.",
+        "memo_sync_error": "Une erreur est survenue durant la synchronisation : {error}."
     }
 }

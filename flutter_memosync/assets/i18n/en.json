@@ -25,24 +25,24 @@
         "signup": "Sign up",
         "signup_title": "Sign up to MemoSync",
         "unqualified_address": "Your email is not accessible, please use a valid email address.",
-        "user_already_exists": [ 
+        "user_already_exists": [
             "A user with this email already exists, ",
             "try logging in",
             "."
-         ],
-        "user_created": [ 
+        ],
+        "user_created": [
             "Your account has been created, verify your email and then ",
             "log in",
             "."
-         ],
+        ],
         "user_has_account": "I already have an account",
         "username_or_password_incorrect": "The username or password is incorrect",
         "verification_link_sent": "If a user is registered with this email and it is not yet verified, a verification link has been sent. Don't forget to check your spams.",
-        "verify_email": [ 
+        "verify_email": [
             "{}",
             "Verify your email address",
             " before trying to log in (don't forget to check your spam folder)"
-         ],
+        ],
         "verifying": "Verifying"
     },
     "debug": {
