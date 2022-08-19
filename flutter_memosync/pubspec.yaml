@@ -40,7 +40,7 @@ dependencies:
   equatable: ^2.0.3
   flutter:
     sdk: flutter
-  flutter_background_service: ^2.1.3
+  # flutter_background_service: ^2.1.3
   flutter_bloc: ^8.0.1
   flutter_local_notifications: ^9.7.0
   flutter_localizations:
@@ -58,6 +58,7 @@ dependencies:
   objectbox_flutter_libs: any
   package_info_plus: ^1.4.2
   quick_notify: ^0.2.1
+  sentry_flutter: ^6.9.0
   settings_ui: ^2.0.2
   shared_preferences: ^2.0.15
   system_tray: ^2.0.1

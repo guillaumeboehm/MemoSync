@@ -30,6 +30,10 @@
 .pub-cache/
 .pub/
 /build/
+pubspec.lock
+linux/flutter/generated_*
+macos/Flutter/Generated*
+windows/flutter/generated_*
 
 # Web related
 lib/generated_plugin_registrant.dart

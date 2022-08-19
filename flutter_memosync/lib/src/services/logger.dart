@@ -48,10 +48,9 @@ class Logger {
   /// Displays a debug message on the screen.
   static Future<bool> notify(String? str) async {
     if (!kDebugMode || !printInfoLogs) return false;
-    // if (!await QuickNotify.hasPermission()) {
-    //   await QuickNotify.requestPermission();
-    // }
-    // if (!await QuickNotify.hasPermission()) return false;
+    if (!await QuickNotify.hasPermission()) {
+      if (!await QuickNotify.requestPermission()) return false;
+    }
     final time = DateTime.now();
     QuickNotify.notify(
       title: '''

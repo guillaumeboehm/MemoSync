@@ -10,12 +10,12 @@ import 'package:flutter_memosync/src/login/views/login_page.dart';
 import 'package:flutter_memosync/src/services/background_handlers/desktop_window_manager.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/models/settings.dart';
-import 'package:flutter_memosync/src/services/notification_service.dart';
 import 'package:flutter_memosync/src/services/repositories/user.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
 import 'package:flutter_memosync/src/splash/splash.dart';
 import 'package:flutter_memosync/src/widgets/route_404.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_platform/universal_platform.dart';
 
@@ -66,6 +66,9 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
       valueListenable: Storage.settingsStorageStream(),
       builder: (context, settings, _) {
         return MaterialApp(
+          navigatorObservers: [
+            SentryNavigatorObserver(),
+          ],
           theme: App.lightTheme,
           darkTheme: App.darkTheme,
           themeMode: (settings.darkMode) ? ThemeMode.dark : ThemeMode.light,
@@ -84,14 +87,14 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
                   !(await DisableBatteryOptimization
                           .isAllBatteryOptimizationDisabled ??
                       false)) {
-                await DisableBatteryOptimization
-                    .showDisableAllOptimizationsSettings(
-                  'Enable Auto Start',
-                  'Follow the steps and enable the auto start of this app',
-                  'Your device has additional battery optimization',
-                  '''
-Follow the steps and disable the optimizations to allow smooth functioning of this app''',
-                );
+//                 await DisableBatteryOptimization
+//                     .showDisableAllOptimizationsSettings(
+//                   'Enable Auto Start',
+//                   'Follow the steps and enable the auto start of this app',
+//                   'Your device has additional battery optimization',
+//                   '''
+// Follow the steps and disable the optimizations to allow smooth functioning of this app''',
+                // );
               }
             });
 
@@ -108,7 +111,7 @@ Follow the steps and disable the optimizations to allow smooth functioning of th
                   );
                   switch (state.status) {
                     case AuthenticationStatus.authenticated:
-                      NotificationService.initNotifications();
+                      // NotificationService.initNotifications();
                       _navigator.pushAndRemoveUntil<void>(
                         HomePage.route(),
                         (route) => false,
