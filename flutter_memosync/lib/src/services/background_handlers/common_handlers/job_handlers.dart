@@ -6,7 +6,7 @@ import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/models/memo.dart';
 import 'package:flutter_memosync/src/services/notification_service.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:flutter_memosync/src/utilities/sentry_wrappers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const _recurrentNotifMaxDelay = 5; // don't notify anymore after more than 5 min
@@ -47,7 +47,7 @@ Future<void> periodicJobHandler(String taskName) async {
       break;
     default:
       unawaited(Logger.notify('WorkManager task unknown : $taskName'));
-      unawaited(Sentry.captureMessage('WorkManager task unknown : $taskName'));
+      unawaited(sentryCaptureMessage('WorkManager task unknown : $taskName'));
   }
 }
 
@@ -215,6 +215,6 @@ Future<void> permanentJobHandler(int tick) async {
       memoId++;
     }
   } catch (e, st) {
-    await Sentry.captureException(e, stackTrace: st);
+    await sentryCaptureException(e, st);
   }
 }

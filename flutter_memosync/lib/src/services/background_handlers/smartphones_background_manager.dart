@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_memosync/src/services/background_handlers/common_handlers/job_handlers.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/storage/storage_objectbox.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:flutter_memosync/src/utilities/sentry_wrappers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:workmanager/workmanager.dart';
@@ -135,56 +135,22 @@ void _workManagerCallbackDispatcher() {
           () {},
         );
       });
-      var storageOpened = false;
 
-      const tryLimit = 5;
-      var tryCount = 0;
-      await Future.doWhile(
-        () async {
-          await SharedPreferences.getInstance().then((sharedPrefs) async {
-            try {
-              await Storage.initStorage(
-                existingStore: Int64List.fromList(
-                  sharedPrefs
-                      .getStringList('storeRef')!
-                      .map(int.parse)
-                      .toList(),
-                ).buffer.asByteData(),
-              );
-              storageOpened = true;
-              return false;
-            } catch (e, st) {
-              unawaited(Logger.error("Couldn't open storage, $e"));
-              await Sentry.captureException(e, stackTrace: st);
-              try {
-                await Storage.initStorage();
-                storageOpened = true;
-                return false;
-              } catch (e2, st2) {
-                unawaited(Logger.error("Couldn't open storage, $e2"));
-                await Sentry.captureException(e2, stackTrace: st2);
-              }
-            }
-          });
-          return tryCount++ < tryLimit; //doWhile
-        },
-      );
-      if (!storageOpened) return Future.value(false); // retry
+      if (!await Storage.initStorage()) return Future.value(false); // retry
       await periodicJobHandler(task);
-      Storage.store.close();
     } catch (err, st) {
       unawaited(
         Logger.error(
           err.toString(),
         ),
       );
-      try {
-        Storage.store.close();
-      } catch (e, st2) {
-        unawaited(Logger.error('Could not close store ${e.toString()}'));
-        await Sentry.captureException(e, stackTrace: st2);
-      }
-      await Sentry.captureException(err, stackTrace: st);
+      // try {
+      //   Storage.store.close();
+      // } catch (e, st2) {
+      //   unawaited(Logger.error('Could not close store ${e.toString()}'));
+      //   await sentryCaptureException(e, st2);
+      // }
+      await sentryCaptureException(err, st);
       return Future.value(false); // retry
     }
     return Future.value(true);

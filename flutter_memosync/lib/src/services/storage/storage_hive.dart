@@ -93,7 +93,7 @@ class Storage extends StorageInterface {
   }
 
   /// Initializes Hive and all the boxes.
-  static Future<void> initStorage({ByteData? existingStore}) async {
+  static Future<bool> initStorage({ByteData? existingStore}) async {
     if (UniversalPlatform.isWeb) {
       await Hive.initFlutter();
     } else {
@@ -124,6 +124,8 @@ class Storage extends StorageInterface {
     await openBox<SettingsObject>('settings');
     await openBox<MemoObject>('memos');
     await openBox<UserObject>('user');
+
+    return true;
   }
 
   /// Returns the settings object or a new object if it is not set.

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_memosync/src/authentication/authentication.dart';
 import 'package:flutter_memosync/src/home/home.dart';
 import 'package:flutter_memosync/src/home/repositories/memo.dart';
@@ -60,7 +61,7 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final localizationDelegate = LocalizedApp.of(context).delegate;
+    // final localizationDelegate = LocalizedApp.of(context).delegate;
 
     return ValueListenableBuilder<SettingsObject>(
       valueListenable: Storage.settingsStorageStream(),
@@ -73,14 +74,17 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
           darkTheme: App.darkTheme,
           themeMode: (settings.darkMode) ? ThemeMode.dark : ThemeMode.light,
           navigatorKey: _navigatorKey,
-          localizationsDelegates: [
-            GlobalMaterialLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            localizationDelegate,
-          ],
-          supportedLocales: localizationDelegate.supportedLocales,
-          locale: localizationDelegate.currentLocale,
+          localizationsDelegates: context.localizationDelegates,
+          supportedLocales: context.supportedLocales,
+          locale: context.locale,
+          // localizationsDelegates: [
+          //   GlobalMaterialLocalizations.delegate,
+          //   GlobalCupertinoLocalizations.delegate,
+          //   GlobalWidgetsLocalizations.delegate,
+          //   localizationDelegate,
+          // ],
+          // supportedLocales: localizationDelegate.supportedLocales,
+          // locale: localizationDelegate.currentLocale,
           builder: (context, child) {
             Future(() async {
               if (!UniversalPlatform.isDesktopOrWeb &&

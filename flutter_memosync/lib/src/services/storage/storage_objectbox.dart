@@ -7,6 +7,7 @@ import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/models/models.dart';
 import 'package:flutter_memosync/src/services/notification_service.dart';
 import 'package:flutter_memosync/src/services/storage/storage_interface.dart';
+import 'package:flutter_memosync/src/utilities/sentry_wrappers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Handles all the storage using Hive
@@ -111,13 +112,48 @@ class Storage extends StorageInterface {
   }
 
   /// Initializes ObjectBox store.
-  static Future<void> initStorage({ByteData? existingStore}) async {
-    store = (existingStore != null)
-        ? Store.fromReference(
-            getObjectBoxModel(),
-            existingStore,
-          )
-        : await openStore();
+  static Future<bool> initStorage({ByteData? existingStore}) async {
+    const maxAttempts = 5;
+    var attempt = 1;
+
+    await Future.doWhile(() async {
+      try {
+        const pref = 'storeRef';
+        final sharedPrefs = await SharedPreferences.getInstance();
+
+        final existingStore = Int64List.fromList(
+          sharedPrefs.getStringList(pref)?.map(int.parse).toList() ?? [],
+        ).buffer.asByteData();
+
+        if (existingStore.lengthInBytes > 0) {
+          //Falls back to opening new store on error
+          try {
+            store = Store.fromReference(
+              getObjectBoxModel(),
+              existingStore,
+            );
+            return false;
+          } catch (e) {
+            unawaited(Logger.info('Store reference invalid, $e'));
+          }
+        }
+
+        store = await openStore();
+        await sharedPrefs.setStringList(
+          pref,
+          Storage.store.reference.buffer
+              .asInt64List()
+              .map((e) => e.toString())
+              .toList(),
+        );
+      } catch (e, st) {
+        unawaited(Logger.error("Couldn't open storage, $e"));
+        await sentryCaptureException(e, st);
+        return ++attempt <= maxAttempts;
+      }
+      return false; //guard
+    });
+    return attempt <= maxAttempts;
   }
 
   /// Returns the settings object or a new object if it is not set.
