@@ -25,24 +25,24 @@
         "signup": "Sign up",
         "signup_title": "Sign up to MemoSync",
         "unqualified_address": "Your email is not accessible, please use a valid email address.",
-        "user_already_exists": [
-            "A user with this email already exists, ",
-            "try logging in",
-            "."
-        ],
-        "user_created": [
-            "Your account has been created, verify your email and then ",
-            "log in",
-            "."
-        ],
+        "user_already_exists": { 
+            "0": "A user with this email already exists, ",
+            "1": "try logging in",
+            "2": "."
+         },
+        "user_created": { 
+            "0": "Your account has been created, verify your email and then ",
+            "1": "log in",
+            "2": "."
+         },
         "user_has_account": "I already have an account",
         "username_or_password_incorrect": "The username or password is incorrect",
         "verification_link_sent": "If a user is registered with this email and it is not yet verified, a verification link has been sent. Don't forget to check your spams.",
-        "verify_email": [
-            "{}",
-            "Verify your email address",
-            " before trying to log in (don't forget to check your spam folder)"
-        ],
+        "verify_email": { 
+            "0": "{}",
+            "1": "Verify your email address",
+            "2": " before trying to log in (don't forget to check your spam folder)"
+         },
         "verifying": "Verifying"
     },
     "debug": {
@@ -97,11 +97,11 @@
     },
     "memo": {
         "create_memo": "Create a new memo",
-        "deletion_alert": [
-            "Are you sure you want to ",
-            "delete {memoTitle}",
-            ", this action is irreversible."
-        ],
+        "deletion_alert": { 
+            "0": "Are you sure you want to ",
+            "1": "delete {memoTitle}",
+            "2": ", this action is irreversible."
+         },
         "hints": {
             "new_memo_title": "New memo title"
         },

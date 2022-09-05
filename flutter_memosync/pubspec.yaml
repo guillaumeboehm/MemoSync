@@ -32,13 +32,13 @@ dependencies:
   crypto: ^3.0.2
   cupertino_icons: ^1.0.2
   device_info_plus: ^4.1.2
-  # Test a little before removing
-  # device_info_plus: 4.0.0 # needs ffi 2.0.1 but launch at startup can't jump from ffi 1.1.2 up a major
-  # device_info_plus_platform_interface: "2.3.0+1" # needs ffi 2.0.1 but launch at startup can't jump from ffi 1.1.2 up a major
   diff_match_patch: ^0.4.1
   dio: ^4.0.6
   disable_battery_optimization: ^1.1.0+1
-  easy_localization: ^3.0.1
+  # easy_localization: ^3.0.1
+  easy_localization: 
+    git:
+      url: https://github.com/guillaumeboehm/easy_localization.git # For missing string fallback
   enum_flag: ^1.0.1
   equatable: ^2.0.3
   flutter:
@@ -49,10 +49,6 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_svg: ^1.0.3
-  # flutter_translate: ^4.0.3
-  flutter_translate: 
-    git:
-      url: https://github.com/guillaumeboehm/Flutter-Translate.git # For missing string fallback
   fuzzy: ^0.4.0-nullsafety.0
   hive: ^2.1.0
   hive_flutter: ^1.1.0

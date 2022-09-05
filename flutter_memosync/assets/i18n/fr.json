@@ -125,21 +125,21 @@
         "resend_link": "Renvoyer le lien",
         "reset_password": "Réinitialiser le mot de passe",
         "send_reset_link": "Envoyer le lien de réinitialisation",
-        "user_already_exists": [
-            "Un utilisateur avec cet email existe déjà, ",
-            "essayez de vous connecter",
-            "."
-        ],
-        "user_created": [
-            "Votre compte à été créé, vérifiez votre email puis ",
-            "connectez-vous",
-            "."
-        ],
-        "verify_email": [
-            "Avant d'essayer de vous connecter,",
-            "vérifiez votre adresse email.",
-            " (N'oubliez pas de regarder vos courriers indésirables)"
-        ],
+        "user_already_exists": { 
+            "0": "Un utilisateur avec cet email existe déjà, ",
+            "1": "essayez de vous connecter",
+            "2": "."
+         },
+        "user_created": { 
+            "0": "Votre compte à été créé, vérifiez votre email puis ",
+            "1": "connectez-vous",
+            "2": "."
+         },
+        "verify_email": { 
+            "0": "Avant d'essayer de vous connecter,",
+            "1": "vérifiez votre adresse email.",
+            "2": " (N'oubliez pas de regarder vos courriers indésirables)"
+         },
         "server_unreachable": "Il semble y avoir un problème de connection aux serveurs de memosync, réessayez plus tard s'il-vous-plait.",
         "reset_password_maybe_sent": "Si un utilisateur est enregistré sur cet email, un lien à été envoyé. N'oubliez pas de vérifier vos courriers indésirables.",
         "verification_link_sent": "Si un utilisateur est inscrit avec cet email, et qu'il n'est pas encore vérifié, un lien de vérification à été envoyé. N'oubliez pas de regarder vos courriers indésirables.",
@@ -172,11 +172,11 @@
             }
         },
         "synchronize": "Synchroniser",
-        "deletion_alert": [
-            "Êtes-vous sûr de vouloir ",
-            "supprimer {memoTitle}",
-            ", cette action est définitive."
-        ],
+        "deletion_alert": { 
+            "0": "Êtes-vous sûr de vouloir ",
+            "1": "supprimer {memoTitle}",
+            "2": ", cette action est définitive."
+         },
         "create_memo": "Créer un nouveau mémo"
     },
     "snack": {

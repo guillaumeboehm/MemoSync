@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_memosync/src/authentication/authentication.dart';
-import 'package:flutter_translate/flutter_translate.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:universal_html/html.dart' show window;
 
 /// Returns
@@ -36,7 +36,7 @@ class VerifyEmail extends Widget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        translate('authentication.verifying'),
+                        tr('authentication.verifying'),
                         textAlign: TextAlign.center,
                         style: const TextStyle(fontSize: 50),
                       ),

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_memosync/src/authentication/authentication.dart';
 import 'package:flutter_memosync/src/login/login.dart';
-import 'package:flutter_translate/flutter_translate.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:validators/validators.dart';
 
 /// View for the user login
@@ -46,7 +46,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                translate('authentication.reset_password'),
+                tr('authentication.reset_password'),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 30,
@@ -74,12 +74,12 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                       ),
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
-                        hintText: translate('authentication.hints.email'),
+                        hintText: tr('authentication.hints.email'),
                         counterText: '',
                       ),
                       validator: (value) {
                         if (!isEmail(value ?? '')) {
-                          return translate(
+                          return tr(
                             'authentication.form_validation.email_invalid',
                           );
                         }
@@ -133,7 +133,7 @@ ${error != null ? error['code'].toString() : success?['code'].toString()}"""]
                           child: Padding(
                             padding: const EdgeInsets.all(15),
                             child: Text(
-                              translate('authentication.send_reset_link'),
+                              tr('authentication.send_reset_link'),
                               textAlign: TextAlign.center,
                               style: const TextStyle(fontSize: 20),
                             ),
@@ -151,7 +151,7 @@ ${error != null ? error['code'].toString() : success?['code'].toString()}"""]
                 onPressed: () => context
                     .read<LoginBloc>()
                     .add(const LoginChangeView(LoginViews.login)),
-                child: Text(translate('authentication.login')),
+                child: Text(tr('authentication.login')),
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 5),
@@ -161,7 +161,7 @@ ${error != null ? error['code'].toString() : success?['code'].toString()}"""]
                     .read<LoginBloc>()
                     .add(const LoginChangeView(LoginViews.signup)),
                 child: Text(
-                  translate('authentication.create_account'),
+                  tr('authentication.create_account'),
                   textAlign: TextAlign.center,
                 ),
               ),

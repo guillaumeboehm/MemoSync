@@ -6,7 +6,7 @@ import 'package:flutter_memosync/src/services/models/models.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
 import 'package:flutter_memosync/src/utilities/string_extenstion.dart';
 import 'package:flutter_memosync/src/widgets/list_drawer.dart';
-import 'package:flutter_translate/flutter_translate.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fuzzy/fuzzy.dart';
 import 'package:throttling/throttling.dart';
 import 'package:universal_platform/universal_platform.dart';
@@ -106,7 +106,7 @@ class _MemoListState extends State<MemoList>
                                                     .showSnackBar(
                                                   SnackBar(
                                                     content: Text(
-                                                      translate(
+                                                      tr(
                                                         '''
 snack.memo_list_refreshed''',
                                                       ),
@@ -145,8 +145,8 @@ snack.memo_list_refreshed''',
                           },
                           controller: searchController,
                           decoration: InputDecoration(
-                            labelText: translate('label.search').capitalize(),
-                            hintText: translate('label.search').capitalize(),
+                            labelText: tr('label.search').capitalize(),
+                            hintText: tr('label.search').capitalize(),
                             prefixIcon: const Icon(Icons.search),
                             suffixIcon: IconButton(
                               padding: const EdgeInsets.only(right: 15),
@@ -189,7 +189,7 @@ snack.memo_list_refreshed''',
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                translate('snack.memo_list_refreshed'),
+                                tr('snack.memo_list_refreshed'),
                               ),
                               duration: const Duration(seconds: 1),
                             ),
@@ -268,13 +268,9 @@ snack.memo_list_refreshed''',
                   isProcessing,
                   _,
                 ) {
-                  final memoDeletionAlert = translateList(
-                    'memo.deletion_alert',
-                    args: {'memoTitle': memoTitle},
-                  );
                   return (isProcessing as bool? ?? false)
                       ? AlertDialog(
-                          title: Text(translate('label.deletion').capitalize()),
+                          title: Text(tr('label.deletion').capitalize()),
                           content: const SizedBox(
                             height: 32,
                             width: 32,
@@ -286,22 +282,37 @@ snack.memo_list_refreshed''',
                           ),
                         )
                       : AlertDialog(
-                          title: Text(translate('label.deletion').capitalize()),
+                          title: Text(tr('label.deletion').capitalize()),
                           content: RichText(
                             text: TextSpan(
                               children: [
                                 TextSpan(
-                                  text: memoDeletionAlert[0],
+                                  text: tr(
+                                    'memo.deletion_alert.0',
+                                    namedArgs: {
+                                      'memoTitle': memoTitle.toString()
+                                    },
+                                  ),
                                 ),
                                 TextSpan(
-                                  text: memoDeletionAlert[1],
+                                  text: tr(
+                                    'memo.deletion_alert.1',
+                                    namedArgs: {
+                                      'memoTitle': memoTitle.toString()
+                                    },
+                                  ),
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.red.shade400,
                                   ),
                                 ),
                                 TextSpan(
-                                  text: memoDeletionAlert[2],
+                                  text: tr(
+                                    'memo.deletion_alert.2',
+                                    namedArgs: {
+                                      'memoTitle': memoTitle.toString()
+                                    },
+                                  ),
                                 ),
                               ],
                             ),
@@ -313,8 +324,7 @@ snack.memo_list_refreshed''',
                                   diagContext,
                                 ).pop();
                               },
-                              child:
-                                  Text(translate('label.cancel').capitalize()),
+                              child: Text(tr('label.cancel').capitalize()),
                             ),
                             TextButton(
                               onPressed: () {
@@ -332,8 +342,7 @@ snack.memo_list_refreshed''',
                                   ).pop();
                                 }
                               },
-                              child:
-                                  Text(translate('label.delete').capitalize()),
+                              child: Text(tr('label.delete').capitalize()),
                             ),
                           ],
                         );

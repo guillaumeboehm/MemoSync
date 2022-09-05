@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_memosync/src/authentication/authentication.dart';
 import 'package:flutter_memosync/src/login/login.dart';
-import 'package:flutter_translate/flutter_translate.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:validators/validators.dart';
 
 /// View for the user login
@@ -54,7 +54,7 @@ class _LoginViewState extends State<LoginView> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                translate('authentication.login'),
+                tr('authentication.login'),
                 style: const TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
@@ -81,12 +81,12 @@ class _LoginViewState extends State<LoginView> {
                       ),
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
-                        labelText: translate('authentication.hints.email'),
+                        labelText: tr('authentication.hints.email'),
                         counterText: '',
                       ),
                       validator: (value) {
                         if (!isEmail(value ?? '')) {
-                          return translate(
+                          return tr(
                             'authentication.form_validation.email_invalid',
                           );
                         }
@@ -119,7 +119,7 @@ class _LoginViewState extends State<LoginView> {
                                 autofillHints: const ['current-password'],
                                 decoration: InputDecoration(
                                   border: const OutlineInputBorder(),
-                                  labelText: translate(
+                                  labelText: tr(
                                     'authentication.hints.password',
                                   ),
                                   counterText: '',
@@ -192,7 +192,7 @@ class _LoginViewState extends State<LoginView> {
                             padding: const EdgeInsets.all(15),
                             child: !state.processing
                                 ? Text(
-                                    translate('authentication.login'),
+                                    tr('authentication.login'),
                                     style: const TextStyle(fontSize: 20),
                                   )
                                 : const CircularProgressIndicator(),
@@ -211,7 +211,7 @@ class _LoginViewState extends State<LoginView> {
                     .read<LoginBloc>()
                     .add(const LoginChangeView(LoginViews.forgotPassword)),
                 child: Text(
-                  translate('authentication.forgot_password'),
+                  tr('authentication.forgot_password'),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -223,7 +223,7 @@ class _LoginViewState extends State<LoginView> {
                     .read<LoginBloc>()
                     .add(const LoginChangeView(LoginViews.signup)),
                 child: Text(
-                  translate('authentication.create_account'),
+                  tr('authentication.create_account'),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -235,7 +235,7 @@ class _LoginViewState extends State<LoginView> {
                     .read<LoginBloc>()
                     .add(const LoginChangeView(LoginViews.resendVerifEmail)),
                 child: Text(
-                  translate('authentication.resend_verification'),
+                  tr('authentication.resend_verification'),
                   textAlign: TextAlign.center,
                 ),
               ),

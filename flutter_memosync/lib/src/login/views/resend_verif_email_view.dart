@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_memosync/src/authentication/authentication.dart';
 import 'package:flutter_memosync/src/login/login.dart';
-import 'package:flutter_translate/flutter_translate.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:validators/validators.dart';
 
 /// View for the user login
@@ -46,7 +46,7 @@ class _ResendVerifEmailViewState extends State<ResendVerifEmailView> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                translate('authentication.resend_verification'),
+                tr('authentication.resend_verification'),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 30,
@@ -74,12 +74,12 @@ class _ResendVerifEmailViewState extends State<ResendVerifEmailView> {
                       ),
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
-                        hintText: translate('authentication.hints.email'),
+                        hintText: tr('authentication.hints.email'),
                         counterText: '',
                       ),
                       validator: (value) {
                         if (!isEmail(value ?? '')) {
-                          return translate(
+                          return tr(
                             'authentication.form_validation.email_invalid',
                           );
                         }
@@ -131,7 +131,7 @@ class _ResendVerifEmailViewState extends State<ResendVerifEmailView> {
                           child: Padding(
                             padding: const EdgeInsets.all(15),
                             child: Text(
-                              translate('authentication.resend_link'),
+                              tr('authentication.resend_link'),
                               textAlign: TextAlign.center,
                               style: const TextStyle(fontSize: 20),
                             ),
@@ -149,7 +149,7 @@ class _ResendVerifEmailViewState extends State<ResendVerifEmailView> {
                 onPressed: () => context
                     .read<LoginBloc>()
                     .add(const LoginChangeView(LoginViews.login)),
-                child: Text(translate('authentication.login')),
+                child: Text(tr('authentication.login')),
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 5),
@@ -159,7 +159,7 @@ class _ResendVerifEmailViewState extends State<ResendVerifEmailView> {
                     .read<LoginBloc>()
                     .add(const LoginChangeView(LoginViews.signup)),
                 child: Text(
-                  translate('authentication.create_account'),
+                  tr('authentication.create_account'),
                   textAlign: TextAlign.center,
                 ),
               ),

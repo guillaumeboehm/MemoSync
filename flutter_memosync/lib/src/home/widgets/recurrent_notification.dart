@@ -6,7 +6,7 @@ import 'package:flutter_memosync/src/home/views/memo_settings.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/models/memo.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
-import 'package:flutter_translate/flutter_translate.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 /// Returns a notification [SettingsTile]
@@ -39,17 +39,17 @@ SettingsTile notificationTile({
                 if (notifInfo['repeatEveryHour'] as int > 0)
                   TextSpan(
                     text: """
-${notifInfo['repeatEveryHour'].toString().padLeft(2, '0')}${translate('label.hour').characters.first}""",
+${notifInfo['repeatEveryHour'].toString().padLeft(2, '0')}${tr('label.hour').characters.first}""",
                   ),
                 if (notifInfo['repeatEveryMinute'] as int > 0)
                   TextSpan(
                     text: """
-${notifInfo['repeatEveryMinute'].toString().padLeft(2, '0')}${translate('label.minute').characters.first}""",
+${notifInfo['repeatEveryMinute'].toString().padLeft(2, '0')}${tr('label.minute').characters.first}""",
                   ),
                 if (notifInfo['repeatEverySecond'] as int > 0)
                   TextSpan(
                     text: """
-${notifInfo['repeatEverySecond'].toString().padLeft(2, '0')}${translate('label.second').characters.first}""",
+${notifInfo['repeatEverySecond'].toString().padLeft(2, '0')}${tr('label.second').characters.first}""",
                   ),
               ],
             )
@@ -148,50 +148,50 @@ Future<Map<dynamic, dynamic>?> showNotificationDialog(
         'repeatEveryMinute': TimeOfDay.now().minute,
         'repeatEverySecond': 0,
         'repeatOnDays': <String, bool>{
-          (translate('label.monday').length > 3)
-              ? translate('label.monday').substring(0, 3)
-              : translate('label.monday'): false,
-          (translate('label.tuesday').length > 3)
-              ? translate('label.tuesday').substring(0, 3)
-              : translate('label.tuesday'): false,
-          (translate('label.wednsday').length > 3)
-              ? translate('label.wednsday').substring(0, 3)
-              : translate('label.wednsday'): false,
-          (translate('label.thursday').length > 3)
-              ? translate('label.thursday').substring(0, 3)
-              : translate('label.thursday'): false,
-          (translate('label.friday').length > 3)
-              ? translate('label.friday').substring(0, 3)
-              : translate('label.friday'): false,
-          (translate('label.saturday').length > 3)
-              ? translate('label.saturday').substring(0, 3)
-              : translate('label.saturday'): false,
-          (translate('label.sunday').length > 3)
-              ? translate('label.sunday').substring(0, 3)
-              : translate('label.sunday'): false,
+          (tr('label.monday').length > 3)
+              ? tr('label.monday').substring(0, 3)
+              : tr('label.monday'): false,
+          (tr('label.tuesday').length > 3)
+              ? tr('label.tuesday').substring(0, 3)
+              : tr('label.tuesday'): false,
+          (tr('label.wednsday').length > 3)
+              ? tr('label.wednsday').substring(0, 3)
+              : tr('label.wednsday'): false,
+          (tr('label.thursday').length > 3)
+              ? tr('label.thursday').substring(0, 3)
+              : tr('label.thursday'): false,
+          (tr('label.friday').length > 3)
+              ? tr('label.friday').substring(0, 3)
+              : tr('label.friday'): false,
+          (tr('label.saturday').length > 3)
+              ? tr('label.saturday').substring(0, 3)
+              : tr('label.saturday'): false,
+          (tr('label.sunday').length > 3)
+              ? tr('label.sunday').substring(0, 3)
+              : tr('label.sunday'): false,
         },
         'ignoreOnDays': <String, bool>{
-          (translate('label.monday').length > 3)
-              ? translate('label.monday').substring(0, 3)
-              : translate('label.monday'): false,
-          (translate('label.tuesday').length > 3)
-              ? translate('label.tuesday').substring(0, 3)
-              : translate('label.tuesday'): false,
-          (translate('label.wednsday').length > 3)
-              ? translate('label.wednsday').substring(0, 3)
-              : translate('label.wednsday'): false,
-          (translate('label.thursday').length > 3)
-              ? translate('label.thursday').substring(0, 3)
-              : translate('label.thursday'): false,
-          (translate('label.friday').length > 3)
-              ? translate('label.friday').substring(0, 3)
-              : translate('label.friday'): false,
-          (translate('label.saturday').length > 3)
-              ? translate('label.saturday').substring(0, 3)
-              : translate('label.saturday'): false,
-          (translate('label.sunday').length > 3)
-              ? translate('label.sunday').substring(0, 3)
-              : translate('label.sunday'): false,
+          (tr('label.monday').length > 3)
+              ? tr('label.monday').substring(0, 3)
+              : tr('label.monday'): false,
+          (tr('label.tuesday').length > 3)
+              ? tr('label.tuesday').substring(0, 3)
+              : tr('label.tuesday'): false,
+          (tr('label.wednsday').length > 3)
+              ? tr('label.wednsday').substring(0, 3)
+              : tr('label.wednsday'): false,
+          (tr('label.thursday').length > 3)
+              ? tr('label.thursday').substring(0, 3)
+              : tr('label.thursday'): false,
+          (tr('label.friday').length > 3)
+              ? tr('label.friday').substring(0, 3)
+              : tr('label.friday'): false,
+          (tr('label.saturday').length > 3)
+              ? tr('label.saturday').substring(0, 3)
+              : tr('label.saturday'): false,
+          (tr('label.sunday').length > 3)
+              ? tr('label.sunday').substring(0, 3)
+              : tr('label.sunday'): false,
         },
         'repeatOnDate': DateTime.now(),
       };
@@ -209,7 +209,7 @@ Future<Map<dynamic, dynamic>?> showNotificationDialog(
     if ((data as Map)['repeatEvery'] == NotificationRepeatEvery.week) {
       if ((data['repeatOnDays'] as Map).values.every((el) => el == false)) {
         valid = false;
-        errMsg = translate(
+        errMsg = tr(
           'memo.settings.recurrent_notifications.select_one_day',
         );
       }
@@ -221,7 +221,7 @@ Future<Map<dynamic, dynamic>?> showNotificationDialog(
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red.shade400,
-          content: Text(errMsg ?? translate('general.unknown_error')),
+          content: Text(errMsg ?? tr('general.unknown_error')),
         ),
       );
     }
@@ -257,7 +257,7 @@ Future<Map<dynamic, dynamic>?> showNotificationDialog(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      translate(
+                      tr(
                         'memo.settings.recurrent_notifications.repeat_every',
                       ),
                     ),
@@ -539,30 +539,30 @@ Repeat on: ${(Map<String, bool>.from(_data['repeatOnDays'] as Map)..removeWhere(
                               NotificationRepeatEvery.month)
                             // Occurs on this day of the month
                             Text(
-                              translate(
+                              tr(
                                 '''
 memo.settings.recurrent_notifications.repeat_on_day''',
-                                args: {
+                                namedArgs: {
                                   'day': dateToDayString(
                                     (_data['repeatOnDate'] as DateTime)
                                         .toLocal(),
                                   ),
-                                  'monthOrYear': translate('label.month'),
+                                  'monthOrYear': tr('label.month'),
                                 },
                               ),
                             )
                           else
                             // Occurs on this day of the year
                             Text(
-                              translate(
+                              tr(
                                 '''
 memo.settings.recurrent_notifications.repeat_on_day''',
-                                args: {
+                                namedArgs: {
                                   'day': dateToDayOfMonthString(
                                     (_data['repeatOnDate'] as DateTime)
                                         .toLocal(),
                                   ),
-                                  'monthOrYear': translate('label.year'),
+                                  'monthOrYear': tr('label.year'),
                                 },
                               ),
                             ),
@@ -616,9 +616,9 @@ memo.settings.recurrent_notifications.repeat_on_day''',
                       Padding(
                         padding: const EdgeInsets.only(bottom: 20, top: 20),
                         child: Text(
-                          translate(
+                          tr(
                             'memo.settings.recurrent_notifications.ignore_on',
-                            args: {
+                            namedArgs: {
                               'dayList': (Map<String, bool>.from(
                                       _data['ignoreOnDays'] as Map)
                                     ..removeWhere((key, value) => !value))
@@ -687,14 +687,14 @@ memo.settings.recurrent_notifications.repeat_on_day''',
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(diagContext),
-                  child: Text(translate('label.cancel').toUpperCase()),
+                  child: Text(tr('label.cancel').toUpperCase()),
                 ),
                 TextButton(
                   onPressed: () => validate(
                     _data,
                     validCallback: () => Navigator.pop(diagContext, _data),
                   ),
-                  child: Text(translate('label.ok').toUpperCase()),
+                  child: Text(tr('label.ok').toUpperCase()),
                 ),
               ],
             ),

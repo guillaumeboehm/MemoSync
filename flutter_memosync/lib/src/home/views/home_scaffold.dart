@@ -5,20 +5,24 @@ import 'package:flutter_memosync/app.dart' show App;
 import 'package:flutter_memosync/src/authentication/authentication.dart';
 import 'package:flutter_memosync/src/home/home.dart';
 import 'package:flutter_memosync/src/home/repositories/memo.dart';
+import 'package:flutter_memosync/src/home/widgets/about_dialog.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
 import 'package:flutter_memosync/src/settings/settings.dart';
 import 'package:flutter_memosync/src/widgets/modal_drawer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_translate/flutter_translate.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 /// Widget returning the Scaffold for the home page
 class HomeScaffold extends StatelessWidget {
   /// Default constructor
-  const HomeScaffold({
+  HomeScaffold({
     super.key,
     required this.builder,
     this.canBack = false,
-  });
+  }) {
+    PackageInfo.fromPlatform();
+  }
 
   /// Returns the home widget to build.
   final Widget Function(BoxConstraints constraints) builder;
@@ -37,6 +41,10 @@ class HomeScaffold extends StatelessWidget {
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
+          String? packageInfo;
+          PackageInfo.fromPlatform().then((info) {
+            packageInfo = '${info.version}-${info.buildNumber}';
+          });
           return SafeArea(
             child: Scaffold(
               key: _scaffoldKey,
@@ -47,26 +55,30 @@ class HomeScaffold extends StatelessWidget {
                         children: [
                           DrawerHeader(
                             child: Text(
-                              translate('general.app_title'),
+                              tr('general.app_title'),
                               style: const TextStyle(fontSize: 40),
                             ),
                           ),
                           if (kDebugMode)
                             ListTile(
-                              title: Text(translate('debug.purge_local_db')),
+                              title: Text(tr('debug.purge_local_db')),
                               onTap: Storage.removeAllMemos,
                             ),
                           ListTile(
-                            title: Text(translate('menu.settings')),
+                            title: Text(tr('menu.settings')),
                             onTap: () => Navigator.of(context)
                               ..pop()
                               ..push<void>(SettingsPage.route()),
                           ),
                           ListTile(
-                            title: Text(translate('menu.logout')),
+                            title: Text(tr('menu.logout')),
                             onTap: () => context
                                 .read<AuthenticationBloc>()
                                 .add(AuthLogoutRequested()),
+                          ),
+                          ListTile(
+                            title: Text(tr('menu.about')),
+                            onTap: () => showAbout(context),
                           ),
                         ],
                       ),
@@ -141,7 +153,7 @@ class HomeScaffold extends StatelessWidget {
                                 ),
                                 Flexible(
                                   child: Text(
-                                    translate('general.app_title'),
+                                    tr('general.app_title'),
                                     overflow: TextOverflow.fade,
                                   ),
                                 ),

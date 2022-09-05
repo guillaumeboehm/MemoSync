@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_memosync/src/authentication/authentication.dart';
 import 'package:flutter_memosync/src/login/login.dart';
-import 'package:flutter_translate/flutter_translate.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:validators/validators.dart';
 
 /// View for the user sign up
@@ -50,7 +50,7 @@ class _SignupViewState extends State<SignupView> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                translate('authentication.signup_title'),
+                tr('authentication.signup_title'),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 30,
@@ -82,12 +82,12 @@ class _SignupViewState extends State<SignupView> {
                           ),
                           decoration: InputDecoration(
                             border: const OutlineInputBorder(),
-                            labelText: translate('authentication.hints.email'),
+                            labelText: tr('authentication.hints.email'),
                             counterText: '',
                           ),
                           validator: (value) {
                             if (!isEmail(value ?? '')) {
-                              return translate(
+                              return tr(
                                 'authentication.form_validation.email_invalid',
                               );
                             }
@@ -117,7 +117,7 @@ class _SignupViewState extends State<SignupView> {
                                     autofillHints: const ['new-password'],
                                     decoration: InputDecoration(
                                       border: const OutlineInputBorder(),
-                                      labelText: translate(
+                                      labelText: tr(
                                         'authentication.hints.password',
                                       ),
                                       counterText: '',
@@ -136,7 +136,7 @@ class _SignupViewState extends State<SignupView> {
                                     validator: (value) {
                                       value ??= '';
                                       if (!isLength(value, 8)) {
-                                        return translate(
+                                        return tr(
                                           '''
 authentication.form_validation.password_too_short''',
                                         );
@@ -144,7 +144,7 @@ authentication.form_validation.password_too_short''',
                                       if (!matches(value, r'[#?!@$%^&*-]') ||
                                           !matches(value, '[A-Z]') ||
                                           !matches(value, '[a-z]')) {
-                                        return translate(
+                                        return tr(
                                           '''
 authentication.form_validation.password_too_weak''',
                                         );
@@ -200,7 +200,7 @@ ${error != null ? error['code'].toString() : success?['code'].toString()}"""]
                           child: Padding(
                             padding: const EdgeInsets.all(15),
                             child: Text(
-                              translate('authentication.signup'),
+                              tr('authentication.signup'),
                               textAlign: TextAlign.center,
                               style: const TextStyle(fontSize: 20),
                             ),
@@ -219,7 +219,7 @@ ${error != null ? error['code'].toString() : success?['code'].toString()}"""]
                     .read<LoginBloc>()
                     .add(const LoginChangeView(LoginViews.login)),
                 child: Text(
-                  translate('authentication.user_has_account'),
+                  tr('authentication.user_has_account'),
                   textAlign: TextAlign.center,
                 ),
               ),

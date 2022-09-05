@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_memosync/src/login/login.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
-import 'package:flutter_translate/flutter_translate.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:universal_io/io.dart';
 import 'package:validators/validators.dart';
 
@@ -28,7 +28,7 @@ enum AuthenticationStatus {
 /// Map of all the error messages corresponding to error results
 Map<String, Widget Function(BuildContext)> authenticationMessages = {
   'ServerUnreachable': (context) => Text(
-        translate('authentication.server_unreachable'),
+        tr('authentication.server_unreachable'),
         textAlign: TextAlign.center,
         style: const TextStyle(color: Colors.red),
       ),
@@ -37,7 +37,7 @@ Map<String, Widget Function(BuildContext)> authenticationMessages = {
         text: TextSpan(
           children: [
             TextSpan(
-              text: translateList('authentication.user_created')[0],
+              text: tr('authentication.user_created.0'),
               style: const TextStyle(color: Colors.green),
             ),
             WidgetSpan(
@@ -49,50 +49,50 @@ Map<String, Widget Function(BuildContext)> authenticationMessages = {
                       .add(const LoginChangeView(LoginViews.login));
                 },
                 child: Text(
-                  translateList('authentication.user_created')[1],
+                  tr('authentication.user_created.1'),
                   style: const TextStyle(color: Colors.orange),
                 ),
               ),
             ),
             TextSpan(
-              text: translateList('authentication.user_created')[2],
+              text: tr('authentication.user_created.2'),
               style: const TextStyle(color: Colors.green),
             ),
           ],
         ),
       ),
   'UnqualifiedAddress': (context) => Text(
-        translate('authentication.unqualified_address'),
+        tr('authentication.unqualified_address'),
         textAlign: TextAlign.center,
         style: const TextStyle(color: Colors.red),
       ),
   'NoUserFound': (context) => Text(
-        translate('authentication.username_or_password_incorrect'),
+        tr('authentication.username_or_password_incorrect'),
         textAlign: TextAlign.center,
         style: const TextStyle(color: Colors.red),
       ),
   'WrongPass': (context) => Text(
-        translate('authentication.username_or_password_incorrect'),
+        tr('authentication.username_or_password_incorrect'),
         textAlign: TextAlign.center,
         style: const TextStyle(color: Colors.red),
       ),
   'ResetPasswordMaybeSent': (context) => Text(
-        translate('authentication.reset_password_maybe_sent'),
+        tr('authentication.reset_password_maybe_sent'),
         textAlign: TextAlign.center,
         style: const TextStyle(color: Colors.green),
       ),
   'MalformedLink': (context) => Text(
-        translate('authentication.malformed_link'),
+        tr('authentication.malformed_link'),
         textAlign: TextAlign.center,
         style: const TextStyle(color: Colors.red),
       ),
   'PasswordChanged': (context) => Text(
-        translate('authentication.malformed_link'),
+        tr('authentication.malformed_link'),
         textAlign: TextAlign.center,
         style: const TextStyle(color: Colors.green),
       ),
   'VerifLinkMaybeSent': (context) => Text(
-        translate('authentication.verification_link_sent'),
+        tr('authentication.verification_link_sent'),
         textAlign: TextAlign.center,
         style: const TextStyle(color: Colors.green),
       ),
@@ -101,7 +101,7 @@ Map<String, Widget Function(BuildContext)> authenticationMessages = {
         text: TextSpan(
           children: [
             TextSpan(
-              text: translateList('authentication.user_already_exists')[0],
+              text: tr('authentication.user_already_exists.0'),
               style: const TextStyle(color: Colors.red),
             ),
             WidgetSpan(
@@ -113,13 +113,13 @@ Map<String, Widget Function(BuildContext)> authenticationMessages = {
                       .add(const LoginChangeView(LoginViews.login));
                 },
                 child: Text(
-                  translateList('authentication.user_already_exists')[1],
+                  tr('authentication.user_already_exists.1'),
                   style: const TextStyle(color: Colors.orange),
                 ),
               ),
             ),
             TextSpan(
-              text: translateList('authentication.user_already_exists')[2],
+              text: tr('authentication.user_already_exists.2'),
               style: const TextStyle(color: Colors.red),
             ),
           ],
@@ -130,7 +130,7 @@ Map<String, Widget Function(BuildContext)> authenticationMessages = {
         text: TextSpan(
           children: [
             TextSpan(
-              text: translateList('authentication.verify_email')[0],
+              text: tr('authentication.verify_email.0'),
               style: const TextStyle(color: Colors.red),
             ),
             WidgetSpan(
@@ -142,13 +142,13 @@ Map<String, Widget Function(BuildContext)> authenticationMessages = {
                       .add(const LoginChangeView(LoginViews.resendVerifEmail));
                 },
                 child: Text(
-                  translateList('authentication.verify_email')[1],
+                  tr('authentication.verify_email.1'),
                   style: const TextStyle(color: Colors.orange),
                 ),
               ),
             ),
             TextSpan(
-              text: translateList('authentication.verify_email')[2],
+              text: tr('authentication.verify_email.2'),
               style: const TextStyle(color: Colors.red),
             ),
           ],

@@ -15,7 +15,7 @@ import 'package:flutter_memosync/src/services/repositories/user.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
 import 'package:flutter_memosync/src/splash/splash.dart';
 import 'package:flutter_memosync/src/widgets/route_404.dart';
-import 'package:flutter_translate/flutter_translate.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_platform/universal_platform.dart';
@@ -231,24 +231,21 @@ class App extends StatelessWidget {
     App.context = context;
     Logger.info('Launching App');
     return DesktopWindowManager.windowWrapper(
-      child: LocalizationProvider(
-        state: LocalizationProvider.of(context).state,
-        child: MultiRepositoryProvider(
-          providers: [
-            RepositoryProvider.value(
-              value: authenticationRepository,
-            ),
-            RepositoryProvider.value(
-              value: memoRepository,
-            ),
-          ],
-          child: BlocProvider(
-            create: (_) => AuthenticationBloc(
-              authenticationRepository: authenticationRepository,
-              userRepository: userRepository,
-            ),
-            child: const AppView(),
+      child: MultiRepositoryProvider(
+        providers: [
+          RepositoryProvider.value(
+            value: authenticationRepository,
           ),
+          RepositoryProvider.value(
+            value: memoRepository,
+          ),
+        ],
+        child: BlocProvider(
+          create: (_) => AuthenticationBloc(
+            authenticationRepository: authenticationRepository,
+            userRepository: userRepository,
+          ),
+          child: const AppView(),
         ),
       ),
     );

@@ -8,7 +8,7 @@ import 'package:flutter_memosync/src/home/home.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/models/memo.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
-import 'package:flutter_translate/flutter_translate.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:throttling/throttling.dart';
 
 /// Main memo view with the memo editor
@@ -105,7 +105,7 @@ class _MemoViewState extends State<MemoView> {
                                                   );
                                             },
                                             child: Text(
-                                              translate('memo.synchronize'),
+                                              tr('memo.synchronize'),
                                             ),
                                           ),
                                         )

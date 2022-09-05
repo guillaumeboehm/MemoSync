@@ -7,7 +7,7 @@ import 'package:flutter_memosync/src/login/views/views.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/widgets/route_404.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_translate/flutter_translate.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 /// The top level login page
 class LoginPage extends StatefulWidget {
@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           Flexible(
                             child: Text(
-                              translate('general.app_title'),
+                              tr('general.app_title'),
                               overflow: TextOverflow.fade,
                             ),
                           ),

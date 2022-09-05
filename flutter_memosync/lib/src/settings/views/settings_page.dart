@@ -6,7 +6,7 @@ import 'package:flutter_memosync/src/services/notification_service.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
 import 'package:flutter_memosync/src/utilities/string_extenstion.dart';
 import 'package:flutter_memosync/src/widgets/number_input.dart';
-import 'package:flutter_translate/flutter_translate.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:universal_platform/universal_platform.dart';
@@ -32,7 +32,7 @@ class SettingsPage extends StatelessWidget {
           children: [
             Flexible(
               child: Text(
-                translate('settings.title'),
+                tr('settings.title'),
                 overflow: TextOverflow.fade,
               ),
             ),
@@ -46,12 +46,12 @@ class SettingsPage extends StatelessWidget {
             sections: [
               // GENERAL
               SettingsSection(
-                title: Text(translate('settings.general.section_title')),
+                title: Text(tr('settings.general.section_title')),
                 tiles: [
                   if (UniversalPlatform.isDesktop)
                     SettingsTile.switchTile(
                       title: Text(
-                        translate('settings.general.launch_on_startup'),
+                        tr('settings.general.launch_on_startup'),
                       ),
                       initialValue: settings.onStartup,
                       onToggle: (enabled) async {
@@ -68,7 +68,7 @@ class SettingsPage extends StatelessWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                translate('settings.option_set_error_msg'),
+                                tr('settings.option_set_error_msg'),
                               ),
                               backgroundColor: Colors.red.shade400,
                             ),
@@ -79,7 +79,7 @@ class SettingsPage extends StatelessWidget {
                   if (UniversalPlatform.isDesktop)
                     SettingsTile.switchTile(
                       title: Text(
-                        translate('settings.general.minimize_on_close'),
+                        tr('settings.general.minimize_on_close'),
                       ),
                       initialValue: settings.closeMinimized,
                       onToggle: (enabled) async {
@@ -93,7 +93,7 @@ class SettingsPage extends StatelessWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                translate('settings.option_set_error_msg'),
+                                tr('settings.option_set_error_msg'),
                               ),
                               backgroundColor: Colors.red.shade400,
                             ),
@@ -103,8 +103,7 @@ class SettingsPage extends StatelessWidget {
                     ),
                   if (UniversalPlatform.isDesktop)
                     SettingsTile.switchTile(
-                      title:
-                          Text(translate('settings.general.start_minimized')),
+                      title: Text(tr('settings.general.start_minimized')),
                       enabled: settings.closeMinimized,
                       initialValue: settings.launchMinimized,
                       onToggle: (enabled) => Storage.setSettings(
@@ -113,7 +112,7 @@ class SettingsPage extends StatelessWidget {
                     ),
                   SettingsTile.switchTile(
                     title: Text(
-                      translate('settings.general.enable_notifications'),
+                      tr('settings.general.enable_notifications'),
                     ),
                     initialValue: settings.notificationsEnabled,
                     onToggle: (enabled) {
@@ -130,7 +129,7 @@ class SettingsPage extends StatelessWidget {
                   ),
                   SettingsTile.navigation(
                     title: Text(
-                      translate('settings.general.autosave.section_title'),
+                      tr('settings.general.autosave.section_title'),
                     ),
                     onPressed: (_) {
                       Navigator.push(
@@ -141,7 +140,7 @@ class SettingsPage extends StatelessWidget {
                   ),
                   SettingsTile.navigation(
                     title: Text(
-                      translate(
+                      tr(
                         'settings.general.background_sync.section_title',
                       ),
                     ),
@@ -156,40 +155,40 @@ class SettingsPage extends StatelessWidget {
               ),
               // Appearance
               SettingsSection(
-                title: Text(translate('settings.appearance.section_title')),
+                title: Text(tr('settings.appearance.section_title')),
                 tiles: [
                   SettingsTile.switchTile(
                     initialValue: settings.darkMode,
                     onToggle: (isDark) =>
                         Storage.setSettings(settings..darkMode = isDark),
                     title: Text(
-                      translate('settings.appearance.dark_theme'),
+                      tr('settings.appearance.dark_theme'),
                     ),
                   ),
                   SettingsTile(
                     title: Text(
-                      translate('settings.appearance.language'),
+                      tr('settings.appearance.language'),
                     ),
                     value: Text(
-                      translate(
+                      tr(
                         '''
-language.name.${LocalizedApp.of(context).delegate.currentLocale.languageCode}''',
+language.name.${context.locale.languageCode}''',
                       ),
                     ),
                     onPressed: (_) {
                       showDialog<Locale?>(
                         context: context,
                         builder: (diagContext) {
-                          final delegate = LocalizedApp.of(context).delegate;
-                          final langs = delegate.supportedLocales;
+                          // final delegate = LocalizedApp.of(context).delegate;
+                          // final langs = delegate.supportedLocales;
                           return AlertDialog(
                             title: Text(
-                              translate(
+                              tr(
                                 'language.selected_message',
-                                args: {
-                                  'language': translate(
+                                namedArgs: {
+                                  'language': tr(
                                     '''
-language.name.${delegate.currentLocale.languageCode}''',
+language.name.${context.locale.languageCode}''',
                                   ),
                                 },
                               ),
@@ -202,18 +201,19 @@ language.name.${delegate.currentLocale.languageCode}''',
                                 children: [
                                   Expanded(
                                     child: ListView.builder(
-                                      itemCount: langs.length,
+                                      itemCount:
+                                          context.supportedLocales.length,
                                       itemBuilder: (context, index) {
                                         return ListTile(
                                           title: Text(
-                                            translate(
+                                            tr(
                                               '''
-language.name.${langs[index].languageCode}''',
+language.name.${context.supportedLocales[index].languageCode}''',
                                             ),
                                           ),
                                           onTap: () => Navigator.pop(
                                             diagContext,
-                                            langs[index],
+                                            context.supportedLocales[index],
                                           ),
                                         );
                                       },
@@ -225,13 +225,17 @@ language.name.${langs[index].languageCode}''',
                           );
                         },
                       ).then((locale) {
-                        changeLocale(context, locale?.languageCode);
-                        Storage.setSettings(
-                          Storage.getSettings()
-                            ..locale = translate(
-                              'language.name.${locale?.languageCode}',
-                            ),
+                        context.setLocale(
+                          locale ??
+                              context.fallbackLocale ??
+                              context.deviceLocale,
                         );
+                        // Storage.setSettings(
+                        //   Storage.getSettings()
+                        //     ..locale = tr(
+                        //       'language.name.${locale?.languageCode}',
+                        //     ),
+                        // );
                       });
                     },
                   ),
@@ -240,13 +244,13 @@ language.name.${langs[index].languageCode}''',
               // Account
               SettingsSection(
                 title: Text(
-                  translate('settings.account.section_title'),
+                  tr('settings.account.section_title'),
                 ),
                 tiles: [
                   SettingsTile.navigation(
                     enabled: false,
                     title: Text(
-                      translate('settings.account.change_password'),
+                      tr('settings.account.change_password'),
                     ),
                     onPressed: (_) {
                       // TODO(me): implement
@@ -257,7 +261,7 @@ language.name.${langs[index].languageCode}''',
               // Privacy
               SettingsSection(
                 title: Text(
-                  translate('settings.privacy.section_title'),
+                  tr('settings.privacy.section_title'),
                 ),
                 tiles: [
                   SettingsTile.switchTile(
@@ -267,7 +271,7 @@ language.name.${langs[index].languageCode}''',
                       // TODO(me): implement
                     },
                     title: Text(
-                      translate('settings.privacy.optin_analytics'),
+                      tr('settings.privacy.optin_analytics'),
                     ),
                   ),
                 ],
@@ -275,7 +279,7 @@ language.name.${langs[index].languageCode}''',
               // Security
               SettingsSection(
                 title: Text(
-                  translate('settings.security.section_title'),
+                  tr('settings.security.section_title'),
                 ),
                 tiles: [
                   SettingsTile.switchTile(
@@ -285,7 +289,7 @@ language.name.${langs[index].languageCode}''',
                       // TODO(me): implement
                     },
                     title: Text(
-                      translate('settings.security.data_encryption'),
+                      tr('settings.security.data_encryption'),
                     ),
                   ),
                 ],
@@ -293,7 +297,7 @@ language.name.${langs[index].languageCode}''',
               // Advanced
               SettingsSection(
                 title: Text(
-                  translate('settings.advanced.section_title'),
+                  tr('settings.advanced.section_title'),
                 ),
                 tiles: [
                   SettingsTile.switchTile(
@@ -303,7 +307,7 @@ language.name.${langs[index].languageCode}''',
                       // TODO(me): implement
                     },
                     title: Text(
-                      translate('settings.advanced.devel_updates'),
+                      tr('settings.advanced.devel_updates'),
                     ),
                   ),
                 ],
@@ -311,7 +315,7 @@ language.name.${langs[index].languageCode}''',
               // Help
               SettingsSection(
                 title: Text(
-                  translate('settings.help.section_title'),
+                  tr('settings.help.section_title'),
                 ),
                 tiles: [
                   SettingsTile.navigation(
@@ -320,7 +324,7 @@ language.name.${langs[index].languageCode}''',
                       // TODO(me): implement
                     },
                     title: Text(
-                      translate('settings.help.reporting'),
+                      tr('settings.help.reporting'),
                     ),
                   ),
                 ],
@@ -338,7 +342,7 @@ class _AutoSaveMemos extends _SubSettingPage {
   _AutoSaveMemos({
     required super.builder,
   }) : super(
-          title: translate('settings.general.autosave.section_title'),
+          title: tr('settings.general.autosave.section_title'),
         );
 
   /// Settings page route
@@ -355,13 +359,13 @@ class _AutoSaveMemos extends _SubSettingPage {
                       initialValue: settings.autoSave,
                       onToggle: (enabled) =>
                           Storage.setSettings(settings..autoSave = enabled),
-                      title: Text(translate('label.enabled')),
+                      title: Text(tr('label.enabled')),
                     ),
                     SettingsTile(
                       enabled: settings.autoSave,
                       value: Text(
                         '''
-${interval.toString().split('.')[0].replaceFirst(RegExp(':'), translate('label.hour').characters.first).replaceFirst(RegExp(':'), translate('label.minute').characters.first)}${translate('label.seconds').characters.first}''',
+${interval.toString().split('.')[0].replaceFirst(RegExp(':'), tr('label.hour').characters.first).replaceFirst(RegExp(':'), tr('label.minute').characters.first)}${tr('label.seconds').characters.first}''',
                       ),
                       onPressed: (value) {
                         showDialog<Duration>(
@@ -393,7 +397,7 @@ ${interval.toString().split('.')[0].replaceFirst(RegExp(':'), translate('label.h
 
                             return SimpleDialog(
                               title: Text(
-                                translate(
+                                tr(
                                   'settings.general.autosave.frequency',
                                 ),
                               ),
@@ -406,16 +410,14 @@ ${interval.toString().split('.')[0].replaceFirst(RegExp(':'), translate('label.h
                                         controller: hoursController
                                           ..text = hours.toString(),
                                         submit: submit,
-                                        hint: translate('label.hours')
-                                            .capitalize(),
+                                        hint: tr('label.hours').capitalize(),
                                         width: 60,
                                       ),
                                       NumberInputField(
                                         controller: minutesController
                                           ..text = minutes.toString(),
                                         submit: submit,
-                                        hint: translate('label.minutes')
-                                            .capitalize(),
+                                        hint: tr('label.minutes').capitalize(),
                                         width: 70,
                                         upperBound: 60,
                                       ),
@@ -423,8 +425,7 @@ ${interval.toString().split('.')[0].replaceFirst(RegExp(':'), translate('label.h
                                         controller: secondsController
                                           ..text = seconds.toString(),
                                         submit: submit,
-                                        hint: translate('label.seconds')
-                                            .capitalize(),
+                                        hint: tr('label.seconds').capitalize(),
                                         width: 70,
                                         upperBound: 60,
                                       ),
@@ -440,13 +441,13 @@ ${interval.toString().split('.')[0].replaceFirst(RegExp(':'), translate('label.h
                                         Navigator.pop(diagContext);
                                       },
                                       child: Text(
-                                        translate('label.cancel').toUpperCase(),
+                                        tr('label.cancel').toUpperCase(),
                                       ),
                                     ),
                                     TextButton(
                                       onPressed: submit,
                                       child: Text(
-                                        translate('label.ok').toUpperCase(),
+                                        tr('label.ok').toUpperCase(),
                                       ),
                                     ),
                                     const Padding(
@@ -467,7 +468,7 @@ ${interval.toString().split('.')[0].replaceFirst(RegExp(':'), translate('label.h
                         });
                       },
                       title: Text(
-                        translate('settings.general.autosave.frequency_label'),
+                        tr('settings.general.autosave.frequency_label'),
                       ),
                     ),
                   ],
@@ -483,8 +484,7 @@ ${interval.toString().split('.')[0].replaceFirst(RegExp(':'), translate('label.h
 class _BackgroundSync extends _SubSettingPage {
   _BackgroundSync({
     required super.builder,
-  }) : super(
-            title: translate('settings.general.background_sync.section_title'));
+  }) : super(title: tr('settings.general.background_sync.section_title'));
 
   /// Settings page route
   static MaterialPageRoute<_BackgroundSync> route() =>
@@ -499,7 +499,7 @@ class _BackgroundSync extends _SubSettingPage {
                       initialValue: settings.bgSync,
                       onToggle: (enabled) =>
                           Storage.setSettings(settings..bgSync = enabled),
-                      title: Text(translate('label.enabled')),
+                      title: Text(tr('label.enabled')),
                     ),
                     if (!UniversalPlatform.isDesktopOrWeb)
                       SettingsTile.switchTile(
@@ -509,7 +509,7 @@ class _BackgroundSync extends _SubSettingPage {
                           settings..bgSyncWifiOnly = enabled,
                         ),
                         title: Text(
-                          translate(
+                          tr(
                             'settings.general.background_sync.wifi_only',
                           ),
                         ),

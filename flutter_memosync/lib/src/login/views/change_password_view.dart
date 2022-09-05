@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_memosync/src/authentication/authentication.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
-import 'package:flutter_translate/flutter_translate.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:universal_html/html.dart' show window;
 import 'package:validators/validators.dart';
 
@@ -71,7 +71,7 @@ class ChangePassword extends Widget {
                             autofillHints: const ['new-password'],
                             decoration: InputDecoration(
                               border: const OutlineInputBorder(),
-                              labelText: translate(
+                              labelText: tr(
                                 'authentication.hints.new_password',
                               ),
                               counterText: '',
@@ -145,7 +145,7 @@ class ChangePassword extends Widget {
                       child: Padding(
                         padding: const EdgeInsets.all(15),
                         child: Text(
-                          translate('authentication.change_password'),
+                          tr('authentication.change_password'),
                           textAlign: TextAlign.center,
                           style: const TextStyle(fontSize: 20),
                         ),
@@ -185,7 +185,7 @@ ${error != null ? error['code'].toString() : success?['code'].toString()}"""]
                         onPressed: () {
                           window.location.href = '/';
                         },
-                        child: Text(translate('authentication.login')),
+                        child: Text(tr('authentication.login')),
                       ),
                     ],
                   );

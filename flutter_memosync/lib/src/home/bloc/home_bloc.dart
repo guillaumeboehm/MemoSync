@@ -9,7 +9,7 @@ import 'package:flutter_memosync/src/authentication/bloc/authentication_bloc.dar
 import 'package:flutter_memosync/src/home/repositories/memo.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
-import 'package:flutter_translate/flutter_translate.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';
@@ -158,14 +158,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           ScaffoldMessenger.of(homeContext).showSnackBar(
             SnackBar(
               backgroundColor: Colors.green.shade400,
-              content: Text(translate('snack.memo_deleted')),
+              content: Text(tr('snack.memo_deleted')),
             ),
           );
         } else {
           ScaffoldMessenger.of(homeContext).showSnackBar(
             SnackBar(
               backgroundColor: Colors.red.shade400,
-              content: Text(translate('snack.memo_deletion_error')),
+              content: Text(tr('snack.memo_deletion_error')),
             ),
           );
         }
@@ -192,7 +192,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             ScaffoldMessenger.of(homeContext).showSnackBar(
               SnackBar(
                 backgroundColor: Colors.red.shade400,
-                content: Text(translate('snack.memo_exists_already')),
+                content: Text(tr('snack.memo_exists_already')),
               ),
             );
             add(const RefreshMemoList());
@@ -200,14 +200,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             ScaffoldMessenger.of(homeContext).showSnackBar(
               SnackBar(
                 backgroundColor: Colors.red.shade400,
-                content: Text(translate('snack.memo_title_missing')),
+                content: Text(tr('snack.memo_title_missing')),
               ),
             );
           } else if (res['code'] == 'InternalError') {
             ScaffoldMessenger.of(homeContext).showSnackBar(
               SnackBar(
                 backgroundColor: Colors.red.shade400,
-                content: Text(translate('snack.memo_creation_internal_error')),
+                content: Text(tr('snack.memo_creation_internal_error')),
               ),
             );
           }
@@ -216,7 +216,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           ScaffoldMessenger.of(homeContext).showSnackBar(
             SnackBar(
               backgroundColor: Colors.green.shade400,
-              content: Text(translate('snack.memo_created')),
+              content: Text(tr('snack.memo_created')),
             ),
           );
           add(const RefreshMemoList());
@@ -274,17 +274,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 switch (res['code']) {
                   case 'NewerVersionExists':
                     return Text(
-                      translate('snack.memo_sync_newer_version_exists'),
+                      tr('snack.memo_sync_newer_version_exists'),
                     );
                   case 'MemoDeleted':
                     return Text(
-                      translate('snack.memo_was_deleted'),
+                      tr('snack.memo_was_deleted'),
                     );
                   default:
                     return Text(
-                      translate(
+                      tr(
                         'snack.memo_sync_error',
-                        args: {'error': res['code']},
+                        namedArgs: {'error': res['code'].toString()},
                       ),
                     );
                 }
@@ -296,7 +296,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         ScaffoldMessenger.of(homeContext).showSnackBar(
           SnackBar(
             backgroundColor: Colors.green.shade300,
-            content: Text(translate('snack.memo_sync_success')),
+            content: Text(tr('snack.memo_sync_success')),
           ),
         );
       }

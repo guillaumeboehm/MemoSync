@@ -13,9 +13,8 @@ import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/repositories/user.dart'
     show UserRepository;
 import 'package:flutter_memosync/src/services/storage/storage.dart';
-import 'package:flutter_memosync/src/services/storage/translate_preferences.dart';
 import 'package:flutter_memosync/src/utilities/sentry_wrappers.dart';
-import 'package:flutter_translate/flutter_translate.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:quick_notify/quick_notify.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:url_strategy/url_strategy.dart';
@@ -40,6 +39,8 @@ void main() async {
             supportedLocales: const [Locale('en'), Locale('fr')],
             path: 'assets/i18n',
             fallbackLocale: const Locale('en'),
+            useFallbackTranslations: true,
+            useOnlyLangCode: true,
             child: App(
               authenticationRepository: AuthenticationRepository(),
               userRepository: UserRepository(),
