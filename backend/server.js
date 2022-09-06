@@ -161,7 +161,7 @@ app.post('/newMemo', authenticateToken, async (req,res)=>{
 		//if already exists exit
 		if(await models.memos.exists({email:userEmail, title:memoTitle}).then(exists=>{
 			if(exists){
-				res.status(409).json({err: "memoAlreadyExists"});
+				res.status(409).json({code: "MemoAlreadyExists", message: "Cannot create the memo because a memo with the given title already exists"});
 				return true;
 			}
 		})) return 0;
@@ -173,9 +173,27 @@ app.post('/newMemo', authenticateToken, async (req,res)=>{
 			version: 0
 		});
 		newMemo.save();
-		res.sendStatus(201);
-	} catch {
-		res.sendStatus(500);
+		res.status(201).json({code: "MemoCreated", title: memoTitle});
+	} catch (err){
+		res.status(500).json({code: "InternalError", message:err });
+	}
+})
+app.get('/getMemos', authenticateToken, async (req,res)=>{
+	try{
+		const email = req.userInfo.email;
+		models.memos.find({email:email, title: { $in: req.query.memos }}, '-email', function (err, memos){
+			if(err){
+				console.log(err);
+				res.status(500).json({code: "InternalError", message:err });
+			}
+			else{
+				res.status(200).json(memos);
+			}
+		})
+	}catch(err){
+		console.log(err);
+		res.status(500).json({code: "InternalError", message:err });
+
 	}
 })
 app.get('/getAllMemos', authenticateToken, async (req,res)=>{
@@ -184,7 +202,7 @@ app.get('/getAllMemos', authenticateToken, async (req,res)=>{
 		models.memos.find({email:email}, '-email', function (err, memos){
 			if(err){
 				console.log(err);
-				res.sendStatus(500);
+				res.status(500).json({code: "InternalError", message:err });
 			}
 			else{
 				res.status(200).json(memos);
@@ -192,25 +210,56 @@ app.get('/getAllMemos', authenticateToken, async (req,res)=>{
 		})
 	}catch(err){
 		console.log(err);
-		res.sendStatus(500);
+		res.status(500).json({code: "InternalError", message:err });
+
+	}
+})
+app.get('/getAllMemosMetadata', authenticateToken, async (req,res)=>{
+	try{
+		const email = req.userInfo.email;
+		models.memos.find({email:email}, '-email -text', function (err, memos){
+			if(err){
+				console.log(err);
+				res.status(500).json({code: "InternalError", message:err });
+			}
+			else{
+				res.status(200).json(memos);
+			}
+		})
+	}catch(err){
+		console.log(err);
+		res.status(500).json({code: "InternalError", message:err });
+
 	}
 })
 app.post('/getMemo', authenticateToken, async (req,res)=>{
 	try{
 		const email = req.userInfo.email;
 		const memoTitle = req.body.memoTitle;
+		const memoVersion = req.body.version;
 		models.memos.findOne({email:email, title:memoTitle}, '-email -title', function (err, memo){
 			if(err){
 				console.log(err);
-				res.sendStatus(500);
+				res.status(500).json({code: "InternalError", message:err });
 			}
 			else{
-				res.status(200).json(memo);
+				if(memo != null){
+					if(memo.version <= memoVersion){
+						memo = {
+							_id: memo['_id'],
+							version: memo['version']
+						}
+					}
+					res.status(200).json(memo);
+				}
+				else {
+					res.status(410).json({ code: "MemoDeleted" });
+				}
 			}
-		})
+		});
 	}catch(err){
 		console.log(err);
-		res.sendStatus(500);
+		res.status(500).json({code: "InternalError", message:err });
 	}
 })
 app.post('/updateMemo', authenticateToken, async (req,res)=>{
@@ -222,18 +271,23 @@ app.post('/updateMemo', authenticateToken, async (req,res)=>{
 		models.memos.findOne({email:email, title:memoTitle}, '-email -title',function (err, memo){
 			if(err){
 				console.log(err);
-				res.sendStatus(500);
+				res.status(500).json({code: "InternalError", message:err });
 			}
 			else{
-				if(memoVer < memo.get('version')) return res.status(406).json(memo);
-				memo.set({text:memoTxt, version:memo.version+1});
-				memo.save();
-				res.status(200).json(memo.version);
+				if(memo != null){
+					if(memoVer <= memo.get('version')) return res.status(406).json({code:"NewerVersionExists",memo:memo});
+					memo.set({ text: memoTxt, version: memoVer });
+					memo.save();
+					res.status(200).json({version:memo.version});
+				}
+				else {
+					res.status(410).json({code: "MemoDeleted"});
+				}
 			}
 		})
 	}catch(err){
 		console.log(err);
-		res.sendStatus(500);
+		res.status(500).json({code: "InternalError", message:err });
 	}
 })
 app.delete('/deleteMemo', authenticateToken, async (req,res)=>{
@@ -243,16 +297,16 @@ app.delete('/deleteMemo', authenticateToken, async (req,res)=>{
 		models.memos.deleteOne({email:email, title:memoTitle}, function (err){
 				if(err){
 					console.log(err);
-					res.sendStatus(500);
+					res.status(500).json({code: "InternalError", message:err });
 				}
 				else{
 					console.log("Memo "+req.body.memoTitle+" from "+req.body.email+" removed by user")
-					res.sendStatus(200);
+					res.status(200).json({code: "MemoDeleted", title: req.body.memoTitle});
 				}
 			})
 	}catch(err){
 		console.log(err);
-		res.sendStatus(500);
+		res.status(500).json({code: "InternalError", message:err });
 	}
 })
 
@@ -265,7 +319,7 @@ function authenticateToken(req, res, next) {
 
 	jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
 		console.log(err);
-		if(err) return res.sendStatus(403);
+		if(err) return res.status(403).json({code:"InvalidToken" ,message: err});
 		req.userInfo = payload;
 		next();
 	})
@@ -277,7 +331,7 @@ function isConnected(req, res, next) {
 
 	jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
 		console.log(err);
-		if(err) return res.sendStatus(403);
+		if(err) return res.status(403).json({code:"InvalidToken" ,message: err});
 		req.userInfo = payload;
 		next();
 	})
