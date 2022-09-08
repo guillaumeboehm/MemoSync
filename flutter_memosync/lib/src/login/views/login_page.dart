@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_memosync/app.dart';
@@ -5,9 +6,11 @@ import 'package:flutter_memosync/src/authentication/authentication.dart';
 import 'package:flutter_memosync/src/login/login.dart';
 import 'package:flutter_memosync/src/login/views/views.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
+import 'package:flutter_memosync/src/widgets/language_dialog.dart';
 import 'package:flutter_memosync/src/widgets/route_404.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:easy_localization/easy_localization.dart';
+
+import '../../services/storage/storage.dart';
 
 /// The top level login page
 class LoginPage extends StatefulWidget {
@@ -36,6 +39,7 @@ class _LoginPageState extends State<LoginPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Flexible(
                 child: BlocConsumer<LoginBloc, LoginState>(
@@ -76,6 +80,24 @@ class _LoginPageState extends State<LoginPage> {
                     );
                   },
                 ),
+              ),
+              IconButton(
+                onPressed: () {
+                  showLanguageDialog(context).then((locale) {
+                    if (locale != null) {
+                      context.setLocale(locale);
+                      setState(() {});
+
+                      Storage.setSettings(
+                        Storage.getSettings()
+                          ..locale = tr(
+                            'language.name.${locale.languageCode}',
+                          ),
+                      );
+                    }
+                  });
+                },
+                icon: const Icon(Icons.language),
               ),
             ],
           ),

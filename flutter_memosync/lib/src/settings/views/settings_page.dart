@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_memosync/src/services/background_handlers/desktop_window_manager.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
@@ -5,14 +6,16 @@ import 'package:flutter_memosync/src/services/models/models.dart';
 import 'package:flutter_memosync/src/services/notification_service.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
 import 'package:flutter_memosync/src/utilities/string_extenstion.dart';
+import 'package:flutter_memosync/src/widgets/language_dialog.dart';
 import 'package:flutter_memosync/src/widgets/number_input.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:universal_platform/universal_platform.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Page showing the app settings
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   /// Default constructor
   const SettingsPage({super.key});
 
@@ -22,6 +25,11 @@ class SettingsPage extends StatelessWidget {
         builder: (context) => const SettingsPage(),
       );
 
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     Logger.info('Building settings page.');
@@ -112,18 +120,103 @@ class SettingsPage extends StatelessWidget {
                     ),
                   SettingsTile.switchTile(
                     title: Text(
-                      tr('settings.general.enable_notifications'),
+                      tr('settings.general.enable_notifications.title'),
                     ),
                     initialValue: settings.notificationsEnabled,
                     onToggle: (enabled) {
-                      Storage.setSettings(
-                        settings..notificationsEnabled = enabled,
-                      );
-                      if (enabled) {
-                        NotificationService
-                            .setPermanentNotificationFromOldState();
-                      } else {
+                      if (!enabled) {
+                        Storage.setSettings(
+                          settings..notificationsEnabled = enabled,
+                        );
                         NotificationService.disablePermanentNotification();
+                      } else {
+                        if (UniversalPlatform.isWeb ||
+                            UniversalPlatform.isLinux ||
+                            UniversalPlatform.isMacOS) {
+                          // No permission needed
+                          Storage.setSettings(
+                            settings..notificationsEnabled = enabled,
+                          );
+                          NotificationService
+                              .setPermanentNotificationFromOldState();
+                        } else {
+                          Permission.notification.request().then((status) {
+                            if (status.isPermanentlyDenied) {
+                              showDialog<void>(
+                                context: context,
+                                builder: (diagContext) {
+                                  return AlertDialog(
+                                    title: Text(
+                                      tr('''
+settings.general.enable_notifications.title'''),
+                                    ),
+                                    content: Text(
+                                      tr('''
+settings.general.enable_notifications.content'''),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          openAppSettings().then((couldOpen) {
+                                            if (!couldOpen) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    tr('''
+settings.general.enable_notifications.error_snack'''),
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                            Navigator.pop(diagContext);
+                                          });
+                                        },
+                                        child: Text(
+                                          tr('''
+settings.general.enable_notifications.error_snack'''),
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(diagContext),
+                                        child: Text(
+                                          tr('label.cancel').capitalize(),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ).then((_) {
+                                Permission.notification.isGranted
+                                    .then((granted) {
+                                  if (granted) {
+                                    Storage.setSettings(
+                                      settings..notificationsEnabled = enabled,
+                                    );
+                                    NotificationService
+                                        .setPermanentNotificationFromOldState();
+                                  }
+                                });
+                              });
+                            } else if (status.isGranted) {
+                              Storage.setSettings(
+                                settings..notificationsEnabled = enabled,
+                              );
+                              NotificationService
+                                  .setPermanentNotificationFromOldState();
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    tr('''
+settings.general.enable_notifications.permission_warning'''),
+                                  ),
+                                ),
+                              );
+                            }
+                          });
+                        }
                       }
                     },
                   ),
@@ -176,66 +269,72 @@ language.name.${context.locale.languageCode}''',
                       ),
                     ),
                     onPressed: (_) {
-                      showDialog<Locale?>(
-                        context: context,
-                        builder: (diagContext) {
-                          // final delegate = LocalizedApp.of(context).delegate;
-                          // final langs = delegate.supportedLocales;
-                          return AlertDialog(
-                            title: Text(
-                              tr(
-                                'language.selected_message',
-                                namedArgs: {
-                                  'language': tr(
-                                    '''
-language.name.${context.locale.languageCode}''',
-                                  ),
-                                },
-                              ),
-                            ),
-                            content: SizedBox(
-                              height: 400,
-                              width: 400,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Expanded(
-                                    child: ListView.builder(
-                                      itemCount:
-                                          context.supportedLocales.length,
-                                      itemBuilder: (context, index) {
-                                        return ListTile(
-                                          title: Text(
-                                            tr(
-                                              '''
-language.name.${context.supportedLocales[index].languageCode}''',
-                                            ),
-                                          ),
-                                          onTap: () => Navigator.pop(
-                                            diagContext,
-                                            context.supportedLocales[index],
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ).then((locale) {
-                        context.setLocale(
-                          locale ??
-                              context.fallbackLocale ??
-                              context.deviceLocale,
-                        );
-                        // Storage.setSettings(
-                        //   Storage.getSettings()
-                        //     ..locale = tr(
-                        //       'language.name.${locale?.languageCode}',
-                        //     ),
+//                       showDialog<Locale?>(
+//                         context: context,
+//                         builder: (diagContext) {
+//                           // final delegate = LocalizedApp.of(context).delegate;
+//                           // final langs = delegate.supportedLocales;
+//                           return AlertDialog(
+//                             title: Text(
+//                               tr(
+//                                 'language.selected_message',
+//                                 namedArgs: {
+//                                   'language': tr(
+//                                     '''
+// language.name.${context.locale.languageCode}''',
+//                                   ),
+//                                 },
+//                               ),
+//                             ),
+//                             content: SizedBox(
+//                               height: 400,
+//                               width: 400,
+//                               child: Column(
+//                                 mainAxisSize: MainAxisSize.min,
+//                                 children: [
+//                                   Expanded(
+//                                     child: ListView.builder(
+//                                       itemCount:
+//                                           context.supportedLocales.length,
+//                                       itemBuilder: (context, index) {
+//                                         return ListTile(
+//                                           title: Text(
+//                                             tr(
+//                                               '''
+// language.name.${context.supportedLocales[index].languageCode}''',
+//                                             ),
+//                                           ),
+//                                           onTap: () => Navigator.pop(
+//                                             diagContext,
+//                                             context.supportedLocales[index],
+//                                           ),
+//                                         );
+//                                       },
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                             ),
+//                           );
+//                         },
+//                       ).then((locale) {
+                      showLanguageDialog(context).then((locale) {
+                        // context.setLocale(
+                        //   locale ??
+                        //       context.fallbackLocale ??
+                        //       context.deviceLocale,
                         // );
+                        if (locale != null) {
+                          context.setLocale(locale);
+                          setState(() {});
+
+                          Storage.setSettings(
+                            Storage.getSettings()
+                              ..locale = tr(
+                                'language.name.${locale.languageCode}',
+                              ),
+                          );
+                        }
                       });
                     },
                   ),
@@ -265,10 +364,9 @@ language.name.${context.supportedLocales[index].languageCode}''',
                 ),
                 tiles: [
                   SettingsTile.switchTile(
-                    enabled: false,
-                    initialValue: false,
+                    initialValue: settings.analytics,
                     onToggle: (enabled) {
-                      // TODO(me): implement
+                      Storage.setSettings(settings..analytics = enabled);
                     },
                     title: Text(
                       tr('settings.privacy.optin_analytics'),
@@ -319,8 +417,21 @@ language.name.${context.supportedLocales[index].languageCode}''',
                 ),
                 tiles: [
                   SettingsTile.navigation(
-                    enabled: false,
                     onPressed: (enabled) {
+                      final url = Uri.parse(
+                        'https://github.com/guillaumeboehm/MemoSync/issues',
+                      );
+                      launchUrl(url).then((res) {
+                        if (!res) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Could not open issue page. visit https://github.com/guillaumeboehm/MemoSync manually.',
+                              ),
+                            ),
+                          );
+                        }
+                      });
                       // TODO(me): implement
                     },
                     title: Text(

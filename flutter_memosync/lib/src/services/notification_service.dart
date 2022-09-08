@@ -27,7 +27,6 @@ class NotificationService {
               ),
             ) ??
             false;
-        log('notif init $ret');
         return ret;
       }
       return true;
@@ -35,6 +34,23 @@ class NotificationService {
       unawaited(Logger.error(e.toString()));
       return false;
     }
+  }
+
+  /// Used for systems that require permission to display notifications
+  static Future<bool> requestPermission() async {
+    try {
+      if (!UniversalPlatform.isAndroid) return true;
+      final localNotif = FlutterLocalNotificationsPlugin()
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+      if (localNotif == null) return false;
+      if (await localNotif.areNotificationsEnabled() ?? false) return true;
+      if (await localNotif.requestPermission() ?? false) return true;
+      await Logger.info('PERM: ${await localNotif.areNotificationsEnabled()}');
+    } catch (e) {
+      unawaited(Logger.error(e.toString()));
+    }
+    return false;
   }
 
   /// Pushes a standard notification

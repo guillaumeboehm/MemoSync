@@ -14,8 +14,6 @@ import 'package:flutter_memosync/src/services/repositories/user.dart'
     show UserRepository;
 import 'package:flutter_memosync/src/services/storage/storage.dart';
 import 'package:flutter_memosync/src/utilities/sentry_wrappers.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:quick_notify/quick_notify.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:url_strategy/url_strategy.dart';
 
@@ -30,13 +28,15 @@ void main() async {
   await initBackgroundService();
   await DesktopWindowManager.init();
   await DesktopBackroungManager.initBackgroundService();
-  // Logger.info('permission: ${(await QuickNotify.hasPermission()).toString()}');
-  //TODO issue with quickNotify permissions and backgroundService notif permissions
+
   Future<void> appRunner() async => runApp(
         DefaultAssetBundle(
           bundle: SentryAssetBundle(enableStructuredDataTracing: true),
           child: EasyLocalization(
-            supportedLocales: const [Locale('en'), Locale('fr')],
+            supportedLocales: const [
+              Locale('en'),
+              Locale('fr'),
+            ],
             path: 'assets/i18n',
             fallbackLocale: const Locale('en'),
             useFallbackTranslations: true,
@@ -47,23 +47,9 @@ void main() async {
               memoRepository: MemoRepository(),
             ),
           ),
-          // child: LocalizedApp(
-          //   await LocalizationDelegate.create(
-          //     fallbackLocale: 'en',
-          //     supportedLocales: ['en', 'fr'],
-          //     preferences: TranslatePreferences(),
-          //     useFallbackForMissingStrings: true,
-          //     interpolateEmptyAsEmtpyString: true,
-          //   ),
-          //   App(
-          //     authenticationRepository: AuthenticationRepository(),
-          //     userRepository: UserRepository(),
-          //     memoRepository: MemoRepository(),
-          //   ),
-          // ),
         ),
       );
-  //TODO If option enabled
+
   await SentryFlutter.init(
     (options) => options
       ..dsn = 'https://examplePublicKey@o0.ingest.sentry.io/0'

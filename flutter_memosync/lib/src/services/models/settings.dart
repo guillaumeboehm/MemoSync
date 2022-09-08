@@ -19,7 +19,7 @@ class SettingsObject extends HiveObject {
 
   /// Are global app notifications.
   @HiveField(4)
-  bool notificationsEnabled = true;
+  bool notificationsEnabled = false;
 
   /// Locale for the app.
   @HiveField(1)
@@ -62,4 +62,10 @@ class SettingsObject extends HiveObject {
   /// Enable background sync on wifi only
   @HiveField(6)
   bool bgSyncWifiOnly = false;
+
+  //########################## Privacy
+
+  /// Opt-in analytics option
+  @HiveField(10)
+  bool analytics = false;
 }

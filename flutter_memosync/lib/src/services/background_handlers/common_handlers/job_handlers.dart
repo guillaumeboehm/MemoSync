@@ -38,7 +38,7 @@ Future<void> periodicJobHandler(String taskName) async {
                       )
                       .inSeconds >
                   Storage.getSettings().autoSaveInterval) {
-            //TODO(me): Implement autosave
+            // TODO(me): Implement autosave
           }
         } catch (e) {
           unawaited(Logger.error('$e'));
@@ -106,8 +106,9 @@ Future<void> permanentJobHandler(int tick) async {
                   now.difference(lastNotif).inDays >
                       (notif['repeatEveryCount'] as int) * 7) break;
 
-              if (!(notif['repeatOnDays'] as Map).containsKey(now.weekday))
+              if (!(notif['repeatOnDays'] as Map).containsKey(now.weekday)) {
                 break;
+              }
 
               final diff =
                   Duration(hours: now.hour, minutes: now.minute).inMinutes -

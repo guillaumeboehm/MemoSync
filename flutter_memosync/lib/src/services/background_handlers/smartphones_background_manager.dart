@@ -1,14 +1,13 @@
 import 'dart:async';
-import 'dart:developer';
-import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:enum_flag/enum_flag.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_memosync/src/services/background_handlers/common_handlers/job_handlers.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
+import 'package:flutter_memosync/src/services/notification_service.dart';
 import 'package:flutter_memosync/src/services/storage/storage_objectbox.dart';
 import 'package:flutter_memosync/src/utilities/sentry_wrappers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,30 +16,30 @@ import 'package:workmanager/workmanager.dart';
 
 enum _WMJobType with EnumFlag {
   backendFetch,
-  wallpaper,
+  // wallpaper,
 }
 
 /// Initializes the smartphone background service
 Future<void> initBackgroundService() async {
   if (UniversalPlatform.isDesktopOrWeb) return;
 
-  //TODO(me): Move the notif init somewhere that makes more sense
-  // await NotificationService.initNotifications();
+  // TODO(me): Move the notif init somewhere that makes more sense
+  await NotificationService.initNotifications();
 
   // Init Background service
-  // FlutterBackgroundService().invoke('stopService');
+  FlutterBackgroundService().invoke('stopService');
 
-  // final service = FlutterBackgroundService();
-  // await service.configure(
-  //   androidConfiguration: AndroidConfiguration(
-  //     onStart: _onStart,
-  //     isForegroundMode: false,
-  //   ),
-  //   iosConfiguration: IosConfiguration(
-  //     onForeground: _onStart,
-  //     onBackground: _onIosBackground,
-  //   ),
-  // );
+  final service = FlutterBackgroundService();
+  await service.configure(
+    androidConfiguration: AndroidConfiguration(
+      onStart: _onStart,
+      isForegroundMode: false,
+    ),
+    iosConfiguration: IosConfiguration(
+      onForeground: _onStart,
+      onBackground: _onIosBackground,
+    ),
+  );
 
   // FlutterBackgroundService().on('allSet').listen((event) {
   //   service.invoke('openStore', {
@@ -48,7 +47,7 @@ Future<void> initBackgroundService() async {
   //   });
   // });
 
-  // unawaited(service.startService());
+  unawaited(service.startService());
 
   // Init workmanager
   await Workmanager().initialize(
@@ -64,63 +63,63 @@ Future<void> initBackgroundService() async {
   );
 }
 
-// // to ensure this is executed
-// // run app from xcode, then from xcode menu, select Simulate Background Fetch
-// bool _onIosBackground(ServiceInstance service) {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   if (kDebugMode) print('FLUTTER BACKGROUND FETCH');
+// to ensure this is executed
+// run app from xcode, then from xcode menu, select Simulate Background Fetch
+bool _onIosBackground(ServiceInstance service) {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (kDebugMode) print('FLUTTER BACKGROUND FETCH');
 
-//   return true;
-// }
+  return true;
+}
 
-// // Called on every service start
-// Future<void> _onStart(ServiceInstance service) async {
-//   DartPluginRegistrant.ensureInitialized();
-//   var storeInitialized = false;
+// Called on every service start
+Future<void> _onStart(ServiceInstance service) async {
+  DartPluginRegistrant.ensureInitialized();
+  var storeInitialized = false;
 
-//   service.on('stopService').listen((event) {
-//     service.stopSelf();
-//   });
+  service.on('stopService').listen((event) {
+    service.stopSelf();
+  });
 
-//   service.on('openStore').listen((event) async {
-//     await Storage.initStorage(
-//       existingStore: Int64List.fromList(
-//         (event?['store'] as List).map((e) => e as int).toList(),
-//       ).buffer.asByteData(),
-//     );
-//     storeInitialized = true;
-//   });
+  // service.on('openStore').listen((event) async {
+  await Storage.initStorage(
+      // existingStore: Int64List.fromList(
+      //   (event?['store'] as List).map((e) => e as int).toList(),
+      // ).buffer.asByteData(),
+      );
+  storeInitialized = true;
+  // });
 
-//   // If it takes too much time assume it was auto started
-//   Future.delayed(
-//     const Duration(seconds: 2),
-//     () async {
-//       if (!storeInitialized) {
-//         await Storage.initStorage();
-//         storeInitialized = true;
-//       }
-//       // There should always be a store ref at this point
-//       // so save it for the workmanager jobs
-//       await SharedPreferences.getInstance().then((sharedPrefs) {
-//         sharedPrefs.setStringList(
-//           'storeRef',
-//           Storage.store.reference.buffer
-//               .asInt64List()
-//               .map((e) => e.toString())
-//               .toList(),
-//         );
-//       });
-//     },
-//   );
+  // If it takes too much time assume it was auto started
+  // Future.delayed(
+  //   const Duration(seconds: 2),
+  //   () async {
+  //     if (!storeInitialized) {
+  //       await Storage.initStorage();
+  //       storeInitialized = true;
+  //     }
+  //     // There should always be a store ref at this point
+  //     // so save it for the workmanager jobs
+  //     await SharedPreferences.getInstance().then((sharedPrefs) {
+  //       sharedPrefs.setStringList(
+  //         'storeRef',
+  //         Storage.store.reference.buffer
+  //             .asInt64List()
+  //             .map((e) => e.toString())
+  //             .toList(),
+  //       );
+  //     });
+  //   },
+  // );
 
-//   service.invoke('allSet');
+  // service.invoke('allSet');
 
-//   Timer.periodic(const Duration(seconds: 1), (timer) async {
-//     if (storeInitialized) {
-//       await permanentJobHandler(timer.tick);
-//     }
-//   });
-// }
+  Timer.periodic(const Duration(seconds: 1), (timer) async {
+    if (storeInitialized) {
+      await permanentJobHandler(timer.tick);
+    }
+  });
+}
 
 // Called by all the workmanager jobs
 void _workManagerCallbackDispatcher() {

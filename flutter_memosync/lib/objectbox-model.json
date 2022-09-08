@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:1802099124627800133",
-      "lastPropertyId": "11:5170716514867111143",
+      "lastPropertyId": "12:1471244855899625389",
       "name": "SettingsObject",
       "properties": [
         {
@@ -62,6 +62,11 @@
         {
           "id": "11:5170716514867111143",
           "name": "bgSyncWifiOnly",
+          "type": 1
+        },
+        {
+          "id": "12:1471244855899625389",
+          "name": "analytics",
           "type": 1
         }
       ],

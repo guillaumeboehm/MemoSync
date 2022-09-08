@@ -26,13 +26,14 @@ class SettingsObjectAdapter extends TypeAdapter<SettingsObject> {
       ..autoSave = fields[2] as bool
       ..autoSaveInterval = fields[3] as int
       ..bgSync = fields[5] as bool
-      ..bgSyncWifiOnly = fields[6] as bool;
+      ..bgSyncWifiOnly = fields[6] as bool
+      ..analytics = fields[10] as bool;
   }
 
   @override
   void write(BinaryWriter writer, SettingsObject obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(4)
       ..write(obj.notificationsEnabled)
       ..writeByte(1)
@@ -52,7 +53,9 @@ class SettingsObjectAdapter extends TypeAdapter<SettingsObject> {
       ..writeByte(5)
       ..write(obj.bgSync)
       ..writeByte(6)
-      ..write(obj.bgSyncWifiOnly);
+      ..write(obj.bgSyncWifiOnly)
+      ..writeByte(10)
+      ..write(obj.analytics);
   }
 
   @override

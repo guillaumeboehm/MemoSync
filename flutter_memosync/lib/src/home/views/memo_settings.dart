@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_memosync/src/home/bloc/home_bloc.dart';
@@ -7,7 +8,6 @@ import 'package:flutter_memosync/src/services/models/models.dart';
 import 'package:flutter_memosync/src/services/notification_service.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
 import 'package:flutter_memosync/src/utilities/string_extenstion.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:universal_platform/universal_platform.dart';
 
@@ -247,7 +247,7 @@ class _SettingsViewState extends State<SettingsView> {
           (UniversalPlatform.isAndroid || UniversalPlatform.isIOS || true)) {
         tiles.add(
           SettingsTile(
-            enabled: false, //TODO(me): To implement
+            enabled: false, // TODO(me): To implement
             title: Text(tr('memo.settings.widgets.set')),
           ),
         );
@@ -257,14 +257,14 @@ class _SettingsViewState extends State<SettingsView> {
         tiles
           ..add(
             SettingsTile(
-              enabled: false, //TODO(me): To implement
+              enabled: false, // TODO(me): To implement
               title: Text(tr('memo.settings.background.set_home_page')),
               onPressed: (context) {},
             ),
           )
           ..add(
             SettingsTile(
-              enabled: false, //TODO(me): To implement
+              enabled: false, // TODO(me): To implement
               title: Text(tr('memo.settings.background.set_lock_screen')),
               onPressed: (context) {},
             ),

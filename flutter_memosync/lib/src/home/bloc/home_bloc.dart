@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:bottom_drawer/bottom_drawer.dart';
 import 'package:diff_match_patch/diff_match_patch.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_memosync/src/authentication/bloc/authentication_bloc.dart';
 import 'package:flutter_memosync/src/home/repositories/memo.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';

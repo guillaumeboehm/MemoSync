@@ -46,7 +46,8 @@ android {
         applicationId "com.example.flutter_memosync"
         // minSdkVersion flutter.minSdkVersion
         minSdkVersion 21
-        targetSdkVersion flutter.targetSdkVersion
+        // targetSdkVersion flutter.targetSdkVersion
+        targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

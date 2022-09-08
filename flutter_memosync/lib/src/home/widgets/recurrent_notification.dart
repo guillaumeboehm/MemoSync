@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_memosync/src/home/views/memo_settings.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/models/memo.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 /// Returns a notification [SettingsTile]
@@ -230,7 +230,7 @@ Future<Map<dynamic, dynamic>?> showNotificationDialog(
 
   return showDialog<Map<dynamic, dynamic>>(
     context: context,
-    barrierDismissible: true,
+    // barrierDismissible: true,
     builder: (diagContext) {
       return RawKeyboardListener(
         focusNode: focusNode,
@@ -620,8 +620,8 @@ memo.settings.recurrent_notifications.repeat_on_day''',
                             'memo.settings.recurrent_notifications.ignore_on',
                             namedArgs: {
                               'dayList': (Map<String, bool>.from(
-                                      _data['ignoreOnDays'] as Map)
-                                    ..removeWhere((key, value) => !value))
+                                _data['ignoreOnDays'] as Map,
+                              )..removeWhere((key, value) => !value))
                                   .keys
                                   .join(', '),
                             },

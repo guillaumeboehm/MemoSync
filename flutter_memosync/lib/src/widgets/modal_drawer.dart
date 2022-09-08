@@ -1,9 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_memosync/src/authentication/authentication.dart';
 import 'package:flutter_memosync/src/services/background_handlers/desktop_window_manager.dart';
 import 'package:flutter_memosync/src/settings/settings.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 /// Drawer widget used in wide screen mode
 class ModalDrawer extends StatefulWidget {

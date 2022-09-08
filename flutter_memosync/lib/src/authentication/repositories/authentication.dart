@@ -4,12 +4,12 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_memosync/src/login/login.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:universal_io/io.dart';
 import 'package:validators/validators.dart';
 
@@ -155,7 +155,7 @@ Map<String, Widget Function(BuildContext)> authenticationMessages = {
         ),
       ),
   // 'OK': (context) => RichText(
-  //       // TODO(me): Need to change that to verifSent or smthg
+  // TODO(me): Need to change that to verifSent or smthg
   //       textAlign: TextAlign.center,
   //       text: TextSpan(
   //         children: [

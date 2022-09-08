@@ -1,9 +1,8 @@
 import 'package:disable_battery_optimization/disable_battery_optimization.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_memosync/src/authentication/authentication.dart';
 import 'package:flutter_memosync/src/home/home.dart';
 import 'package:flutter_memosync/src/home/repositories/memo.dart';
@@ -15,7 +14,6 @@ import 'package:flutter_memosync/src/services/repositories/user.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
 import 'package:flutter_memosync/src/splash/splash.dart';
 import 'package:flutter_memosync/src/widgets/route_404.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_platform/universal_platform.dart';
@@ -86,6 +84,8 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
           // supportedLocales: localizationDelegate.supportedLocales,
           // locale: localizationDelegate.currentLocale,
           builder: (context, child) {
+            // TODO(me): Use Permission.ignore...
+            // instead and do it when activating a permanent notif only
             Future(() async {
               if (!UniversalPlatform.isDesktopOrWeb &&
                   !(await DisableBatteryOptimization
@@ -97,7 +97,8 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
 //                   'Follow the steps and enable the auto start of this app',
 //                   'Your device has additional battery optimization',
 //                   '''
-// Follow the steps and disable the optimizations to allow smooth functioning of this app''',
+// Follow the steps and disable the optimizations
+// to allow smooth functioning of this app''',
                 // );
               }
             });
