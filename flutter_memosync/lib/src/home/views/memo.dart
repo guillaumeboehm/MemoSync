@@ -234,9 +234,10 @@ class _MemoViewState extends State<MemoView> {
                             );
                       },
                       tooltip: 'Open settings',
-                      child: const Icon(
+                      child: Icon(
                         Icons.settings,
                         size: 30,
+                        color: Theme.of(context).canvasColor,
                       ),
                     ),
                   ),

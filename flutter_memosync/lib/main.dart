@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_memosync/app.dart';
 import 'package:flutter_memosync/src/authentication/authentication.dart'
     show AuthenticationRepository;
@@ -9,7 +10,6 @@ import 'package:flutter_memosync/src/home/repositories/memo.dart'
 import 'package:flutter_memosync/src/services/background_handlers/desktop_background_manager.dart';
 import 'package:flutter_memosync/src/services/background_handlers/desktop_window_manager.dart';
 import 'package:flutter_memosync/src/services/background_handlers/smartphones_background_manager.dart';
-import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/repositories/user.dart'
     show UserRepository;
 import 'package:flutter_memosync/src/services/storage/storage.dart';
@@ -19,6 +19,8 @@ import 'package:url_strategy/url_strategy.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(); //.env
+  await dotenv.load(fileName: '.env-secret');
   await EasyLocalization.ensureInitialized();
   setPathUrlStrategy();
   if (!await Storage.initStorage()) {
@@ -52,7 +54,7 @@ void main() async {
 
   await SentryFlutter.init(
     (options) => options
-      ..dsn = 'https://examplePublicKey@o0.ingest.sentry.io/0'
+      ..dsn = dotenv.get('SENTRY_URI')
       ..environment = kDebugMode ? 'dev' : 'prod',
     appRunner: appRunner,
   );

@@ -7,11 +7,13 @@ import 'package:flutter_memosync/src/authentication/authentication.dart';
 import 'package:flutter_memosync/src/home/home.dart';
 import 'package:flutter_memosync/src/home/repositories/memo.dart';
 import 'package:flutter_memosync/src/home/widgets/about_dialog.dart';
+import 'package:flutter_memosync/src/services/background_handlers/desktop_window_manager.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
 import 'package:flutter_memosync/src/settings/settings.dart';
 import 'package:flutter_memosync/src/widgets/modal_drawer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 /// Widget returning the Scaffold for the home page
 class HomeScaffold extends StatelessWidget {
@@ -52,11 +54,46 @@ class HomeScaffold extends StatelessWidget {
                             child: ListView(
                               padding: EdgeInsets.zero,
                               children: [
-                                DrawerHeader(
-                                  child: Text(
-                                    tr('general.app_title'),
-                                    style: const TextStyle(fontSize: 40),
+                                // ColoredBox(
+                                //   color: Theme.of(context).primaryColor,
+                                //   child: DrawerHeader(
+                                //     child: Text(
+                                //       tr('general.app_title'),
+                                //       style: const TextStyle(fontSize: 40),
+                                //     ),
+                                //   ),
+                                // ),
+                                ListTile(
+                                  tileColor: Theme.of(context).primaryColor,
+                                  title: Padding(
+                                    padding: const EdgeInsets.only(
+                                      bottom: 15,
+                                      top: 10,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Flexible(
+                                          child: SvgPicture.asset(
+                                            'assets/resources/logos/svg/Full_logo.svg',
+                                            height: 40,
+                                          ),
+                                        ),
+                                        const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 5),
+                                        ),
+                                        Text(
+                                          tr('general.app_title'),
+                                          style: const TextStyle(
+                                            fontSize: 30,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
+                                  onTap: () => Navigator.of(context)
+                                    ..pop()
+                                    ..push<void>(SettingsPage.route()),
                                 ),
                                 if (kDebugMode)
                                   ListTile(
@@ -79,6 +116,11 @@ class HomeScaffold extends StatelessWidget {
                                   title: Text(tr('menu.about')),
                                   onTap: () => showAbout(context),
                                 ),
+                                if (UniversalPlatform.isDesktop)
+                                  ListTile(
+                                    title: Text(tr('menu.exit')),
+                                    onTap: DesktopWindowManager.forceExit,
+                                  ),
                               ],
                             ),
                           )
@@ -130,41 +172,41 @@ class HomeScaffold extends StatelessWidget {
                                           ),
                                         ]
                                       : <Widget>[],
-                                  Flexible(
-                                    child: InkWell(
-                                      onTap: () {
-                                        // Go back to memo selection I guess
-                                        BlocProvider.of<HomeBloc>(context).add(
-                                          const DeselectCurrentMemo(),
-                                        );
-                                      },
-                                      focusColor: Colors.transparent,
-                                      hoverColor: Colors.transparent,
-                                      splashColor: Colors.transparent,
-                                      highlightColor: Colors.transparent,
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Flexible(
-                                            child: SvgPicture.asset(
-                                              'assets/resources/logos/svg/Full_logo.svg',
-                                              height: 40,
-                                            ),
-                                          ),
-                                          const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 5),
-                                          ),
-                                          Flexible(
-                                            child: Text(
-                                              tr('general.app_title'),
-                                              overflow: TextOverflow.fade,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
+                                  // Flexible(
+                                  //   child: InkWell(
+                                  //     onTap: () {
+                                  //       // Go back to memo selection I guess
+                                  //       BlocProvider.of<HomeBloc>(context).add(
+                                  //         const DeselectCurrentMemo(),
+                                  //       );
+                                  //     },
+                                  //     focusColor: Colors.transparent,
+                                  //     hoverColor: Colors.transparent,
+                                  //     splashColor: Colors.transparent,
+                                  //     highlightColor: Colors.transparent,
+                                  //     child: Row(
+                                  //       mainAxisSize: MainAxisSize.min,
+                                  //       children: [
+                                  //         Flexible(
+                                  //           child: SvgPicture.asset(
+                                  //             'assets/resources/logos/svg/Full_logo.svg',
+                                  //             height: 40,
+                                  //           ),
+                                  //         ),
+                                  //         const Padding(
+                                  //           padding: EdgeInsets.symmetric(
+                                  //               horizontal: 5),
+                                  //         ),
+                                  //         Flexible(
+                                  //           child: Text(
+                                  //             tr('general.app_title'),
+                                  //             overflow: TextOverflow.fade,
+                                  //           ),
+                                  //         ),
+                                  //       ],
+                                  //     ),
+                                  //   ),
+                                  // ),
                                 ],
                               );
                             },

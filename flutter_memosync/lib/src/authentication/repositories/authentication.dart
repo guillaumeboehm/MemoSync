@@ -8,6 +8,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_memosync/src/login/login.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:universal_io/io.dart';
@@ -201,7 +202,7 @@ class AuthenticationRepository {
 
   final _authBaseUri = Uri(
     scheme: 'https',
-    host: 'auth.memosync.net',
+    host: dotenv.get('AUTH_URI'),
   );
   final _authDio = Dio();
 

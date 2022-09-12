@@ -71,9 +71,10 @@ class _ListDrawerState extends State<ListDrawer> {
             child: FloatingActionButton(
               heroTag: 'bigAddButton',
               onPressed: openDrawer,
-              child: const Icon(
+              child: Icon(
                 Icons.add,
                 size: 40,
+                color: Theme.of(context).canvasColor,
               ),
             ),
           ),
@@ -89,78 +90,74 @@ class _ListDrawerState extends State<ListDrawer> {
                 duration:
                     value ? Duration.zero : const Duration(milliseconds: 500),
                 child: BottomDrawer(
+                  color: Theme.of(context).canvasColor,
                   header: Container(),
                   body: SizedBox(
                     height: _drawerSize,
                     width: widget.width,
-                    child: ColoredBox(
-                      color: Colors.red,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 50),
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(20),
-                                  ),
-                                  color: Colors.grey.shade400,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 50),
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(20),
                                 ),
-                                child: const Divider(
-                                  color: Colors.transparent,
-                                  height: 5,
-                                  thickness: 0,
-                                ),
+                                color: Theme.of(context).dividerColor,
+                                // color: Colors.grey.shade400,
+                              ),
+                              child: const Divider(
+                                color: Colors.transparent,
+                                height: 5,
+                                thickness: 0,
                               ),
                             ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 15, bottom: 5),
-                              child: Text(
-                                tr('memo.create_memo'),
-                                style: const TextStyle(fontSize: 17),
-                              ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 15, bottom: 5),
+                            child: Text(
+                              tr('memo.create_memo'),
+                              style: const TextStyle(fontSize: 17),
                             ),
-                            TextField(
-                              decoration: InputDecoration(
-                                hintText: tr('memo.hints.new_memo_title'),
-                              ),
-                              controller: _inputController,
-                              focusNode: _inputFocusController,
-                              textInputAction: TextInputAction.go,
-                              onSubmitted: (value) {
+                          ),
+                          TextField(
+                            decoration: InputDecoration(
+                              hintText: tr('memo.hints.new_memo_title'),
+                            ),
+                            controller: _inputController,
+                            focusNode: _inputFocusController,
+                            textInputAction: TextInputAction.go,
+                            onSubmitted: (value) {
+                              context.read<HomeBloc>().add(
+                                    CreateMemo(
+                                      value,
+                                      _addingMemo,
+                                      _drawerController,
+                                    ),
+                                  );
+                            },
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10, bottom: 5),
+                            child: FloatingActionButton.small(
+                              heroTag: 'smolAddButton',
+                              onPressed: () {
                                 context.read<HomeBloc>().add(
                                       CreateMemo(
-                                        value,
+                                        _inputController.text,
                                         _addingMemo,
                                         _drawerController,
                                       ),
                                     );
                               },
+                              child: const Icon(Icons.add),
                             ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 10, bottom: 5),
-                              child: FloatingActionButton.small(
-                                heroTag: 'smolAddButton',
-                                onPressed: () {
-                                  context.read<HomeBloc>().add(
-                                        CreateMemo(
-                                          _inputController.text,
-                                          _addingMemo,
-                                          _drawerController,
-                                        ),
-                                      );
-                                },
-                                child: const Icon(Icons.add),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

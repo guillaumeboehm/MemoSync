@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:diff_match_patch/diff_match_patch.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/models/memo.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
@@ -12,7 +13,7 @@ import 'package:validators/validators.dart';
 class MemoRepository {
   final _baseUri = Uri(
     scheme: 'https',
-    host: 'memosync.net',
+    host: dotenv.get('API_URI'),
   );
   final _dio = Dio();
   static Options _baseOptions(String accessToken) {

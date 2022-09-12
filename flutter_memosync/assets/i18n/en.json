@@ -133,7 +133,8 @@
     "menu": {
         "exit": "Exit",
         "logout": "Logout",
-        "settings": "Settings"
+        "settings": "Settings",
+        "about": "About"
     },
     "settings": {
         "account": {
