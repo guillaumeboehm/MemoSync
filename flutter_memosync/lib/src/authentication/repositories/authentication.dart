@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
-import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -189,12 +189,17 @@ class AuthenticationRepository {
   AuthenticationRepository() {
     if (kDebugMode) {
       // Seems needed for some emulators
-      (_authDio.httpClientAdapter as DefaultHttpClientAdapter)
-          .onHttpClientCreate = (HttpClient client) {
-        client.badCertificateCallback =
-            (X509Certificate cert, String host, int port) => true;
-        return client;
-      };
+      _authDio.httpClientAdapter = IOHttpClientAdapter(
+        createHttpClient: () {
+          // Don't trust any certificate
+          // just because their root cert is trusted.
+          final client = HttpClient(
+            context: SecurityContext(),
+          )..badCertificateCallback =
+              (X509Certificate cert, String host, int port) => true;
+          return client;
+        },
+      );
     }
   }
 
@@ -388,7 +393,7 @@ class AuthenticationRepository {
       } else {
         result['error'] = {'code': 'ResponseNotAJSON'};
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       if (e.response?.data != null) {
         unawaited(Logger.error(e.response?.data.toString()));
         result['error'] = jsonDecode(e.response?.data as String);

@@ -8,7 +8,7 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_memosync/src/services/background_handlers/common_handlers/job_handlers.dart';
 import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:flutter_memosync/src/services/notification_service.dart';
-import 'package:flutter_memosync/src/services/storage/storage_objectbox.dart';
+import 'package:flutter_memosync/src/services/storage/storage.dart';
 import 'package:flutter_memosync/src/utilities/sentry_wrappers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_platform/universal_platform.dart';

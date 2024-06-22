@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_memosync/src/services/storage/storage.dart';
-import 'package:launch_at_startup/launch_at_startup.dart';
+import 'package:launch_at_startup/launch_at_startup.dart'
+    if (dart.library.html) 'package:flutter_memosync/src/services/background_handlers/noop_launch_at_startup.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:system_tray/system_tray.dart' as st;
 import 'package:universal_io/io.dart';
@@ -75,11 +76,11 @@ class DesktopWindowManager {
     // create context menu
     final menu = st.Menu();
     await menu.buildFrom([
-      st.MenuItemLable(
+      st.MenuItemLabel(
         label: 'Open',
         onClicked: (menuItem) => _openFromTray(),
       ),
-      st.MenuItemLable(
+      st.MenuItemLabel(
         label: 'Exit',
         onClicked: (menuItem) {
           windowManager.destroy();
@@ -204,8 +205,8 @@ class _WrapperState extends State<_Wrapper> with WindowListener {
 
   @override
   Future<void> onWindowClose() async {
-    final _isPreventClose = await windowManager.isPreventClose();
-    if (_isPreventClose) {
+    final isPreventClose = await windowManager.isPreventClose();
+    if (isPreventClose) {
       await DesktopWindowManager._minimizeToTray();
     }
   }

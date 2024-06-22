@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -23,7 +22,7 @@ class NotificationService {
                 android: AndroidInitializationSettings(
                   'ic_quick_notify',
                 ),
-                iOS: IOSInitializationSettings(),
+                iOS: DarwinInitializationSettings(),
               ),
             ) ??
             false;
@@ -45,7 +44,10 @@ class NotificationService {
               AndroidFlutterLocalNotificationsPlugin>();
       if (localNotif == null) return false;
       if (await localNotif.areNotificationsEnabled() ?? false) return true;
-      if (await localNotif.requestPermission() ?? false) return true;
+      if (await localNotif.requestNotificationsPermission() ?? false) {
+        return true;
+      }
+
       await Logger.info('PERM: ${await localNotif.areNotificationsEnabled()}');
     } catch (e) {
       unawaited(Logger.error(e.toString()));
@@ -94,9 +96,9 @@ class NotificationService {
   /// Pushes or Modifies the permanent notification on mobiles
   static Future<bool> setPermanentNotification(
     String title, {
-    String? body,
     required int memoVersion,
     required String memoTitle,
+    String? body,
   }) async {
     if (UniversalPlatform.isDesktopOrWeb) return false;
     try {
@@ -117,7 +119,7 @@ class NotificationService {
                   'Notification channel for persistant notifications',
               priority: Priority.min,
               importance: Importance.min,
-              category: 'CATEGORY_SYSTEM',
+              category: AndroidNotificationCategory.system,
               channelShowBadge: false,
               enableVibration: false,
               ongoing: true,
@@ -127,7 +129,7 @@ class NotificationService {
               additionalFlags:
                   Int32List.fromList([32, 256]), //NO_CLEAR/LOCAL_ONLY
             ),
-            iOS: const IOSNotificationDetails(
+            iOS: const DarwinNotificationDetails(
               threadIdentifier: 'memosync.PERSISTENT_NOTIF',
             ),
           ),
@@ -163,9 +165,9 @@ class NotificationService {
           );
           if (memo != null) {
             setPermanentNotification(
-              memo.text,
-              memoTitle: memo.title,
               memoVersion: memo.version,
+              memoTitle: memo.title,
+              memo.text,
             );
           }
         } catch (e) {

@@ -20,7 +20,7 @@ import 'package:url_strategy/url_strategy.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(); //.env
-  await dotenv.load(fileName: '.env-secret');
+  // await dotenv.load(fileName: '.env-secret');
   await EasyLocalization.ensureInitialized();
   setPathUrlStrategy();
   if (!await Storage.initStorage()) {
@@ -33,7 +33,7 @@ void main() async {
 
   Future<void> appRunner() async => runApp(
         DefaultAssetBundle(
-          bundle: SentryAssetBundle(enableStructuredDataTracing: true),
+          bundle: SentryAssetBundle(),
           child: EasyLocalization(
             supportedLocales: const [
               Locale('en'),

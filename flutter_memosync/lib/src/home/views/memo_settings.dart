@@ -154,9 +154,9 @@ class _SettingsViewState extends State<SettingsView> {
                 final memo = Storage.getMemo(memo: currentMemo);
                 if (memo != null) {
                   NotificationService.setPermanentNotification(
-                    memo.text,
                     memoVersion: memo.version,
                     memoTitle: currentMemo,
+                    memo.text,
                   );
                 }
               } else {

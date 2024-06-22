@@ -175,7 +175,7 @@ class _MemoViewState extends State<MemoView> {
                                                 );
                                           }
 
-                                          if (_memoModifiedDebouncer.isReady) {
+                                          if (_memoModifiedDebouncer.isIdle) {
                                             // Launch once before the debouncer
                                             changeMemo();
                                             _memoModifiedDebouncer

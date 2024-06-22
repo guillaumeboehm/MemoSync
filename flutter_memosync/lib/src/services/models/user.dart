@@ -1,11 +1,11 @@
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:objectbox/objectbox.dart';
+// import 'package:objectbox/objectbox.dart';
 
 part 'user.g.dart';
 
 /// [HiveObject] used to store all the user data.
-@Entity()
+// @Entity()
 @HiveType(typeId: 1)
 class UserObject extends HiveObject {
   /// Default constructor.

@@ -162,9 +162,9 @@ class Storage extends StorageInterface {
               .startsWith('${memo as String}-')) {
             log('Should notify');
             NotificationService.setPermanentNotification(
-              obj.text,
-              memoTitle: obj.title,
               memoVersion: obj.version,
+              memoTitle: obj.title,
+              obj.text,
             );
           }
         },

@@ -8,7 +8,8 @@ import 'package:flutter_memosync/src/services/storage/storage.dart';
 import 'package:flutter_memosync/src/utilities/string_extenstion.dart';
 import 'package:flutter_memosync/src/widgets/language_dialog.dart';
 import 'package:flutter_memosync/src/widgets/number_input.dart';
-import 'package:launch_at_startup/launch_at_startup.dart';
+import 'package:launch_at_startup/launch_at_startup.dart'
+    if (dart.library.html) 'package:flutter_memosync/src/services/background_handlers/noop_launch_at_startup.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:universal_platform/universal_platform.dart';

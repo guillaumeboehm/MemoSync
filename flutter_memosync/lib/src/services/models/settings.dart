@@ -1,12 +1,12 @@
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:objectbox/objectbox.dart';
+// import 'package:objectbox/objectbox.dart';
 
 part 'settings.g.dart';
 
 // Last field 9
 /// [HiveObject] used to store all the global settings.
-@Entity()
+// @Entity()
 @HiveType(typeId: 0)
 class SettingsObject extends HiveObject {
   /// Default constructor.

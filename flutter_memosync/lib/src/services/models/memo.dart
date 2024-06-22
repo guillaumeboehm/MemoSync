@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter_memosync/src/services/logger.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:objectbox/objectbox.dart';
+// import 'package:objectbox/objectbox.dart';
 
 part 'memo.g.dart';
 
@@ -70,7 +70,7 @@ void ensureNotificationRepeatEveryValues() {
 }
 
 /// [HiveObject] used to cache the memos.
-@Entity()
+// @Entity()
 @HiveType(typeId: 3)
 class MemoObject extends HiveObject {
   /// Default constructor.
@@ -80,7 +80,7 @@ class MemoObject extends HiveObject {
   int id = 0;
 
   /// Memo title.
-  @Unique()
+  // @Unique()
   @HiveField(0)
   String title = '';
 

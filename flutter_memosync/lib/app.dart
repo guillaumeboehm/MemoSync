@@ -121,19 +121,16 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
                         HomePage.route(),
                         (route) => false,
                       );
-                      break;
                     case AuthenticationStatus.unauthenticated:
                       _navigator.pushAndRemoveUntil<void>(
                         LoginPage.route(),
                         (route) => false,
                       );
-                      break;
                     case AuthenticationStatus.unknown:
                       _navigator.pushAndRemoveUntil<void>(
                         LoginPage.route(),
                         (route) => false,
                       );
-                      break;
                   }
                 } else {
                   if (state.status == AuthenticationStatus.authenticated) {
@@ -150,14 +147,13 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
                           LoginPage.route(
                             args: {
                               'route': Uri.base.path,
-                              ...Uri.base.queryParameters
+                              ...Uri.base.queryParameters,
                             },
                           ),
                           (route) => false,
                         );
                         startup = false;
                       }
-                      break;
                     default:
                       _navigator.pushAndRemoveUntil<void>(
                         route404,
@@ -185,10 +181,10 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
 class App extends StatelessWidget {
   /// Default constructor requiring both repositories
   const App({
-    super.key,
     required this.authenticationRepository,
     required this.userRepository,
     required this.memoRepository,
+    super.key,
   });
 
   /// Repository used to handle authentication calls

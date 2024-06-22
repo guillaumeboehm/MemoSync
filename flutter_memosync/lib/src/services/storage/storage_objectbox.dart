@@ -198,9 +198,9 @@ class Storage extends StorageInterface {
         (prefs) {
           if (prefs.getString('currentPermanentMemo')!.startsWith('$memo-')) {
             NotificationService.setPermanentNotification(
-              obj.text,
-              memoTitle: obj.title,
               memoVersion: obj.version,
+              memoTitle: obj.title,
+              obj.text,
             );
           }
         },
