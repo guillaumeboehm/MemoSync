@@ -3,10 +3,10 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_memosync/src/authentication/repositories/authentication.dart';
-import 'package:flutter_memosync/src/services/logger.dart';
-import 'package:flutter_memosync/src/services/models/models.dart';
-import 'package:flutter_memosync/src/services/repositories/user.dart';
+import 'package:memosync/src/authentication/repositories/authentication.dart';
+import 'package:memosync/src/services/logger.dart';
+import 'package:memosync/src/services/models/models.dart';
+import 'package:memosync/src/services/repositories/user.dart';
 
 part 'authentication_event.dart';
 part 'authentication_state.dart';

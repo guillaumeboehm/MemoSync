@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter_memosync/src/home/repositories/memo.dart';
-import 'package:flutter_memosync/src/services/logger.dart';
-import 'package:flutter_memosync/src/services/models/memo.dart';
-import 'package:flutter_memosync/src/services/notification_service.dart';
-import 'package:flutter_memosync/src/services/storage/storage.dart';
-import 'package:flutter_memosync/src/utilities/sentry_wrappers.dart';
+import 'package:memosync/src/home/repositories/memo.dart';
+import 'package:memosync/src/services/logger.dart';
+import 'package:memosync/src/services/models/memo.dart';
+import 'package:memosync/src/services/notification_service.dart';
+import 'package:memosync/src/services/storage/storage.dart';
+import 'package:memosync/src/utilities/sentry_wrappers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const _recurrentNotifMaxDelay = 5; // don't notify anymore after more than 5 min

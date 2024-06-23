@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_memosync/src/services/logger.dart';
-import 'package:flutter_memosync/src/services/storage/storage.dart';
+import 'package:memosync/src/services/logger.dart';
+import 'package:memosync/src/services/storage/storage.dart';
 import 'package:quick_notify/quick_notify.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_platform/universal_platform.dart';

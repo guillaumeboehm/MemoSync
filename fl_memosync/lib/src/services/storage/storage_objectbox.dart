@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_memosync/objectbox.g.dart';
-import 'package:flutter_memosync/src/services/logger.dart';
-import 'package:flutter_memosync/src/services/models/models.dart';
-import 'package:flutter_memosync/src/services/notification_service.dart';
-import 'package:flutter_memosync/src/services/storage/storage_interface.dart';
-import 'package:flutter_memosync/src/utilities/sentry_wrappers.dart';
+import 'package:memosync/objectbox.g.dart';
+import 'package:memosync/src/services/logger.dart';
+import 'package:memosync/src/services/models/models.dart';
+import 'package:memosync/src/services/notification_service.dart';
+import 'package:memosync/src/services/storage/storage_interface.dart';
+import 'package:memosync/src/utilities/sentry_wrappers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Handles all the storage using Hive

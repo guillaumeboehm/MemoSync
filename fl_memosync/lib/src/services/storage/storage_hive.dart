@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_memosync/src/services/logger.dart';
-import 'package:flutter_memosync/src/services/models/models.dart';
-import 'package:flutter_memosync/src/services/notification_service.dart';
-import 'package:flutter_memosync/src/services/storage/storage_interface.dart';
+import 'package:memosync/src/services/logger.dart';
+import 'package:memosync/src/services/models/models.dart';
+import 'package:memosync/src/services/notification_service.dart';
+import 'package:memosync/src/services/storage/storage_interface.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:flutter_memosync/src/services/models/models.dart'
+import 'package:memosync/src/services/models/models.dart'
     show UserObject;
-import 'package:flutter_memosync/src/services/storage/storage.dart';
+import 'package:memosync/src/services/storage/storage.dart';
 
 /// Repository managing the user data.
 class UserRepository {

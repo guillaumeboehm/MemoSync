@@ -4,9 +4,9 @@ import 'dart:convert';
 import 'package:diff_match_patch/diff_match_patch.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_memosync/src/services/logger.dart';
-import 'package:flutter_memosync/src/services/models/memo.dart';
-import 'package:flutter_memosync/src/services/storage/storage.dart';
+import 'package:memosync/src/services/logger.dart';
+import 'package:memosync/src/services/models/memo.dart';
+import 'package:memosync/src/services/storage/storage.dart';
 import 'package:validators/validators.dart';
 
 /// Repository used to handle memo database comunication.

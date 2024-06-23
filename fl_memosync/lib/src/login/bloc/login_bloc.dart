@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_memosync/src/services/logger.dart';
+import 'package:memosync/src/services/logger.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';

@@ -1,13 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_memosync/app.dart';
-import 'package:flutter_memosync/src/authentication/authentication.dart';
-import 'package:flutter_memosync/src/login/login.dart';
-import 'package:flutter_memosync/src/login/views/views.dart';
-import 'package:flutter_memosync/src/services/logger.dart';
-import 'package:flutter_memosync/src/widgets/language_dialog.dart';
-import 'package:flutter_memosync/src/widgets/route_404.dart';
+import 'package:memosync/app.dart';
+import 'package:memosync/src/authentication/authentication.dart';
+import 'package:memosync/src/login/login.dart';
+import 'package:memosync/src/login/views/views.dart';
+import 'package:memosync/src/services/logger.dart';
+import 'package:memosync/src/widgets/language_dialog.dart';
+import 'package:memosync/src/widgets/route_404.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../services/storage/storage.dart';

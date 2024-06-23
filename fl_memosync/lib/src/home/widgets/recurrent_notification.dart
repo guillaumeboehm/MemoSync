@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_memosync/src/home/views/memo_settings.dart';
-import 'package:flutter_memosync/src/services/logger.dart';
-import 'package:flutter_memosync/src/services/models/memo.dart';
-import 'package:flutter_memosync/src/services/storage/storage.dart';
+import 'package:memosync/src/home/views/memo_settings.dart';
+import 'package:memosync/src/services/logger.dart';
+import 'package:memosync/src/services/models/memo.dart';
+import 'package:memosync/src/services/storage/storage.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 /// Returns a notification [SettingsTile]

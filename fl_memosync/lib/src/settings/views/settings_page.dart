@@ -1,15 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_memosync/src/services/background_handlers/desktop_window_manager.dart';
-import 'package:flutter_memosync/src/services/logger.dart';
-import 'package:flutter_memosync/src/services/models/models.dart';
-import 'package:flutter_memosync/src/services/notification_service.dart';
-import 'package:flutter_memosync/src/services/storage/storage.dart';
-import 'package:flutter_memosync/src/utilities/string_extenstion.dart';
-import 'package:flutter_memosync/src/widgets/language_dialog.dart';
-import 'package:flutter_memosync/src/widgets/number_input.dart';
+import 'package:memosync/src/services/background_handlers/desktop_window_manager.dart';
+import 'package:memosync/src/services/logger.dart';
+import 'package:memosync/src/services/models/models.dart';
+import 'package:memosync/src/services/notification_service.dart';
+import 'package:memosync/src/services/storage/storage.dart';
+import 'package:memosync/src/utilities/string_extenstion.dart';
+import 'package:memosync/src/widgets/language_dialog.dart';
+import 'package:memosync/src/widgets/number_input.dart';
 import 'package:launch_at_startup/launch_at_startup.dart'
-    if (dart.library.html) 'package:flutter_memosync/src/services/background_handlers/noop_launch_at_startup.dart';
+    if (dart.library.html) 'package:memosync/src/services/background_handlers/noop_launch_at_startup.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:universal_platform/universal_platform.dart';

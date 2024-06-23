@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter_memosync/src/services/logger.dart';
+import 'package:memosync/src/services/logger.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 // import 'package:objectbox/objectbox.dart';

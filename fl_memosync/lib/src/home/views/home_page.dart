@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_memosync/app.dart' show App;
-import 'package:flutter_memosync/src/home/home.dart';
-import 'package:flutter_memosync/src/home/views/home_scaffold.dart';
-import 'package:flutter_memosync/src/home/views/memo.dart';
-import 'package:flutter_memosync/src/home/views/memo_settings.dart';
-import 'package:flutter_memosync/src/services/logger.dart';
-import 'package:flutter_memosync/src/services/storage/storage.dart';
+import 'package:memosync/app.dart' show App;
+import 'package:memosync/src/home/home.dart';
+import 'package:memosync/src/home/views/home_scaffold.dart';
+import 'package:memosync/src/home/views/memo.dart';
+import 'package:memosync/src/home/views/memo_settings.dart';
+import 'package:memosync/src/services/logger.dart';
+import 'package:memosync/src/services/storage/storage.dart';
 
 /// Widget containing the memo list, memo view and memo settings
 class HomePage extends StatelessWidget {

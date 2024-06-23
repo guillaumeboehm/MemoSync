@@ -6,10 +6,10 @@ import 'package:diff_match_patch/diff_match_patch.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_memosync/src/authentication/bloc/authentication_bloc.dart';
-import 'package:flutter_memosync/src/home/repositories/memo.dart';
-import 'package:flutter_memosync/src/services/logger.dart';
-import 'package:flutter_memosync/src/services/storage/storage.dart';
+import 'package:memosync/src/authentication/bloc/authentication_bloc.dart';
+import 'package:memosync/src/home/repositories/memo.dart';
+import 'package:memosync/src/services/logger.dart';
+import 'package:memosync/src/services/storage/storage.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';

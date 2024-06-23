@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter_memosync/src/services/background_handlers/common_handlers/job_handlers.dart';
-import 'package:flutter_memosync/src/services/notification_service.dart';
+import 'package:memosync/src/services/background_handlers/common_handlers/job_handlers.dart';
+import 'package:memosync/src/services/notification_service.dart';
 import 'package:universal_platform/universal_platform.dart';
 
 /// Static class mimicing the smartphone background services for desktop and web

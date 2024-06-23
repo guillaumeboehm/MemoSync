@@ -2,18 +2,18 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_memosync/app.dart';
-import 'package:flutter_memosync/src/authentication/authentication.dart'
+import 'package:memosync/app.dart';
+import 'package:memosync/src/authentication/authentication.dart'
     show AuthenticationRepository;
-import 'package:flutter_memosync/src/home/repositories/memo.dart'
+import 'package:memosync/src/home/repositories/memo.dart'
     show MemoRepository;
-import 'package:flutter_memosync/src/services/background_handlers/desktop_background_manager.dart';
-import 'package:flutter_memosync/src/services/background_handlers/desktop_window_manager.dart';
-import 'package:flutter_memosync/src/services/background_handlers/smartphones_background_manager.dart';
-import 'package:flutter_memosync/src/services/repositories/user.dart'
+import 'package:memosync/src/services/background_handlers/desktop_background_manager.dart';
+import 'package:memosync/src/services/background_handlers/desktop_window_manager.dart';
+import 'package:memosync/src/services/background_handlers/smartphones_background_manager.dart';
+import 'package:memosync/src/services/repositories/user.dart'
     show UserRepository;
-import 'package:flutter_memosync/src/services/storage/storage.dart';
-import 'package:flutter_memosync/src/utilities/sentry_wrappers.dart';
+import 'package:memosync/src/services/storage/storage.dart';
+import 'package:memosync/src/utilities/sentry_wrappers.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:url_strategy/url_strategy.dart';
 

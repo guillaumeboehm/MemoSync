@@ -1,4 +1,4 @@
-import 'package:flutter_memosync/src/services/storage/storage.dart';
+import 'package:memosync/src/services/storage/storage.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 /// Wraps Sentry.captureException for analytics option

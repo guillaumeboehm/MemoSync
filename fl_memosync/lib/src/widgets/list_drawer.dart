@@ -2,7 +2,7 @@ import 'package:bottom_drawer/bottom_drawer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_memosync/src/home/home.dart';
+import 'package:memosync/src/home/home.dart';
 
 /// Bottom drawer widget used when adding a memo
 class ListDrawer extends StatefulWidget {
