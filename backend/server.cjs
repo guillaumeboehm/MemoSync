@@ -1,45 +1,48 @@
 const express = require('express');
+const json = express.json;
 const app = express();
 
-const bcrypt = require('bcrypt');
-const crypto = require('crypto');
-require('dotenv').config();
+// const bcrypt = require('bcrypt');
+// const crypto = require('crypto');
+const dotenv = require('dotenv');
+dotenv.config()
 const mongoose = require('mongoose');
+const connect = mongoose.connect;
 const jwt = require('jsonwebtoken');
-var path = require('path');
-var favicon = require('serve-favicon');
+const { join } = require('path');
+const favicon = require('serve-favicon');
 
 //! view engine setup
-app.set('views', path.join(__dirname,'../frontend/views'));
+app.set('views', join(__dirname,'../frontend/views'));
 app.set('view engine', 'ejs');
 app.set('view options', {filename:true});
-app.use('/css', express.static(path.join(__dirname, "../frontend/css")));
-app.use('/js', express.static(path.join(__dirname, "../frontend/js")));
-app.use('/resources', express.static(path.join(__dirname, "../resources")));
-app.use(favicon(path.join(__dirname, '../resources/favicon.ico')));
+app.use('/css', express.static(join(__dirname, "../frontend/css")));
+app.use('/js', express.static(join(__dirname, "../frontend/js")));
+app.use('/resources', express.static(join(__dirname, "../resources")));
+app.use(favicon(join(__dirname, '../resources/favicon.ico')));
 //TODO restrict access for connected/disconnected
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
 	res.render('welcome');
 })
-app.get('/home', (req, res) => {
+app.get('/home', (_, res) => {
 	res.render('home');
 })
-app.get('/login', (req, res) => {
+app.get('/login', (_, res) => {
 	res.render('login');
 })
-app.get('/signup', (req, res) => {
+app.get('/signup', (_, res) => {
 	res.render('signup');
 })
-app.get('/verifEmail', (req, res) => {
+app.get('/verifEmail', (_, res) => {
 	res.render('verifEmail');
 })
-app.get('/resendVerif', (req, res) => {
+app.get('/resendVerif', (_, res) => {
 	res.render('resendVerif');
 })
-app.get('/forgotPassword', (req, res) => {
+app.get('/forgotPassword', (_, res) => {
 	res.render('forgotPassword');
 })
-app.get('/changePassword', (req, res) => {
+app.get('/changePassword', (_, res) => {
 	res.render('changePassword');
 })
 
@@ -56,7 +59,7 @@ const dbCollNames = {
 const mongoURL = 'mongodb://'+dbHost+':'+dbPort+'/'+dbName;
 
 try{
-	mongoose.connect(mongoURL, {user:dbUsername,pass:dbPwd});
+	connect(mongoURL, {user:dbUsername,pass:dbPwd});
 } catch(err){
 	console.log(err);
 }
@@ -64,7 +67,7 @@ try{
 const models = require('./models')(mongoose, dbCollNames);
 
 //! Express config
-app.use(express.json());
+app.use(json());
 
 //Admin routes
 app.delete('/AdminRemUsers', async (req,res)=>{
@@ -324,18 +327,18 @@ function authenticateToken(req, res, next) {
 		next();
 	})
 }
-function isConnected(req, res, next) {
-	const authHeader = req.headers['authorization'];
-	const token = authHeader && authHeader.split(' ')[1];
-	if(token == null) return res.redirect('/');
-
-	jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
-		console.log(err);
-		if(err) return res.status(403).json({code:"InvalidToken" ,message: err});
-		req.userInfo = payload;
-		next();
-	})
-}
+// INFO: Never used
+// function isConnected(req, res, next) {
+// 	const authHeader = req.headers['authorization'];
+// 	const token = authHeader && authHeader.split(' ')[1];
+// 	if(token == null) return res.redirect('/');
+// 	jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
+// 		console.log(err);
+// 		if(err) return res.status(403).json({code:"InvalidToken" ,message: err});
+// 		req.userInfo = payload;
+// 		next();
+// 	})
+// }
 
 app.listen(8080, async () => {
 	console.log('server listening')

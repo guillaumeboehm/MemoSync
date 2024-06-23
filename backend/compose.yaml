@@ -1,0 +1,6 @@
+services:
+  mongodb:
+    build:
+      dockerfile: dockerfiles/mongodb.dockerfile
+    ports:
+      - "27017:27017"

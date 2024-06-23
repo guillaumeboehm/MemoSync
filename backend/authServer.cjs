@@ -1,16 +1,18 @@
-const bcrypt = require('bcrypt');
-const crypto = require('crypto');
-require('dotenv').config();
+const { compare, hash } = require('bcrypt');
+const { randomBytes } = require('crypto');
+const dotenv = require('dotenv');
+dotenv.config()
 
 const express = require('express');
+const json = express.json;
 const app = express();
 const jwt = require('jsonwebtoken');
-var cors = require('cors');
+const cors = require('cors');
 var apiCall = undefined;
 
 //! Mail setup
-const mailer = require('nodemailer');
-const mailTransporter = mailer.createTransport({
+const { createTransport } = require('nodemailer');
+const mailTransporter = createTransport({
 	host: process.env.MAIL_HOST,
 	port: process.env.MAIL_PORT,
 	secure: true,
@@ -22,6 +24,7 @@ const mailTransporter = mailer.createTransport({
 
 //! Mongoose config
 const mongoose = require('mongoose');
+const connect = mongoose.connect;
 const dbName = process.env.DB_NAME;
 const dbUsername = process.env.DB_USERNAME;
 const dbPwd = process.env.DB_PWD;
@@ -34,7 +37,7 @@ const dbCollNames = {
 const mongoURL = 'mongodb://'+dbHost+':'+dbPort+'/'+dbName;
 
 try{
-	mongoose.connect(mongoURL, {user:dbUsername,pass:dbPwd});
+	connect(mongoURL, {user:dbUsername,pass:dbPwd});
 } catch(err){
 	if(err) console.log(err);
 }
@@ -49,7 +52,7 @@ String.prototype.format = function () {
 const asciiToB64 = (data) => Buffer.from(data).toString('base64');
 const b64ToAscii = (data) => Buffer.from(data, 'base64').toString('ascii');
 
-app.use(express.json());
+app.use(json());
 app.use(cors({origin: '*'}));
 
 app.post('/newToken', async (req, res) => {
@@ -57,8 +60,8 @@ app.post('/newToken', async (req, res) => {
 	try{
 		const authHeader = req.headers['authorization'];
 		const authToken = authHeader && authHeader.split(' ')[1];
-		refresh = true
-		if (authToken != null) await jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET, async (err, payload) => {
+		var refresh = true
+		if (authToken != null) jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET, async (err, payload) => {
 			if(!err){
 				refresh = false;
 				// check if user still exists
@@ -118,7 +121,7 @@ app.delete('/logout', async (req, res) => {
 			logError("NoTokenGiven");
 			return res.status(400).json({code:"NoUserFound", message:"Cannot logout because no refresh token was given"});
 		}
-		jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, payload) => {
+		jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, payload) => {
 			if(err){
 				logError("InvalidBearerToken", err);
 				return res.status(401).json({code:"InvalidBearerToken", message:"Cannot logout because the refresh token is invalid"});
@@ -208,7 +211,7 @@ app.post('/login', async (req, res) => {
 				return res.status(401).json({code:'VerifEmail', message: "Cannot login because the user's email is not verified"});
 			}
 
-			bcrypt.compare(pass, user.get('password'), function(err,success){
+			compare(pass, user.get('password'), function(err,success){
 				if(err) {
 					logError("InternalError", err);
 					return res.status(500).json({code:"InternalError", message: err});
@@ -248,8 +251,8 @@ app.post('/signup', async (req, res) => {
 		})) return 0;
 
 		const email = req.body.email;
-		const hashedPassword = await bcrypt.hash(req.body.password, 10);
-		const verifToken = crypto.randomBytes(40).toString('hex');
+		const hashedPassword = await hash(req.body.password, 10);
+		const verifToken = randomBytes(40).toString('hex');
 		sendVerifEmail(email, verifToken).then(mailRes=>{
 			console.log(mailRes)
 			switch(mailRes.status){
@@ -360,7 +363,7 @@ app.post('/forgotPassword', async (req, res)=>{
 				return res.status(400).json({code:"NoUserFound", message:"Cannot send password reset link because the given user doesn't exist"});
 			}
 
-			const pwdToken = crypto.randomBytes(40).toString('hex');
+			const pwdToken = randomBytes(40).toString('hex');
 			sendForgottenPasswordEmail(email, pwdToken).then(mailRes=>{
 				console.log(mailRes)
 				switch(mailRes.status){
@@ -382,7 +385,7 @@ app.post('/forgotPassword', async (req, res)=>{
 app.post('/changePassword', async (req, res)=>{
 	const authHeader = req.headers['authorization'];
 	const accessToken = authHeader && authHeader.split(' ')[1];
-	const hashedPassword = await bcrypt.hash(req.body.password, 10);
+	const hashedPassword = await hash(req.body.password, 10);
 
 	var resetToken = undefined;
 	var email = undefined;
@@ -444,7 +447,7 @@ app.post('/resendVerif', async (req, res)=>{
 				return res.status(400).json({ code: 'AlreadyVerified', message: "No need to send a verification email because the user's email is already verified" });
 			}
 
-			const verifToken = crypto.randomBytes(40).toString('hex');
+			const verifToken = randomBytes(40).toString('hex');
 			sendVerifEmail(email, verifToken).then(mailRes=>{
 				console.log(mailRes)
 				switch(mailRes.status){
@@ -470,7 +473,7 @@ function generateAccessToken(payload) {
 }
 async function sendVerifEmail(dest, token) {
 	return new Promise((resolve,reject)=>{
-		mailOptions = {
+		const mailOptions = {
 			from: process.env.MAIL_USER,
 			to: dest,
 			subject: process.env.VERIF_MAIL_SUBJECT,
@@ -494,7 +497,7 @@ async function sendVerifEmail(dest, token) {
 }
 async function sendForgottenPasswordEmail(dest, token) {
 	return new Promise((resolve,reject)=>{
-		mailOptions = {
+		const mailOptions = {
 			from: process.env.MAIL_USER,
 			to: dest,
 			subject: process.env.PWD_MAIL_SUBJECT,
