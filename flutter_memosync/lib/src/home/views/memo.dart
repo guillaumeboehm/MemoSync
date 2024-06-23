@@ -90,11 +90,11 @@ class _MemoViewState extends State<MemoView> {
                                           child: TextButton(
                                             onPressed: () {
                                               final currentText =
-                                                  memo?.text ?? '';
+                                                  memo.text ?? '';
                                               final currentVersion =
-                                                  (memo?.version ?? 0) + 1;
+                                                  (memo.version ?? 0) + 1;
                                               final currentPatches =
-                                                  memo?.patches ?? '';
+                                                  memo.patches ?? '';
                                               context.read<HomeBloc>().add(
                                                     SyncMemo(
                                                       state.currentMemo,
@@ -108,7 +108,7 @@ class _MemoViewState extends State<MemoView> {
                                               tr('memo.synchronize'),
                                             ),
                                           ),
-                                        )
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -130,9 +130,8 @@ class _MemoViewState extends State<MemoView> {
                                       state.currentMemo,
                                     ),
                                     builder: (context, memo, widget) {
-                                      _memoController.text = memo == null
-                                          ? ''
-                                          : (memo as MemoObject?)?.text ?? '';
+                                      _memoController.text =
+                                          (memo as MemoObject?)?.text ?? '';
                                       if (cursorPos[state.currentMemo] !=
                                           null) {
                                         _memoController.selection =
@@ -148,7 +147,6 @@ class _MemoViewState extends State<MemoView> {
                                         );
                                       }
                                       _textFocus.requestFocus();
-
                                       return TextField(
                                         controller: _memoController,
                                         maxLines: null,
