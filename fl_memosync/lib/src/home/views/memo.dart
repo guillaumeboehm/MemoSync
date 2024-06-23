@@ -4,11 +4,11 @@ import 'dart:math';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_memosync/app.dart';
-import 'package:flutter_memosync/src/home/home.dart';
-import 'package:flutter_memosync/src/services/logger.dart';
-import 'package:flutter_memosync/src/services/models/memo.dart';
-import 'package:flutter_memosync/src/services/storage/storage.dart';
+import 'package:memosync/app.dart';
+import 'package:memosync/src/home/home.dart';
+import 'package:memosync/src/services/logger.dart';
+import 'package:memosync/src/services/models/memo.dart';
+import 'package:memosync/src/services/storage/storage.dart';
 import 'package:throttling/throttling.dart';
 
 /// Main memo view with the memo editor
