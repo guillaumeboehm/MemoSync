@@ -1,17 +1,17 @@
 // This is a basic Flutter widget test.
 //
 // To perform an interaction with a widget in your test, use the WidgetTester
-// utility that Flutter provides. For example, you can send tap and scroll
+// utility in the flutter_test package. For example, you can send tap and scroll
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_memosync/app.dart';
-import 'package:flutter_memosync/src/authentication/repositories/authentication.dart'
+import 'package:fl_memosync/app.dart';
+import 'package:fl_memosync/src/authentication/repositories/authentication.dart'
     show AuthenticationRepository;
-import 'package:flutter_memosync/src/home/repositories/memo.dart'
+import 'package:fl_memosync/src/home/repositories/memo.dart'
     show MemoRepository;
-import 'package:flutter_memosync/src/services/repositories/user.dart'
+import 'package:fl_memosync/src/services/repositories/user.dart'
     show UserRepository;
 import 'package:flutter_test/flutter_test.dart';
 
