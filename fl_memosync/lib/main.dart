@@ -5,8 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:memosync/app.dart';
 import 'package:memosync/src/authentication/authentication.dart'
     show AuthenticationRepository;
-import 'package:memosync/src/home/repositories/memo.dart'
-    show MemoRepository;
+import 'package:memosync/src/home/repositories/memo.dart' show MemoRepository;
 import 'package:memosync/src/services/background_handlers/desktop_background_manager.dart';
 import 'package:memosync/src/services/background_handlers/desktop_window_manager.dart';
 import 'package:memosync/src/services/background_handlers/smartphones_background_manager.dart';
@@ -32,21 +31,24 @@ void main() async {
   await DesktopBackroungManager.initBackgroundService();
 
   Future<void> appRunner() async => runApp(
-        DefaultAssetBundle(
-          bundle: SentryAssetBundle(),
-          child: EasyLocalization(
-            supportedLocales: const [
-              Locale('en'),
-              Locale('fr'),
-            ],
-            path: 'assets/i18n',
-            fallbackLocale: const Locale('en'),
-            useFallbackTranslations: true,
-            useOnlyLangCode: true,
-            child: App(
-              authenticationRepository: AuthenticationRepository(),
-              userRepository: UserRepository(),
-              memoRepository: MemoRepository(),
+        MaterialApp(
+          title: 'Test',
+          home: DefaultAssetBundle(
+            bundle: SentryAssetBundle(),
+            child: EasyLocalization(
+              supportedLocales: const [
+                Locale('en-US'),
+                Locale('fr-FR'),
+              ],
+              path: 'assets/i18n',
+              fallbackLocale: const Locale('en-US'),
+              useFallbackTranslations: true,
+              useOnlyLangCode: true,
+              child: App(
+                authenticationRepository: AuthenticationRepository(),
+                userRepository: UserRepository(),
+                memoRepository: MemoRepository(),
+              ),
             ),
           ),
         ),

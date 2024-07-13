@@ -59,8 +59,6 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    // final localizationDelegate = LocalizedApp.of(context).delegate;
-
     return ValueListenableBuilder<SettingsObject>(
       valueListenable: Storage.settingsStorageStream(),
       builder: (context, settings, _) {
@@ -75,14 +73,6 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,
-          // localizationsDelegates: [
-          //   GlobalMaterialLocalizations.delegate,
-          //   GlobalCupertinoLocalizations.delegate,
-          //   GlobalWidgetsLocalizations.delegate,
-          //   localizationDelegate,
-          // ],
-          // supportedLocales: localizationDelegate.supportedLocales,
-          // locale: localizationDelegate.currentLocale,
           builder: (context, child) {
             // TODO(me): Use Permission.ignore...
             // instead and do it when activating a permanent notif only
@@ -90,19 +80,8 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
               if (!UniversalPlatform.isDesktopOrWeb &&
                   !(await DisableBatteryOptimization
                           .isAllBatteryOptimizationDisabled ??
-                      false)) {
-//                 await DisableBatteryOptimization
-//                     .showDisableAllOptimizationsSettings(
-//                   'Enable Auto Start',
-//                   'Follow the steps and enable the auto start of this app',
-//                   'Your device has additional battery optimization',
-//                   '''
-// Follow the steps and disable the optimizations
-// to allow smooth functioning of this app''',
-                // );
-              }
+                      false)) {}
             });
-
             Logger.info('built');
             return BlocListener<AuthenticationBloc, AuthenticationState>(
               listenWhen: (previous, current) =>
@@ -110,13 +89,11 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
                   previous.status != current.status,
               listener: (context, state) {
                 if (!kIsWeb || Uri.base.path == '/') {
-                  // Not ideal but meh
                   Logger.info(
                     'BlocListener rebuild with auth status: ${state.status}',
                   );
                   switch (state.status) {
                     case AuthenticationStatus.authenticated:
-                      // NotificationService.initNotifications();
                       _navigator.pushAndRemoveUntil<void>(
                         HomePage.route(),
                         (route) => false,
@@ -166,7 +143,6 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
               child: child,
             );
           },
-          // home: const SplashPage(),
           onGenerateRoute: (RouteSettings settings) => SplashPage.route(),
         );
       },
