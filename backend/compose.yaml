@@ -1,6 +1,9 @@
 services:
   mongodb:
     build:
-      dockerfile: dockerfiles/mongodb.dockerfile
+      dockerfile: ./docker_data/mongodb/dockerfile
+    restart: unless-stopped
+    volumes:
+      - ./docker_data/mongodb/db:/data/db
     ports:
-      - "27017:27017"
+      - "27017-27019:27017-27019"
