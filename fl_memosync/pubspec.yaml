@@ -68,13 +68,13 @@ dependencies:
   sentry_flutter: ^8.2.0
   settings_ui: ^2.0.2
   shared_preferences: ^2.0.15
-  system_tray: ^2.0.1
+  # system_tray: ^2.0.1
   throttling: ^2.0.1
+  tray_manager: any
   universal_html: ^2.0.8
   universal_io: ^2.0.4
   universal_platform: ^1.0.0
   url_launcher: ^6.1.5
-  url_strategy: ^0.2.0
   validators: ^3.0.0
   window_manager: ^0.3.9
   workmanager: ^0.5.0

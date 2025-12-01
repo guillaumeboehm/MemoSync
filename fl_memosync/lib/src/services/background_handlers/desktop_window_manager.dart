@@ -194,6 +194,7 @@ class _WrapperState extends State<_Wrapper> with WindowListener, TrayListener {
     }
   }
 
+  // WindowManager signals
   @override
   void onWindowFocus() {
     // do something
@@ -243,5 +244,42 @@ class _WrapperState extends State<_Wrapper> with WindowListener, TrayListener {
   @override
   void onWindowLeaveFullScreen() {
     // do something
+  }
+
+  // TrayManager signals
+  @override
+  void onTrayIconMouseDown() {
+    // do something, for example pop up the menu
+    trayManager.popUpContextMenu();
+    if (UniversalPlatform.isMacOS) {
+      trayManager.popUpContextMenu();
+    } else {
+      if (!UniversalPlatform.isWindows) {
+        trayManager.destroy();
+      }
+      windowManager.show();
+    }
+  }
+
+  @override
+  void onTrayIconRightMouseDown() {
+    // do something
+    UniversalPlatform.isMacOS
+        ? windowManager.show()
+        : trayManager.popUpContextMenu();
+  }
+
+  @override
+  void onTrayIconRightMouseUp() {
+    // do something
+  }
+
+  @override
+  void onTrayMenuItemClick(MenuItem menuItem) {
+    if (menuItem.key == 'show_window') {
+      // do something
+    } else if (menuItem.key == 'exit_app') {
+      // do something
+    }
   }
 }
