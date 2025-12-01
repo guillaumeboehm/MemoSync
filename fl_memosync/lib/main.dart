@@ -31,24 +31,21 @@ void main() async {
   await DesktopBackroungManager.initBackgroundService();
 
   Future<void> appRunner() async => runApp(
-        MaterialApp(
-          title: 'Test',
-          home: DefaultAssetBundle(
-            bundle: SentryAssetBundle(),
-            child: EasyLocalization(
-              supportedLocales: const [
-                Locale('en-US'),
-                Locale('fr-FR'),
-              ],
-              path: 'assets/i18n',
-              fallbackLocale: const Locale('en-US'),
-              useFallbackTranslations: true,
-              useOnlyLangCode: true,
-              child: App(
-                authenticationRepository: AuthenticationRepository(),
-                userRepository: UserRepository(),
-                memoRepository: MemoRepository(),
-              ),
+        DefaultAssetBundle(
+          bundle: SentryAssetBundle(),
+          child: EasyLocalization(
+            supportedLocales: const [
+              Locale('en', 'US'),
+              Locale('fr', 'FR'),
+            ],
+            path: 'assets/i18n',
+            fallbackLocale: const Locale('en', 'US'),
+            useFallbackTranslations: true,
+            useOnlyLangCode: true,
+            child: App(
+              authenticationRepository: AuthenticationRepository(),
+              userRepository: UserRepository(),
+              memoRepository: MemoRepository(),
             ),
           ),
         ),
