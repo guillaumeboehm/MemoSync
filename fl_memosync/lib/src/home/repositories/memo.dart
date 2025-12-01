@@ -12,8 +12,10 @@ import 'package:validators/validators.dart';
 /// Repository used to handle memo database comunication.
 class MemoRepository {
   final _baseUri = Uri(
-    scheme: 'https',
-    host: dotenv.get('API_URI'),
+    // WARN: for testing
+    scheme: 'http', host: 'localhost', port: 8080,
+    // scheme: 'https',
+    // host: dotenv.get('API_URI'),
   );
   final _dio = Dio();
   static Options _baseOptions(String accessToken) {

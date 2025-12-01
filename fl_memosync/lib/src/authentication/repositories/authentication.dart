@@ -168,9 +168,11 @@ class AuthenticationRepository {
           // Don't trust any certificate
           // just because their root cert is trusted.
           final client = HttpClient(
-            context: SecurityContext(),
-          )..badCertificateCallback =
-              (X509Certificate cert, String host, int port) => true;
+              // WARN: While on local
+              // context: SecurityContext(),
+              )
+            ..badCertificateCallback =
+                (X509Certificate cert, String host, int port) => true;
           return client;
         },
       );
@@ -180,8 +182,10 @@ class AuthenticationRepository {
   final _controller = StreamController<AuthenticationStatus>();
 
   final _authBaseUri = Uri(
-    scheme: 'https',
-    host: dotenv.get('AUTH_URI'),
+    // WARN: for testing
+    scheme: 'http', host: 'localhost', port: 8081,
+    // scheme: 'https',
+    // host: dotenv.get('AUTH_URI'),
   );
   final _authDio = Dio();
 
@@ -368,6 +372,7 @@ class AuthenticationRepository {
         result['error'] = {'code': 'ResponseNotAJSON'};
       }
     } on DioException catch (e) {
+      await Logger.info(e.toString());
       if (e.response?.data != null) {
         unawaited(Logger.error(e.response?.data.toString()));
         result['error'] = jsonDecode(e.response?.data as String);
