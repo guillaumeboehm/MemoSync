@@ -1,19 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:memosync/src/services/storage/storage.dart';
 import 'package:launch_at_startup/launch_at_startup.dart'
     if (dart.library.html) 'package:memosync/src/services/background_handlers/noop_launch_at_startup.dart';
+import 'package:memosync/src/services/storage/storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:system_tray/system_tray.dart' as st;
+import 'package:tray_manager/tray_manager.dart';
 import 'package:universal_io/io.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:window_manager/window_manager.dart';
 
 /// Handles desktop application actions
 class DesktopWindowManager {
-  /// The app system tray icon
-  static st.SystemTray? systemTray;
-
   /// Wraps the MaterialApp to handle window events
   static Widget windowWrapper({
     required Widget child,
@@ -47,9 +44,6 @@ class DesktopWindowManager {
       title: 'MemoSync',
     );
 
-    // ### System tray stuff
-    systemTray = st.SystemTray();
-
     // ### Show window if not launch minimized or just make tray icon
     if (Storage.getSettings().closeMinimized &&
         Storage.getSettings().launchMinimized) {
@@ -68,47 +62,34 @@ class DesktopWindowManager {
         : 'assets/resources/logos/png/Full_logo_32px.png';
 
     // We first init the systray menu
-    await systemTray?.initSystemTray(
-      toolTip: 'MemoSync',
-      iconPath: path,
-    );
+    await trayManager.setIcon(path);
+    await trayManager.setTitle('MemoSync');
 
     // create context menu
-    final menu = st.Menu();
-    await menu.buildFrom([
-      st.MenuItemLabel(
-        label: 'Open',
-        onClicked: (menuItem) => _openFromTray(),
-      ),
-      st.MenuItemLabel(
-        label: 'Exit',
-        onClicked: (menuItem) {
-          windowManager.destroy();
-        },
-      ),
-    ]);
+    final menu = Menu(
+      items: [
+        MenuItem(
+          key: 'open',
+          label: 'Open',
+          onClick: (menuItem) => _openFromTray(),
+        ),
+        MenuItem.separator(),
+        MenuItem(
+          key: 'exit',
+          label: 'Exit',
+          onClick: (menuItem) {
+            windowManager.destroy();
+          },
+        ),
+      ],
+    );
 
     // set context menu
-    await systemTray?.setContextMenu(menu);
-
-    // handle system tray event
-    systemTray?.registerSystemTrayEventHandler((eventName) {
-      if (eventName == st.kSystemTrayEventClick) {
-        if (UniversalPlatform.isMacOS) {
-          systemTray?.popUpContextMenu();
-        } else {
-          UniversalPlatform.isWindows ? windowManager.show() : _openFromTray();
-        }
-      } else if (eventName == st.kSystemTrayEventRightClick) {
-        UniversalPlatform.isMacOS
-            ? windowManager.show()
-            : systemTray?.popUpContextMenu();
-      }
-    });
+    await trayManager.setContextMenu(menu);
   }
 
   static Future<void> _deleteSysTray() async {
-    await systemTray?.destroy();
+    await trayManager.destroy();
   }
 
   /// Set whether to minimize to system tray on close
@@ -179,10 +160,11 @@ class _Wrapper extends StatefulWidget {
   State<_Wrapper> createState() => _WrapperState();
 }
 
-class _WrapperState extends State<_Wrapper> with WindowListener {
+class _WrapperState extends State<_Wrapper> with WindowListener, TrayListener {
   @override
   void initState() {
     windowManager.addListener(this);
+    trayManager.addListener(this);
     _init();
     super.initState();
   }
@@ -190,6 +172,7 @@ class _WrapperState extends State<_Wrapper> with WindowListener {
   @override
   void dispose() {
     windowManager.removeListener(this);
+    trayManager.removeListener(this);
     super.dispose();
   }
 

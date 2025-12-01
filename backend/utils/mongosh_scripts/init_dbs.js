@@ -18,5 +18,5 @@ if(db.getCollectionInfos().length === 0) {
     db.createCollection("User")
 }
 else {
-    console.log("Database already setup, leaving.")
+    console.log("Database already setup, continuing.")
 }

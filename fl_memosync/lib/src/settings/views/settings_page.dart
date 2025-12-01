@@ -1,5 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:launch_at_startup/launch_at_startup.dart'
+    if (dart.library.html) 'package:memosync/src/services/background_handlers/noop_launch_at_startup.dart';
 import 'package:memosync/src/services/background_handlers/desktop_window_manager.dart';
 import 'package:memosync/src/services/logger.dart';
 import 'package:memosync/src/services/models/models.dart';
@@ -8,8 +10,6 @@ import 'package:memosync/src/services/storage/storage.dart';
 import 'package:memosync/src/utilities/string_extenstion.dart';
 import 'package:memosync/src/widgets/language_dialog.dart';
 import 'package:memosync/src/widgets/number_input.dart';
-import 'package:launch_at_startup/launch_at_startup.dart'
-    if (dart.library.html) 'package:memosync/src/services/background_handlers/noop_launch_at_startup.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:universal_platform/universal_platform.dart';
@@ -74,14 +74,16 @@ class _SettingsPageState extends State<SettingsPage> {
                               ? await launchAtStartup.enable()
                               : await launchAtStartup.disable();
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                tr('settings.option_set_error_msg'),
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  tr('settings.option_set_error_msg'),
+                                ),
+                                backgroundColor: Colors.red.shade400,
                               ),
-                              backgroundColor: Colors.red.shade400,
-                            ),
-                          );
+                            );
+                          }
                         }
                       },
                     ),
@@ -99,14 +101,16 @@ class _SettingsPageState extends State<SettingsPage> {
                             settings..closeMinimized = enabled,
                           );
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                tr('settings.option_set_error_msg'),
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  tr('settings.option_set_error_msg'),
+                                ),
+                                backgroundColor: Colors.red.shade400,
                               ),
-                              backgroundColor: Colors.red.shade400,
-                            ),
-                          );
+                            );
+                          }
                         }
                       },
                     ),
@@ -270,63 +274,9 @@ language.name.${context.locale.languageCode}''',
                       ),
                     ),
                     onPressed: (_) {
-//                       showDialog<Locale?>(
-//                         context: context,
-//                         builder: (diagContext) {
-//                           // final delegate = LocalizedApp.of(context).delegate;
-//                           // final langs = delegate.supportedLocales;
-//                           return AlertDialog(
-//                             title: Text(
-//                               tr(
-//                                 'language.selected_message',
-//                                 namedArgs: {
-//                                   'language': tr(
-//                                     '''
-// language.name.${context.locale.languageCode}''',
-//                                   ),
-//                                 },
-//                               ),
-//                             ),
-//                             content: SizedBox(
-//                               height: 400,
-//                               width: 400,
-//                               child: Column(
-//                                 mainAxisSize: MainAxisSize.min,
-//                                 children: [
-//                                   Expanded(
-//                                     child: ListView.builder(
-//                                       itemCount:
-//                                           context.supportedLocales.length,
-//                                       itemBuilder: (context, index) {
-//                                         return ListTile(
-//                                           title: Text(
-//                                             tr(
-//                                               '''
-// language.name.${context.supportedLocales[index].languageCode}''',
-//                                             ),
-//                                           ),
-//                                           onTap: () => Navigator.pop(
-//                                             diagContext,
-//                                             context.supportedLocales[index],
-//                                           ),
-//                                         );
-//                                       },
-//                                     ),
-//                                   ),
-//                                 ],
-//                               ),
-//                             ),
-//                           );
-//                         },
-//                       ).then((locale) {
                       showLanguageDialog(context).then((locale) {
-                        // context.setLocale(
-                        //   locale ??
-                        //       context.fallbackLocale ??
-                        //       context.deviceLocale,
-                        // );
                         if (locale != null) {
-                          context.setLocale(locale);
+                          context.setLocale(Locale(locale.toLanguageTag()));
                           setState(() {});
 
                           Storage.setSettings(
@@ -568,7 +518,7 @@ ${interval.toString().split('.')[0].replaceFirst(RegExp(':'), tr('label.hour').c
                                       ),
                                     ),
                                   ],
-                                )
+                                ),
                               ],
                             );
                           },

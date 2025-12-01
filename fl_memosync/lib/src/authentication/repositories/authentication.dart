@@ -155,32 +155,6 @@ Map<String, Widget Function(BuildContext)> authenticationMessages = {
           ],
         ),
       ),
-  // 'OK': (context) => RichText(
-  // TODO(me): Need to change that to verifSent or smthg
-  //       textAlign: TextAlign.center,
-  //       text: TextSpan(
-  //         children: [
-  //           const TextSpan(
-  //             text: 'Verification email sent, check your emails and ',
-  //             style: TextStyle(color: Colors.red),
-  //           ),
-  //           WidgetSpan(
-  //             child: TextButton(
-  //               style: const ButtonStyle(alignment: Alignment.bottomCenter),
-  //               onPressed: () {
-  //                 context
-  //                     .read<LoginBloc>()
-  //                     .add(const LoginChangeView(LoginViews.login));
-  //               },
-  //               child: const Text(
-  //                 'log in',
-  //                 style: TextStyle(color: Colors.orange),
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
 };
 
 /// Repository used to handle user connection.
