@@ -2,6 +2,10 @@
 
 backend_root="$(dirname "$0")"
 
+echo "Installing dependencies..."
+npm install -y
+"${backend_root}/node_modules/pm2/bin/pm2" update
+
 echo "Activating database..."
 "${backend_root}/utils/activate_db.sh" && sleep 3
 
