@@ -30,7 +30,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   bottom_drawer: ^0.0.5
-  connectivity_plus: ^6.0.3
+  connectivity_plus: ^7.0.0
   crypto: ^3.0.3
   cupertino_icons: ^1.0.8
   device_info_plus: ^11.1.1
@@ -48,9 +48,9 @@ dependencies:
   flutter_background_service: ^5.0.5
   # flutter_background_service:
   #   path: /home/yoro/repos/flutter_background_service/packages/flutter_background_service # To avoid request on import
-  flutter_bloc: ^8.0.1
-  flutter_dotenv: ^5.0.2
-  flutter_local_notifications: ^18.0.1
+  flutter_bloc: ^9.1.1
+  flutter_dotenv: ^6.0.0
+  flutter_local_notifications: ^19.5.0
   # flutter_localizations:
   #   sdk: flutter
   flutter_svg: ^2.0.10+1
@@ -63,13 +63,13 @@ dependencies:
   launch_at_startup: ^0.3.0
   # objectbox: ^4.0.0
   # objectbox_flutter_libs: ^4.0.0
-  package_info_plus: ^8.0.0
+  package_info_plus: ^9.0.0
   path_provider: any
-  permission_handler: ^11.3.1
+  permission_handler: ^12.0.1
   quick_notify: ^0.2.1
   # quick_notify: 
   #   path: /home/yoro/repos/quick.flutter/packages/quick_notify # To avoid request on launch
-  sentry_flutter: ^8.2.0
+  sentry_flutter: ^9.8.0
   settings_ui: ^2.0.2
   shared_preferences: ^2.0.15
   # system_tray: ^2.0.1
@@ -80,17 +80,17 @@ dependencies:
   universal_platform: ^1.0.0
   url_launcher: ^6.1.5
   validators: ^3.0.0
-  window_manager: ^0.4.2
-  workmanager: ^0.5.0
+  window_manager: ^0.5.1
+  workmanager: ^0.7.0
 
 dev_dependencies:
-  bloc_test: ^9.0.3
+  bloc_test: ^10.0.0
   build_runner: ^2.4.11
   flutter_test:
     sdk: flutter
   hive_generator: ^2.0.1
   # objectbox_generator: ^4.0.0
-  very_good_analysis: ^6.0.0
+  very_good_analysis: ^7.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
