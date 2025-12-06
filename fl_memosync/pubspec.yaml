@@ -33,7 +33,7 @@ dependencies:
   connectivity_plus: ^7.0.0
   crypto: ^3.0.3
   cupertino_icons: ^1.0.8
-  device_info_plus: ^11.1.1
+  device_info_plus: ^12.3.0
   diff_match_patch: ^0.4.1
   dio: ^5.5.0+1
   disable_battery_optimization: ^1.1.1
@@ -60,7 +60,7 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   intl: any
-  launch_at_startup: ^0.3.0
+  launch_at_startup: ^0.5.1
   # objectbox: ^4.0.0
   # objectbox_flutter_libs: ^4.0.0
   package_info_plus: ^9.0.0
@@ -74,14 +74,14 @@ dependencies:
   shared_preferences: ^2.0.15
   # system_tray: ^2.0.1
   throttling: ^2.0.1
-  tray_manager: any
+  tray_manager: ^0.5.2
   universal_html: ^2.0.8
   universal_io: ^2.0.4
   universal_platform: ^1.0.0
   url_launcher: ^6.1.5
   validators: ^3.0.0
   window_manager: ^0.5.1
-  workmanager: ^0.7.0
+  workmanager: ^0.9.0+3
 
 dev_dependencies:
   bloc_test: ^10.0.0
@@ -90,7 +90,7 @@ dev_dependencies:
     sdk: flutter
   hive_generator: ^2.0.1
   # objectbox_generator: ^4.0.0
-  very_good_analysis: ^7.0.0
+  very_good_analysis: ^10.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

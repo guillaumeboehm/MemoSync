@@ -59,7 +59,7 @@ Future<void> initBackgroundService() async {
     'memosync_backend_fetch',
     'backendFetch',
     tag: [_WMJobType.backendFetch].flag.toString(),
-    existingWorkPolicy: ExistingWorkPolicy.keep,
+    existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
   );
 }
 
