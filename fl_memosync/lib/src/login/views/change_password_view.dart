@@ -68,11 +68,13 @@ class ChangePassword extends Widget {
                                   controller: _passwordController,
                                   obscureText: !visible,
                                   maxLength: 1000, // If the user is stupid
-                                  toolbarOptions: const ToolbarOptions(
-                                    copy: true,
-                                    cut: true,
-                                    paste: true,
-                                  ),
+                                  contextMenuBuilder: (context, state) {
+                                    return AdaptiveTextSelectionToolbar
+                                        .buttonItems(
+                                      anchors: state.contextMenuAnchors,
+                                      buttonItems: state.contextMenuButtonItems,
+                                    );
+                                  },
                                   autofillHints: const ['new-password'],
                                   decoration: InputDecoration(
                                     border: const OutlineInputBorder(),

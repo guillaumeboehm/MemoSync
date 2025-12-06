@@ -80,11 +80,13 @@ class _SignupViewState extends State<SignupView> {
                                 keyboardType: TextInputType.emailAddress,
                                 autofillHints: const ['username'],
                                 maxLength: 1000, // If the user is stupid
-                                toolbarOptions: const ToolbarOptions(
-                                  copy: true,
-                                  cut: true,
-                                  paste: true,
-                                ),
+                                contextMenuBuilder: (context, state) {
+                                  return AdaptiveTextSelectionToolbar
+                                      .buttonItems(
+                                    anchors: state.contextMenuAnchors,
+                                    buttonItems: state.contextMenuButtonItems,
+                                  );
+                                },
                                 decoration: InputDecoration(
                                   border: const OutlineInputBorder(),
                                   labelText: tr('authentication.hints.email'),
@@ -116,11 +118,14 @@ class _SignupViewState extends State<SignupView> {
                                           obscureText: !visible,
                                           maxLength:
                                               1000, // If the user is stupid
-                                          toolbarOptions: const ToolbarOptions(
-                                            copy: true,
-                                            cut: true,
-                                            paste: true,
-                                          ),
+                                          contextMenuBuilder: (context, state) {
+                                            return AdaptiveTextSelectionToolbar
+                                                .buttonItems(
+                                              anchors: state.contextMenuAnchors,
+                                              buttonItems:
+                                                  state.contextMenuButtonItems,
+                                            );
+                                          },
                                           autofillHints: const ['new-password'],
                                           decoration: InputDecoration(
                                             border: const OutlineInputBorder(),

@@ -82,11 +82,12 @@ class _LoginViewState extends State<LoginView> {
                             autofillHints: const ['username'],
                             maxLength: 1000, // If the user is stupid
                             keyboardType: TextInputType.emailAddress,
-                            toolbarOptions: const ToolbarOptions(
-                              copy: true,
-                              cut: true,
-                              paste: true,
-                            ),
+                            contextMenuBuilder: (context, state) {
+                              return AdaptiveTextSelectionToolbar.buttonItems(
+                                anchors: state.contextMenuAnchors,
+                                buttonItems: state.contextMenuButtonItems,
+                              );
+                            },
                             decoration: InputDecoration(
                               border: const OutlineInputBorder(),
                               labelText: tr('authentication.hints.email'),
@@ -119,11 +120,14 @@ class _LoginViewState extends State<LoginView> {
                                       controller: _passwordController,
                                       obscureText: !visible,
                                       maxLength: 1000, // If the user is stupid
-                                      toolbarOptions: const ToolbarOptions(
-                                        copy: true,
-                                        cut: true,
-                                        paste: true,
-                                      ),
+                                      contextMenuBuilder: (context, state) {
+                                        return AdaptiveTextSelectionToolbar
+                                            .buttonItems(
+                                          anchors: state.contextMenuAnchors,
+                                          buttonItems:
+                                              state.contextMenuButtonItems,
+                                        );
+                                      },
                                       autofillHints: const ['current-password'],
                                       decoration: InputDecoration(
                                         border: const OutlineInputBorder(),

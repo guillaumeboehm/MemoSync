@@ -71,11 +71,12 @@ class _ResendVerifEmailViewState extends State<ResendVerifEmailView> {
                             autofillHints: const ['username'],
                             maxLength: 1000, // If the user is stupid
                             keyboardType: TextInputType.emailAddress,
-                            toolbarOptions: const ToolbarOptions(
-                              copy: true,
-                              cut: true,
-                              paste: true,
-                            ),
+                            contextMenuBuilder: (context, state) {
+                              return AdaptiveTextSelectionToolbar.buttonItems(
+                                anchors: state.contextMenuAnchors,
+                                buttonItems: state.contextMenuButtonItems,
+                              );
+                            },
                             decoration: InputDecoration(
                               border: const OutlineInputBorder(),
                               hintText: tr('authentication.hints.email'),
