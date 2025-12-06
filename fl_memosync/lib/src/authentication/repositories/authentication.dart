@@ -192,7 +192,6 @@ class AuthenticationRepository {
   /// Stream updated each time the [AuthenticationStatus] changes.
   Stream<AuthenticationStatus> get status async* {
     await Future<void>.delayed(const Duration(seconds: 1));
-    yield AuthenticationStatus.unknown;
     yield* _controller.stream;
   }
 

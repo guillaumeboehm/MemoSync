@@ -142,15 +142,6 @@ class _LoginPageState extends State<LoginPage> {
                                     .read<AuthenticationBloc>()
                                     .state
                                     .status ==
-                                AuthenticationStatus.unknown) {
-                              context
-                                  .read<AuthenticationBloc>()
-                                  .add(AuthFromStorage());
-                              return const CircularProgressIndicator();
-                            } else if (context
-                                    .read<AuthenticationBloc>()
-                                    .state
-                                    .status ==
                                 AuthenticationStatus.authenticated) {
                               return const CircularProgressIndicator();
                             } else {

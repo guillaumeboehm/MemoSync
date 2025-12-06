@@ -33,23 +33,22 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
 
   NavigatorState get _navigator => _navigatorKey.currentState!;
 
-  bool startup = true;
   SharedPreferences? _sharedPreferences;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+    // WidgetsBinding.instance.addObserver(this);
     Future.microtask(() async {
       _sharedPreferences = await SharedPreferences.getInstance();
     });
   }
 
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   WidgetsBinding.instance.removeObserver(this);
+  //   super.dispose();
+  // }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -73,6 +72,7 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,
+          onGenerateRoute: (RouteSettings settings) => SplashPage.route(),
           builder: (context, child) {
             // TODO(me): Use Permission.ignore...
             // instead and do it when activating a permanent notif only
@@ -82,7 +82,7 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
                           .isAllBatteryOptimizationDisabled ??
                       false)) {}
             });
-            Logger.info('built');
+            Logger.info('Building App');
             return BlocListener<AuthenticationBloc, AuthenticationState>(
               listenWhen: (previous, current) =>
                   current.status == AuthenticationStatus.unknown ||
@@ -105,7 +105,7 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
                       );
                     case AuthenticationStatus.unknown:
                       _navigator.pushAndRemoveUntil<void>(
-                        LoginPage.route(),
+                        SplashPage.route(),
                         (route) => false,
                       );
                   }
@@ -119,18 +119,15 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
                   switch (Uri.base.path) {
                     case '/verifEmail':
                     case '/changePassword':
-                      if (startup) {
-                        _navigator.pushAndRemoveUntil<void>(
-                          LoginPage.route(
-                            args: {
-                              'route': Uri.base.path,
-                              ...Uri.base.queryParameters,
-                            },
-                          ),
-                          (route) => false,
-                        );
-                        startup = false;
-                      }
+                      _navigator.pushAndRemoveUntil<void>(
+                        LoginPage.route(
+                          args: {
+                            'route': Uri.base.path,
+                            ...Uri.base.queryParameters,
+                          },
+                        ),
+                        (route) => false,
+                      );
                     default:
                       _navigator.pushAndRemoveUntil<void>(
                         route404,
@@ -143,7 +140,7 @@ class _AppViewState extends State<AppView> with WidgetsBindingObserver {
               child: child,
             );
           },
-          onGenerateRoute: (RouteSettings settings) => SplashPage.route(),
+          // onGenerateRoute: (RouteSettings settings) => SplashPage.route(),
         );
       },
     );
