@@ -56,3 +56,6 @@ app.*.map.json
 
 # FVM Version Cache
 .fvm/
+
+# runtime sentry stuff
+.sentry-native/
