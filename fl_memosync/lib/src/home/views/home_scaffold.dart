@@ -34,7 +34,7 @@ class HomeScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _scaffoldKey = GlobalKey<ScaffoldState>();
+    final scaffoldKey = GlobalKey<ScaffoldState>();
     return BlocProvider(
       create: (context) => HomeBloc(
         context.read<AuthenticationBloc>(),
@@ -48,7 +48,7 @@ class HomeScaffold extends StatelessWidget {
                 valueListenable: Storage.settingsStorageStream(),
                 builder: (context, value, child) {
                   return Scaffold(
-                    key: _scaffoldKey,
+                    key: scaffoldKey,
                     drawer: (constraints.maxWidth < App.maxWidth)
                         ? Drawer(
                             child: ListView(
@@ -160,7 +160,7 @@ class HomeScaffold extends StatelessWidget {
                                       ? <Widget>[
                                           ...backArrow,
                                           IconButton(
-                                            onPressed: () => _scaffoldKey
+                                            onPressed: () => scaffoldKey
                                                 .currentState
                                                 ?.openDrawer(),
                                             icon: const Icon(Icons.menu),
