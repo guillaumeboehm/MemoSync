@@ -32,7 +32,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
-    Logger.info('Building login page.');
+    Logger.info('[LoginPage] Building login page.');
     return BlocProvider(
       create: (context) => LoginBloc(),
       child: Scaffold(
@@ -135,6 +135,9 @@ class _LoginPageState extends State<LoginPage> {
                             return previous.view != current.view;
                           },
                           builder: (context, state) {
+                            Logger.info(
+                              '[LoginPage] Login page BlocBuilder',
+                            );
                             context
                                 .read<AuthenticationBloc>()
                                 .add(AuthHideError());

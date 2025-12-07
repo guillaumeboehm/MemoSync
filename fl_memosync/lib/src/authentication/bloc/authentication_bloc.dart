@@ -22,7 +22,7 @@ class AuthenticationBloc
   })  : _authenticationRepository = authenticationRepository,
         _userRepository = userRepository,
         super(const AuthenticationState.unknown()) {
-    Logger.info('AuthBloc constructor');
+    Logger.info('[AuthBloc] constructor');
     on<AuthStatusChanged>(_onAuthStatusChanged);
     on<AuthFromStorage>(_onAuthFromStorage);
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
