@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:launch_at_startup/launch_at_startup.dart'
@@ -163,10 +165,14 @@ class _Wrapper extends StatefulWidget {
 class _WrapperState extends State<_Wrapper> with WindowListener, TrayListener {
   @override
   void initState() {
+    unawaited(asyncInitState());
+    super.initState();
+  }
+
+  Future<void> asyncInitState() async {
     windowManager.addListener(this);
     trayManager.addListener(this);
-    _init();
-    super.initState();
+    await _init();
   }
 
   @override
