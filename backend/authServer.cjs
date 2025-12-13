@@ -39,7 +39,7 @@ const mongoURL = "mongodb://" + dbHost + ":" + dbPort + "/" + dbName;
 try {
   connect(mongoURL, { user: dbUsername, pass: dbPwd });
 } catch (err) {
-  if (err) console.log(err);
+  if (err) logError(err);
 }
 const models = require("./models")(mongoose, dbCollNames);
 
@@ -61,40 +61,35 @@ app.post("/newToken", async (req, res) => {
   try {
     const authHeader = req.headers["authorization"];
     const authToken = authHeader && authHeader.split(" ")[1];
-    var refresh = true;
-    if (authToken != null)
-      jwt.verify(
-        authToken,
-        process.env.ACCESS_TOKEN_SECRET,
-        async (err, payload) => {
-          if (!err) {
-            refresh = false;
-            // check if user still exists
-            logInfo("authToken valid");
-            await models.users.exists({ email: payload.email }).then(
-              (exists) => {
-                // Not sure why await isn't accepted here... Seems to work without so meh
-                if (!exists) {
-                  logError("UserNotFound");
-                  return res.status(401).json({
-                    code: "UserNotFound",
-                    message:
-                      "Cannot produce new token because the given user doesn't exist",
-                  });
-                }
-                logInfo("User exists");
-                return false;
-              },
-              (err) => {
-                throw "Error while fetching user data: " + err;
-              },
-            );
-            logSuccess("Sending back current token");
-            return res.status(200).json({ accessToken: authToken }); // resend the same token
-          }
-        },
-      );
-    if (!refresh) throw "Access token is valid so should have returned already";
+    var isAuthTokenValid = false;
+    if (authToken != null) {
+      var decodedToken;
+      try {
+        decodedToken = jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET);
+      } catch {
+        logDebug("Auth token invalid, refreshing...");
+      }
+      isAuthTokenValid = true;
+      // check if user still exists
+      logInfo("authToken valid");
+      const userEmail = decodedToken.email;
+      const userExists = await models.users.exists({ email: userEmail });
+      if (!userExists) {
+        logError("UserNotFound");
+        return res.status(401).json({
+          code: "UserNotFound",
+          message:
+            "Cannot produce new token because the given user doesn't exist",
+        });
+      } else {
+        logSuccess("Sending back current token");
+        return res.status(200).json({ accessToken: authToken }); // resend the same token
+      }
+    }
+    console.assert(
+      !isAuthTokenValid,
+      "Access token is valid so should have returned already",
+    );
     const refreshToken = req.body.token;
     if (refreshToken == null) {
       logError("NoRefreshTokenSent");
@@ -104,42 +99,35 @@ app.post("/newToken", async (req, res) => {
           "Cannot produce new token because the refresh token wasn't given to the query",
       });
     }
-    jwt.verify(
-      refreshToken,
-      process.env.REFRESH_TOKEN_SECRET,
-      async function (err, payload) {
-        if (err) {
-          logError("RefreshTokenInvalid", err);
-          return res.status(401).json({
-            code: "RefreshTokenInvalid",
-            message:
-              "Cannot produce new token because the refresh token is invalid",
-          });
-        }
-        if (
-          await models.users
-            .exists({
-              email: payload.email,
-              jwt_recovery_tokens: { $in: [refreshToken] },
-            })
-            .then((exists) => {
-              if (!exists) {
-                logError("RefreshTokenNotFound");
-                return res.status(401).json({
-                  code: "RefreshTokenNotFound",
-                  message:
-                    "Cannot produce new token because the server doesn't have a refresh token stored",
-                });
-              }
-            })
-        )
-          throw "Error while fetching user data.";
-
-        const accessToken = generateAccessToken({ email: payload.email });
-        logSuccess("Sending new token");
-        return res.status(200).json({ accessToken: accessToken });
-      },
-    );
+    var decodedToken;
+    try {
+      decodedToken = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    } catch {
+      logError("RefreshTokenInvalid", err);
+      return res.status(401).json({
+        code: "RefreshTokenInvalid",
+        message:
+          "Cannot produce new token because the refresh token is invalid",
+      });
+    }
+    const userExists = await models.users.exists({
+      email: decodedToken.email,
+      jwt_recovery_tokens: { $in: [refreshToken] },
+    });
+    if (userExists) {
+      const accessToken = generateAccessToken({
+        email: decodedToken.email,
+      });
+      logSuccess("Sending new token");
+      return res.status(200).json({ accessToken: accessToken });
+    } else {
+      logError("RefreshTokenNotFound");
+      return res.status(401).json({
+        code: "RefreshTokenNotFound",
+        message:
+          "Cannot produce new token because the server doesn't have a refresh token stored",
+      });
+    }
   } catch (e) {
     logError("InternalError", e);
     return res.status(500).json({ code: "InternalError", message: e });
@@ -159,53 +147,43 @@ app.delete("/logout", async (req, res) => {
         message: "Cannot logout because no refresh token was given",
       });
     }
-    jwt.verify(
-      refreshToken,
-      process.env.REFRESH_TOKEN_SECRET,
-      (err, payload) => {
-        if (err) {
-          logError("InvalidBearerToken", err);
-          return res.status(401).json({
-            code: "InvalidBearerToken",
-            message: "Cannot logout because the refresh token is invalid",
-          });
-        }
-        models.users
-          .findOne({ email: payload.email })
-          .exec()
-          .then((user) => {
-            if (user === null) {
-              logError("NoUserFound");
-              return res.status(400).json({
-                code: "NoUserFound",
-                message: "Cannot logout because the given user doesn't exist",
-              });
-            }
+    var decodedToken;
+    try {
+      decodedToken = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    } catch {
+      logError("InvalidBearerToken", err);
+      return res.status(401).json({
+        code: "InvalidBearerToken",
+        message: "Cannot logout because the refresh token is invalid",
+      });
+    }
+    var user = models.users
+      .findOne({ email: decodedToken.email })
+      .exec()
+      .catch((err) => {
+        logError("InternalError", err);
+        return res.status(500).json({ code: "InternalError", message: err });
+      });
+    if (!user) {
+      logError("NoUserFound");
+      return res.status(400).json({
+        code: "NoUserFound",
+        message: "Cannot logout because the given user doesn't exist",
+      });
+    } else {
+      const tokens = user.get("jwt_recovery_tokens");
+      tokens.pop(refreshToken);
+      user.save();
 
-            const tokens = user.get("jwt_recovery_tokens");
-            tokens.pop(refreshToken);
-            user.save();
-
-            logSuccess(payload.email + " logged out");
-            res.status(204).json({ code: "LoggedOut" });
-          })
-          .catch((err) => {
-            logError("InternalError", err);
-            return res
-              .status(500)
-              .json({ code: "InternalError", message: err });
-          });
-      },
-    );
-    logError("UnknownError");
-    return res
-      .status(500)
-      .json({ code: "UnknownError", message: "Something went wrong" });
+      logSuccess(payload.email + " logged out");
+      return res.status(204).json({ code: "LoggedOut" });
+    }
   } catch (e) {
     logError("InternalError", e);
-    res.status(500).json({ code: "InternalError", message: e });
+    return res.status(500).json({ code: "InternalError", message: e });
   }
 });
+
 app.delete("/logoutEverywhere", async (req, res) => {
   apiCall = "logoutEverywhere";
   try {
@@ -220,44 +198,40 @@ app.delete("/logoutEverywhere", async (req, res) => {
       });
     }
 
-    jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, payload) => {
-      if (err) {
-        logError("InvalidBearerToken", err);
-        return res.status(401).json({
-          code: "InvalidBearerToken",
-          message: "Cannot logout because the given refresh token is invalid",
-        });
-      }
-      models.users
-        .findOne({ email: payload.email })
-        .exec()
-        .then((user) => {
-          if (user === null) {
-            logError("NoUserFound", err);
-            return res.status(400).json({
-              code: "NoUserFound",
-              message: "Cannot logout because the given user doesn't exist",
-            });
-          }
+    var decodedToken;
+    try {
+      decodedToken = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+    } catch {
+      logError("InvalidBearerToken", err);
+      return res.status(401).json({
+        code: "InvalidBearerToken",
+        message: "Cannot logout because the given refresh token is invalid",
+      });
+    }
 
-          user.set("jwt_recovery_tokens", []);
-          user.save();
+    var user = models.users
+      .findOne({ email: decodedToken.email })
+      .exec()
+      .catch((err) => {
+        logError("InternalError", err);
+        return res.status(500).json({ code: "InternalError", message: err });
+      });
+    if (!user) {
+      logError("NoUserFound", err);
+      return res.status(400).json({
+        code: "NoUserFound",
+        message: "Cannot logout because the given user doesn't exist",
+      });
+    } else {
+      user.set("jwt_recovery_tokens", []);
+      user.save();
 
-          logSuccess(payload.email + "logged out everywhere");
-          res.status(204).json({ code: "LoggedOutEverywhere" });
-        })
-        .catch((err) => {
-          logError("InternalError", err);
-          return res.status(500).json({ code: "InternalError", message: err });
-        });
-    });
-    logError("UnknownError");
-    return res
-      .status(500)
-      .json({ code: "UnknownError", message: "Something went wrong" });
+      logSuccess(decodedToken.email + "logged out everywhere");
+      return res.status(204).json({ code: "LoggedOutEverywhere" });
+    }
   } catch (e) {
     logError("InternalError", e);
-    res.status(500).json({ code: "InternalError", message: e });
+    return res.status(500).json({ code: "InternalError", message: e });
   }
 });
 
@@ -266,121 +240,104 @@ app.post("/login", async (req, res) => {
   try {
     const email = req.body.email;
     const pass = req.body.password;
-    await models.users
+    var user = await models.users
       .findOne({ email: email })
       .exec()
-      .then((user) => {
-        console.log(user);
-        if (user === null) {
-          logError("NoUserFound");
-          return res.status(401).json({
-            code: "NoUserFound",
-            message: "Cannot login because the given user doesn't exist",
-          });
-        }
-        if (user.verification !== "verified") {
-          logError("VerifEmail");
-          return res.status(401).json({
-            code: "VerifEmail",
-            message: "Cannot login because the user's email is not verified",
-          });
-        }
-
-        compare(pass, user.get("password"), function (err, success) {
-          if (err) {
-            logError("InternalError", err);
-            return res
-              .status(500)
-              .json({ code: "InternalError", message: err });
-          }
-          if (success) {
-            const payload = { email: email };
-            const accessToken = generateAccessToken(payload);
-            const refreshToken = jwt.sign(
-              payload,
-              process.env.REFRESH_TOKEN_SECRET,
-            );
-
-            const tokens = user.get("jwt_recovery_tokens");
-            tokens.push(refreshToken);
-            user.save();
-
-            logSuccess(payload.email + " logged in");
-            res
-              .status(200)
-              .json({ accessToken: accessToken, refreshToken: refreshToken });
-          } else {
-            logError("WrongPass");
-            res.status(401).json({
-              code: "WrongPass",
-              message: "Cannot login because the given password is wrong",
-            });
-          }
-        });
-      })
       .catch((err) => {
         logError("InternalError", err);
         return res.status(500).json({ code: "InternalError", message: err });
       });
+    logDebug(user);
+    if (!user) {
+      logError("NoUserFound");
+      return res.status(401).json({
+        code: "NoUserFound",
+        message: "Cannot login because the given user doesn't exist",
+      });
+    }
+    if (user.verification !== "verified") {
+      logError("VerifEmail");
+      return res.status(401).json({
+        code: "VerifEmail",
+        message: "Cannot login because the user's email is not verified",
+      });
+    }
+    const pass_checked = await compare(pass, user.get("password"));
+    if (pass_checked) {
+      const payload = { email: email };
+      const accessToken = generateAccessToken(payload);
+      const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET);
+
+      const tokens = user.get("jwt_recovery_tokens");
+      tokens.push(refreshToken);
+      user.save();
+
+      logSuccess(payload.email + " logged in");
+      return res
+        .status(200)
+        .json({ accessToken: accessToken, refreshToken: refreshToken });
+    } else {
+      logError("WrongPass");
+      return res.status(401).json({
+        code: "WrongPass",
+        message: "Cannot login because the given password is wrong",
+      });
+    }
   } catch (e) {
     logError("InternalError", e);
-    res.status(500).json({ code: "InternalError", message: e });
+    return res.status(500).json({ code: "InternalError", message: e });
   }
 });
+
 app.post("/signup", async (req, res) => {
-  console.log("oy");
   apiCall = "signup";
   try {
-    if (
-      await models.users.exists({ email: req.body.email }).then((exists) => {
-        if (exists) {
-          logError("UserAlreadyExists");
-          res.status(409).json({
-            code: "UserAlreadyExists",
-            message: "Cannot sign up because the given user already exists",
-          });
-          return true;
-        }
-      })
-    )
-      return 0;
+    const userExists = await models.users.exists({ email: req.body.email });
+    if (userExists) {
+      logError("UserAlreadyExists");
+      return res.status(409).json({
+        code: "UserAlreadyExists",
+        message: "Cannot sign up because the given user already exists",
+      });
+    }
 
     const email = req.body.email;
     const hashedPassword = await hash(req.body.password, 10);
     const verifToken = randomBytes(40).toString("hex");
-    sendVerifEmail(email, verifToken).then((mailRes) => {
-      console.log(mailRes);
-      switch (mailRes.status) {
-        case 450:
-        case 504:
-          logError("UnqualifiedAddress");
-          return res.status(400).json({
-            code: "UnqualifiedAddress",
-            message: "Cannot sign up because the given email is not accessible",
-          });
-        case 535:
-          return res.status(500).json({
-            code: "InternalError",
-            message:
-              "An issue occured while trying to send the verification email",
-          });
-      }
-      const newUser = new models.users({
-        email: email,
-        password: hashedPassword,
-        verification: verifToken,
-        jwt_recovery_tokens: [],
-        creationDate: Date.now().toString(),
-      });
-      newUser.save();
-      logSuccess(email + " user created");
-      return res.status(201).json({ code: "UserCreated" });
+
+    const mailRes = await sendVerifEmail(email, verifToken);
+    console.debug(mailRes);
+    switch (mailRes.status) {
+      case 450:
+      case 504:
+        logError("UnqualifiedAddress");
+        return res.status(400).json({
+          code: "UnqualifiedAddress",
+          message: "Cannot sign up because the given email is not accessible",
+        });
+      case 535:
+        return res.status(500).json({
+          code: "InternalError",
+          message:
+            "An issue occured while trying to send the verification email",
+        });
+    }
+    const newUser = new models.users({
+      email: email,
+      password: hashedPassword,
+      verification: verifToken,
+      jwt_recovery_tokens: [],
+      creationDate: Date.now().toString(),
     });
+    newUser.save();
+    logSuccess(email + " user created");
+    return res.status(201).json({ code: "UserCreated" });
   } catch (err) {
     logError("InternalError", err);
     return res.status(500).json({ code: "InternalError", message: err });
   }
 });
+
 app.get("/verifEmail", async (req, res) => {
   apiCall = "verifEmail";
   try {
@@ -399,108 +356,106 @@ app.get("/verifEmail", async (req, res) => {
       });
     }
 
-    await models.users
+    var user = await models.users
       .findOne({ email: b64ToAscii(email) })
       .exec()
-      .then((user) => {
-        if (user === null) {
-          logError("NoUserFound");
-          return res.status(401).json({
-            code: "NoUserFound",
-            message: "Cannot verify email because the given user doesn't exist",
-            // kept for compatibility for now 05/30/22
-            text: "The user you're trying to verify couldn't be found.",
-            button: "Sign up",
-            redirect: "/signup",
-          });
-        }
-
-        if (user.verification === "verified") {
-          logSuccess("Email already verified");
-          return res.status(200).json({
-            code: "AlreadyVerified",
-            // kept for compatibility for now 05/30/22
-            text: "Your email is already verified.",
-            button: "Login",
-            redirect: "/login",
-          });
-        }
-        if (user.verification !== token) {
-          logError("verification token invalid");
-          return res.status(400).json({
-            code: "InvalidToken",
-            message:
-              "Cannot verify because the given verification token is invalid",
-            // kept for compatibility for now 05/30/22
-            text: "The verification token is invalid, try resending the verification email.",
-            button: "Resend verification email",
-            redirect: "/resendVerif",
-          });
-        }
-        user.verification = "verified";
-        user.save();
-        logSuccess("Email is verified");
-        res.status(200).json({
-          code: "Verified",
-          // kept for compatibility for now 05/30/22
-          text: "Your email has been verified, your can now log in your MemoSync account.",
-          button: "Login",
-          redirect: "/login",
-        });
-      })
-      .catch((err) => {
-        logError("InternalError", err);
-        return res.status(500).json({ code: "InternalError" });
-      });
-  } catch (err) {
-    logError("InternalError", err);
-    res.status(500).json({ code: "InternalError", message: err });
-  }
-});
-app.post("/forgotPassword", async (req, res) => {
-  apiCall = "forgotPassword";
-  try {
-    const email = req.body.email;
-    await models.users
-      .findOne({ email: email })
-      .exec()
-      .then((user) => {
-        if (user === null) {
-          logError("NoUserFound");
-          return res.status(400).json({
-            code: "NoUserFound",
-            message:
-              "Cannot send password reset link because the given user doesn't exist",
-          });
-        }
-
-        const pwdToken = randomBytes(40).toString("hex");
-        sendForgottenPasswordEmail(email, pwdToken).then((mailRes) => {
-          console.log(mailRes);
-          switch (mailRes.status) {
-            case 504:
-              logError("UnqualifiedAddress");
-              return res.status(400).json({
-                code: "UnqualifiedAddress",
-                message:
-                  "Cannot send password reset link because the uesr's address is not accessible",
-              });
-          }
-          user.set("resetPasswordToken", pwdToken);
-          user.save();
-          logSuccess("reset link sent");
-          res.status(200).json({ code: "ResetLinkSent" });
-        });
-      })
       .catch((err) => {
         logError("InternalError", err);
         return res.status(500).json({ code: "InternalError", message: err });
       });
+
+    if (!user) {
+      logError("NoUserFound");
+      return res.status(401).json({
+        code: "NoUserFound",
+        message: "Cannot verify email because the given user doesn't exist",
+        // kept for compatibility for now 05/30/22
+        text: "The user you're trying to verify couldn't be found.",
+        button: "Sign up",
+        redirect: "/signup",
+      });
+    }
+    if (user.verification === "verified") {
+      logSuccess("Email already verified");
+      return res.status(200).json({
+        code: "AlreadyVerified",
+        // kept for compatibility for now 05/30/22
+        text: "Your email is already verified.",
+        button: "Login",
+        redirect: "/login",
+      });
+    }
+    if (user.verification !== token) {
+      logError("verification token invalid");
+      return res.status(400).json({
+        code: "InvalidToken",
+        message:
+          "Cannot verify because the given verification token is invalid",
+        // kept for compatibility for now 05/30/22
+        text: "The verification token is invalid, try resending the verification email.",
+        button: "Resend verification email",
+        redirect: "/resendVerif",
+      });
+    }
+    user.verification = "verified";
+    user.save();
+    logSuccess("Email is verified");
+    return res.status(200).json({
+      code: "Verified",
+      // kept for compatibility for now 05/30/22
+      text: "Your email has been verified, your can now log in your MemoSync account.",
+      button: "Login",
+      redirect: "/login",
+    });
   } catch (err) {
     logError("InternalError", err);
-    res.status(500).json({ code: "InternalError", message: err });
+    return res.status(500).json({ code: "InternalError", message: err });
   }
 });
+
+app.post("/forgotPassword", async (req, res) => {
+  apiCall = "forgotPassword";
+  try {
+    const email = req.body.email;
+    var user = await models.users
+      .findOne({ email: email })
+      .exec()
+      .catch((err) => {
+        logError("InternalError", err);
+        return res.status(500).json({ code: "InternalError", message: err });
+      });
+
+    if (!user) {
+      logError("NoUserFound");
+      return res.status(400).json({
+        code: "NoUserFound",
+        message:
+          "Cannot send password reset link because the given user doesn't exist",
+      });
+    }
+    const pwdToken = randomBytes(40).toString("hex");
+    const mailRes = await sendForgottenPasswordEmail(email, pwdToken);
+    logDebug(mailRes);
+    switch (mailRes.status) {
+      case 504:
+        logError("UnqualifiedAddress");
+        // TODO: This should probably not return a error status for safety
+        return res.status(400).json({
+          code: "UnqualifiedAddress",
+          message:
+            "Cannot send password reset link because the user's address is not accessible",
+        });
+    }
+    user.set("resetPasswordToken", pwdToken);
+    user.save();
+    logSuccess("reset link sent");
+    return res.status(200).json({ code: "ResetLinkSent" });
+  } catch (err) {
+    logError("InternalError", err);
+    return res.status(500).json({ code: "InternalError", message: err });
+  }
+});
+
 app.post("/changePassword", async (req, res) => {
   const authHeader = req.headers["authorization"];
   const accessToken = authHeader && authHeader.split(" ")[1];
@@ -510,13 +465,17 @@ app.post("/changePassword", async (req, res) => {
   var email = undefined;
   // Check access token if one is provided
   if (accessToken) {
-    jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
-      if (err) {
-        logError("accessToken invalid", err);
-        return res.status(400).json({ code: "InvalidToken", message: err });
-      }
-      if (!err) email = payload.email;
-    });
+    var decodedToken;
+    try {
+      decodedToken = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+    } catch {
+      logError("accessToken invalid");
+      return res.status(400).json({
+        code: "InvalidToken",
+        message: "Cannot reset password because the access token is invalid",
+      });
+    }
+    email = decodedToken.email;
   }
   // if no access token was provided get the email from the body
   resetToken = req.body.resetToken;
@@ -533,89 +492,87 @@ app.post("/changePassword", async (req, res) => {
         message: "The given link is missing the user id",
       });
   }
-  await models.users
+  var user = await models.users
     .findOne({ email: email })
     .exec()
-    .then((user) => {
-      if (user === null) {
-        logError("NoUserFound");
-        return res.status(400).json({
-          code: "NoUserFound",
-          message:
-            "Cannot change password because the given user doesn't exist",
-        });
-      }
-      if (resetToken && user.get("resetPasswordToken") !== resetToken) {
-        logError("MalformedLink");
-        return res.status(400).json({
-          code: "MalformedLink",
-          message:
-            "Cannot change password because the given reset token is invalid",
-        });
-      }
-
-      //Issok
-      user.set("password", hashedPassword);
-      user.set("resetPasswordToken", "");
-      user.save();
-      logSuccess("password changed");
-      res.status(201).json({ code: "PasswordChanged" });
-    })
     .catch((err) => {
       logError("InternalError", err);
       return res.status(500).json({ code: "InternalError", message: err });
     });
+
+  if (!user) {
+    logError("NoUserFound");
+    return res.status(400).json({
+      code: "NoUserFound",
+      message: "Cannot change password because the given user doesn't exist",
+    });
+  }
+  if (resetToken && user.get("resetPasswordToken") !== resetToken) {
+    logError("MalformedLink");
+    return res.status(400).json({
+      code: "MalformedLink",
+      message:
+        "Cannot change password because the given reset token is invalid",
+    });
+  }
+
+  //Issok
+  user.set("password", hashedPassword);
+  user.set("resetPasswordToken", "");
+  user.save();
+  logSuccess("password changed");
+  return res.status(201).json({ code: "PasswordChanged" });
 });
+
 app.post("/resendVerif", async (req, res) => {
   apiCall = "resendVerif";
   try {
     const email = req.body.email;
-    await models.users
+    var user = await models.users
       .findOne({ email: email })
       .exec()
-      .then((user) => {
-        if (user === null) {
-          logError("NoUserFound");
-          return res.status(400).json({
-            code: "NoUserFound",
-            message:
-              "Cannot send the verification email because the given user doesn't exist",
-          });
-        }
-        if (user.verification === "verified") {
-          logError("AlreadyVerified");
-          return res.status(400).json({
-            code: "AlreadyVerified",
-            message:
-              "No need to send a verification email because the user's email is already verified",
-          });
-        }
-
-        const verifToken = randomBytes(40).toString("hex");
-        sendVerifEmail(email, verifToken).then((mailRes) => {
-          console.log(mailRes);
-          switch (mailRes.status) {
-            case 504:
-              logError("UnqualifiedAddress");
-              return res.status(400).json({
-                code: "UnqualifiedAddress",
-                message:
-                  "Cannot send verification email because the user's email is not accessible",
-              });
-          }
-          user.set("verification", verifToken);
-          user.save();
-          logSuccess("verif email sent");
-          res.status(200).json({ code: "VerifEmailSent" });
-        });
-      })
       .catch((err) => {
         logError("InternalError", err);
         return res.status(500).json({ code: "InternalError", message: err });
       });
+
+    if (!user) {
+      logError("NoUserFound");
+      return res.status(400).json({
+        code: "NoUserFound",
+        message:
+          "Cannot send the verification email because the given user doesn't exist",
+      });
+    }
+    if (user.verification === "verified") {
+      logError("AlreadyVerified");
+      return res.status(400).json({
+        code: "AlreadyVerified",
+        message:
+          "No need to send a verification email because the user's email is already verified",
+      });
+    }
+
+    const verifToken = randomBytes(40).toString("hex");
+    const mailRes = sendVerifEmail(email, verifToken);
+    logDebug(mailRes);
+    switch (mailRes.status) {
+      case 504:
+        logError("UnqualifiedAddress");
+        // TODO: Again not sure it should have an error return
+        return res.status(400).json({
+          code: "UnqualifiedAddress",
+          message:
+            "Cannot send verification email because the user's email is not accessible",
+        });
+    }
+    user.set("verification", verifToken);
+    user.save();
+    logSuccess("verif email sent");
+    return res.status(200).json({ code: "VerifEmailSent" });
   } catch (err) {
     logError("InternalError", err);
-    res.status(500).json({ code: "InternalError", message: err });
+    return res.status(500).json({ code: "InternalError", message: err });
   }
 });
 
@@ -626,7 +583,6 @@ function generateAccessToken(payload) {
   });
 }
 async function sendVerifEmail(dest, token) {
-  console.log("email");
   return new Promise((resolve, reject) => {
     const mailOptions = {
       from: process.env.MAIL_USER,
@@ -644,14 +600,14 @@ async function sendVerifEmail(dest, token) {
     let mailRes = {};
     mailTransporter.sendMail(mailOptions, function (err, info) {
       if (err) {
-        console.log(err);
+        logError(err);
         mailRes.status = err.responseCode;
         mailRes.err = err.response;
         resolve(mailRes);
         //TODO Ensure that the user will eventually receive the mail dunno how
       } else {
         mailRes.status = 200;
-        console.log("Email sent: " + info.response);
+        logInfo("Email sent: " + info.response);
         resolve(mailRes);
       }
     });
@@ -674,20 +630,25 @@ async function sendForgottenPasswordEmail(dest, token) {
     let mailRes = {};
     mailTransporter.sendMail(mailOptions, function (err, info) {
       if (err) {
-        console.log(err);
+        logError(err);
         mailRes.status = err.responseCode;
         mailRes.err = err.response;
         resolve(mailRes);
         //TODO Ensure that the user will eventually receive the mail dunno how
       } else {
         mailRes.status = 200;
-        console.log("Email sent: " + info.response);
+        logInfo("Email sent: " + info.response);
         resolve(mailRes);
       }
     });
   });
 }
 
+function logDebug(msg, ret) {
+  ret
+    ? console.log("DEBUG " + apiCall + " : " + msg, ret)
+    : console.log("DEBUG " + apiCall + " : " + msg);
+}
 function logInfo(msg, ret) {
   ret
     ? console.log("INFO " + apiCall + " : " + msg, ret)
@@ -697,6 +658,11 @@ function logSuccess(msg, ret) {
   ret
     ? console.log("SUCCESS " + apiCall + " : " + msg, ret)
     : console.log("SUCCESS " + apiCall + " : " + msg);
+}
+function logWarning(msg, ret) {
+  ret
+    ? console.warn("WARN " + apiCall + " : " + msg, ret)
+    : console.warn("WARN " + apiCall + " : " + msg);
 }
 function logError(msg, ret) {
   ret
